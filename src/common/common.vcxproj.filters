@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="tool">
+      <UniqueIdentifier>{6213619d-8890-4c50-ba2e-2d4eb17d753d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{c808072d-782d-4aa9-8cbd-2a720eaf1f1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{689b871f-3d46-4f61-832e-cc9b1950146c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Service">
+      <UniqueIdentifier>{3d5e8f7c-8d29-408d-9e64-8f67243b06d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{844a4f86-48ae-4678-8698-2009f47e6ebb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tool\buffer.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\cLock.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\Mempool.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\SafeQueue.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\thread.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\public.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stdafx.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\bytebuffer.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\DataSend.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\DebugFile.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\delegate.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\Floyd.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\GameApi.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\global.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\mkdir.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\noncopyable.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\ScopeGuard.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\UnionID.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\UnitTest.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="Log\AsyncLog.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="Log\LogFile.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer\TimerWheel.h">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\Service.h">
+      <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\ServiceMgr.h">
+      <Filter>Service</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\include\stdafx.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\DataSend.cpp">
+      <Filter>tool</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\DebugFile.cpp">
+      <Filter>tool</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\GameApi.cpp">
+      <Filter>tool</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\UnitTest.cpp">
+      <Filter>tool</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\AsyncLog.cpp">
+      <Filter>Log</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\LogFile.cpp">
+      <Filter>Log</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer\TimerWheel.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\ServiceMgr.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

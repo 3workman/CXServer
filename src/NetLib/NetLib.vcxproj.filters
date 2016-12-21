@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="server">
+      <UniqueIdentifier>{79818548-4cd9-469e-883a-6ddf4d5dbd70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="client">
+      <UniqueIdentifier>{17d9d422-ceda-4ea0-8611-674b620412d7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="client\ClientLink.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="server\ServLink.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="server\ServLinkMgr.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="client\ClientLink.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="client\config_client.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="server\define.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="server\ServLink.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="server\ServLinkMgr.h">
+      <Filter>server</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

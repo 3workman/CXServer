@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{0aabffe6-11fc-49d5-990f-413a2c05b4c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reward">
+      <UniqueIdentifier>{ee88d2a5-d2c4-48bb-a28b-da0cfb805b01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Trigger">
+      <UniqueIdentifier>{0119609b-f740-4e7d-825d-552c12a24afe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="msg">
+      <UniqueIdentifier>{283c6b73-606a-48d0-a55d-ac52100744f1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Player\Player.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Player\MsgPool.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Trigger\trigger.cpp">
+      <Filter>Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="Reward\reward.cpp">
+      <Filter>Reward</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Player\Player.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\PlayerMsg.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\MsgPool.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Trigger\trigger.h">
+      <Filter>Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="Reward\reward.h">
+      <Filter>Reward</Filter>
+    </ClInclude>
+    <ClInclude Include="..\msg\MsgEnum.h">
+      <Filter>msg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\msg\TestMsg.h">
+      <Filter>msg</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
