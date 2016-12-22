@@ -46,20 +46,17 @@ bool Reward::_Change(Player& player, Type typ, int diff)
 //各类资源变更函数
 bool Reward::_SetGold(Player& player, int diff)
 {
-    bool retCheck = false;
-    bool retWrite = false;
-
     if (_isCheck)
     {
         int playerGold = 100; //取玩家数据
-        retCheck = (playerGold + diff) >= 0;
+        if (playerGold + diff < 0)
+            return false;
     }
     if (_isWrite)
     {
-        retWrite = true; //变更玩家数据
+        //变更玩家数据
     }
-
-    return ((!_isCheck) || retCheck) && ((!_isWrite) || retWrite);
+    return true;
 }
 bool Reward::_SetDiamond(Player& player, int diff)
 {
