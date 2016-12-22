@@ -14,8 +14,8 @@ struct TriggerTable
 {
     uint16      id;
     uint16      type;
-    uint32      val1; //1223145632：12月23号14:56:32
-    uint32      val2;
+    int32       val1; //1223145632：12月23号14:56:32
+    int32       val2;
 };
 class Trigger {
     typedef std::map<int, const TriggerTable> TriggerMap;
@@ -23,7 +23,7 @@ class Trigger {
 
     Trigger();
 public:
-    typedef bool(Trigger::*TriggerFunc)(Player&, uint32, uint32);
+    typedef bool(Trigger::*TriggerFunc)(Player&, int32, int32);
     enum {
         UpLevel,
         DuringTheTime,
@@ -36,7 +36,7 @@ public:
     bool Check(Player& player, const std::vector<int>& triggerIds);
 
     //各类判断函数
-    bool IsUpLevel(Player& player, uint32 val1, uint32 val2);
-    bool IsDuringTime(Player& player, uint32 val1, uint32 val2);
+    bool IsUpLevel(Player& player, int32 val1, int32 val2);
+    bool IsDuringTime(Player& player, int32 val1, int32 val2);
 };
 #define sTrigger Trigger::Instance()

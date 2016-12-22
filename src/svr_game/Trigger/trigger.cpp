@@ -34,12 +34,12 @@ bool Trigger::Check(Player& player, const std::vector<int>& triggerIds)
 
 //----------------------------------------------------------
 //¸÷ÀàÅÐ¶Ïº¯Êý
-bool Trigger::IsUpLevel(Player& player, uint32 val1, uint32 val2)
+bool Trigger::IsUpLevel(Player& player, int32 val1, int32 val2)
 {
     //return player.GetLevel() >= val1;
     return false;
 }
-bool Trigger::IsDuringTime(Player& player, uint32 val1, uint32 val2)
+bool Trigger::IsDuringTime(Player& player, int32 val1, int32 val2)
 {
     int64 timeNow = GameApi::TimeNowSec();
 
