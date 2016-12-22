@@ -21,6 +21,7 @@
     <ClCompile Include="Trigger\trigger.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\msg\LoginMsg.h" />
     <ClInclude Include="..\msg\MsgEnum.h" />
     <ClInclude Include="..\msg\TestMsg.h" />
     <ClInclude Include="Player\MsgPool.h" />

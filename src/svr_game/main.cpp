@@ -6,11 +6,28 @@
 #include "Service\ServiceMgr.h"
 #include "Timer\TimerWheel.h"
 #include "tool\GameApi.h"
+#include "..\msg\LoginMsg.h"
 
 
-void BindPlayerLink(void*& refPlayer, ServLink* p)
+void BindPlayerLink(void*& refPlayer, ServLink* p, void* pMsg)
 {
-    refPlayer = new Player(p);
+    switch (((stMsg*)pMsg)->msgId){
+    case C2S_Login:
+    {
+        refPlayer = new Player(p);
+    }
+    break;
+    case C2S_ReConnect:
+    {
+        ReConnectMsg* msg = (ReConnectMsg*)pMsg;
+        if (Player* player = Player::FindByIdx(msg->playerIdx))
+        {
+            player->SetServLink(p);
+        }
+    }
+    break;
+    default: assert(0); break;
+    }
 }
 void HandleClientMsg(void* player, void* pMsg, DWORD size)
 {

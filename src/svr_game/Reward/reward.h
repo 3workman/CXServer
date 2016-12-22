@@ -49,4 +49,4 @@ public:
     bool _SetHeroExp(Player& player, int diff);
     bool _SetItem(Player& player, int diff);
 };
-#define sResource Resource::Instance()
+#define sResource Reward::Instance()

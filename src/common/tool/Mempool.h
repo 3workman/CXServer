@@ -182,10 +182,10 @@ private:
 template <class T>
 class CPoolIndex{ // 自动编号，便于管理(对象要含有m_index变量，记录其内存id)，【非线程安全】
 	T**    m_arrPtr;
-	int    m_cnt;
-	std::queue<int> m_queue;
+    uint   m_cnt;
+    std::queue<uint> m_queue;
 public:
-    CPoolIndex(int num) : m_cnt(num){
+    CPoolIndex(uint num) : m_cnt(num){
 		m_arrPtr = (T**)malloc(m_cnt * sizeof(T*));
 		if (!m_arrPtr) return;
 
@@ -193,7 +193,7 @@ public:
         T* pObj = (T*)malloc(m_cnt * sizeof(T));
         if (!pObj) return;	         // 若类operator new，此处用new，会多次调用构造函数
 
-        for (int i = 0; i < m_cnt; ++i) {
+        for (uint i = 0; i < m_cnt; ++i) {
             m_arrPtr[i] = pObj++;
             m_queue.push(i);
         }
@@ -208,7 +208,7 @@ public:
 		memcpy(temp, m_arrPtr, m_cnt * sizeof(T*));
 		free(m_arrPtr);	m_arrPtr = temp;
 
-        for (int i = 0; i < m_cnt; ++i) {
+        for (uint i = 0; i < m_cnt; ++i) {
             m_arrPtr[m_cnt + i] = pObj++;
             m_queue.push(m_cnt + i);
         }
@@ -217,7 +217,7 @@ public:
 	}
 	T* Alloc(){
 		if (m_queue.empty() && !Double()) return NULL;
-		int id = m_queue.front();
+        uint id = m_queue.front();
 		m_queue.pop();
 		m_arrPtr[id]->m_index = id; // 分配时设置内存id
 		return m_arrPtr[id];
@@ -226,8 +226,8 @@ public:
 		m_queue.push(p->m_index);
 		p->m_index = VOID_POOL_ID; // 回收后置空内存id
 	}
-	T* GetByID(int id){
-		if (id < 0 || id >= m_cnt) return NULL;
+    T* GetByIdx(uint id){
+		if (id >= m_cnt) return NULL;
 		return VOID_POOL_ID == m_arrPtr[id]->m_index ? NULL : m_arrPtr[id];
 	}
 };
@@ -239,7 +239,7 @@ public:
 	    void* operator new(size_t /*size*/, const char* file, int line){ return _Pool().Alloc(); }\
 	    void operator delete(void* p, const char* file, int line){ return _Pool().Dealloc((T*)p); }\
 	    void operator delete(void* p, size_t) { return _Pool().Dealloc((T*)p); }\
-        static T* FindByID(int id){ return _Pool().GetByID(id); }
+        static T* FindByIdx(uint idx){ return _Pool().GetByIdx(idx); }
 
 
 template <class T>

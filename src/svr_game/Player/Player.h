@@ -10,13 +10,14 @@ class ServLink;
 class Player {
     Pool_Index_Define(Player, 50);
 private:
-    ServLink* const _clientNetLink;
+    ServLink* _clientNetLink;
 public:
 
 
 public:
     Player(ServLink* p);
 
+    void SetServLink(ServLink* p);
     void SendMsg(stMsg& msg, DWORD size);
 public:
     #include "PlayerMsg.h"

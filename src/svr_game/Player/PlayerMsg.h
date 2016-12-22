@@ -8,5 +8,5 @@
 * @ date 2016-12-12
 ************************************************************************/
 
-Msg_Declare(Login);
-Msg_Declare(Echo);
+Msg_Declare(C2S_Login);
+Msg_Declare(C2S_Echo);

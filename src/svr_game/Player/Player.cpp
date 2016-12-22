@@ -8,15 +8,20 @@ Player::Player(ServLink* p)
 {
 
 }
+void Player::SetServLink(ServLink* p)
+{
+    _clientNetLink = p;
+}
 void Player::SendMsg(stMsg& msg, DWORD size)
 {
     _clientNetLink->SendMsg(&msg, size);
 }
-Msg_Realize(Login)
+
+Msg_Realize(C2S_Login)
 {
     printf("aaaaaaaaaaaaaaaa\n");
 }
-Msg_Realize(Echo)
+Msg_Realize(C2S_Echo)
 {
     TestMsg& msg = (TestMsg&)req;
     char* str = ((char*)&msg) + 4;

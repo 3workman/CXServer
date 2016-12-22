@@ -1,14 +1,15 @@
 #pragma once
 
 
-enum MyEnum
+enum MsgEnum
 {
-    Login,
-    Echo,
+    C2S_Login,
+    C2S_ReConnect,
+    C2S_Echo,
 
     MSG_MAX_CNT
 };
 struct stMsg
 {
-    MyEnum msgId;
+    MsgEnum msgId;
 };

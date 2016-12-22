@@ -9,10 +9,9 @@ ClientLink g_link(config);
 
 void HandleServerMsg(void* p, DWORD size)
 {
-    stMsg* pMsg = (stMsg*)p;
-    if (pMsg->msgId == Echo)
+    if (C2S_Echo == ((stMsg*)p)->msgId)
     {
-        printf("Echo: %s\n", ((char*)pMsg) + 4);
+        printf("Echo: %s\n", ((char*)p) + 4);
     }
 }
 void RunClientIOCP(ClientLink& link)
@@ -28,7 +27,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
     RunClientIOCP(g_link);
 
-    TestMsg msg; msg.msgId = Echo;
+    TestMsg msg; msg.msgId = C2S_Echo;
     // 立即发送一条数据，及时触发服务器端的AcceptExDoneIOCallback
     // 测试结果显示：客户端仅仅connect但不发送数据，不会触发服务器DoneIO回调
     // 真实环境下是会发数据的，不会只Connect

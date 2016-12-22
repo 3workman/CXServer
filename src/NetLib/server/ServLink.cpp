@@ -561,7 +561,7 @@ void ServLink::HandleClientMessage(void* pMsg, DWORD size)
     */
     if (_player == NULL)
     {
-        _pMgr->_BindLinkAndPlayer(_player, this);
+        _pMgr->_BindLinkAndPlayer(_player, this, pMsg);
     }
     _pMgr->_HandleClientMsg(_player, pMsg, size);
 }
