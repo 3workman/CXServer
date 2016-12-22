@@ -13,17 +13,17 @@ class Player;
 struct TriggerTable
 {
     uint16      id;
-    uint8       type;
-    int64       val1; //20160223145632：2016年2月23号14:56:32
-    int64       val2;
+    uint16      type;
+    uint32      val1; //1223145632：12月23号14:56:32
+    uint32      val2;
 };
 class Trigger {
-    typedef std::map<uint16, const TriggerTable> TriggerMap;
+    typedef std::map<int, const TriggerTable> TriggerMap;
     TriggerMap m_TriggerLst;
 
     Trigger();
 public:
-    typedef bool(Trigger::*TriggerFunc)(Player*, int64, int64);
+    typedef bool(Trigger::*TriggerFunc)(Player&, uint32, uint32);
     enum {
         UpLevel,
         DuringTheTime,
@@ -32,11 +32,11 @@ public:
     };
     static Trigger& Instance(){ static Trigger T; return T; }
 
-    bool Check(Player* player, const int triggerId);
-    bool Check(Player* player, const std::vector<uint16>& triggerIds);
+    bool Check(Player& player, const int triggerId);
+    bool Check(Player& player, const std::vector<int>& triggerIds);
 
     //各类判断函数
-    bool IsUpLevel(Player* player, int64 val1, int64 val2);
-    bool IsDuringTime(Player* player, int64 val1, int64 val2);
+    bool IsUpLevel(Player& player, uint32 val1, uint32 val2);
+    bool IsDuringTime(Player& player, uint32 val1, uint32 val2);
 };
 #define sTrigger Trigger::Instance()

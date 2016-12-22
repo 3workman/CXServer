@@ -12,7 +12,7 @@ Trigger::Trigger()
 {
     // 读表
 }
-bool Trigger::Check(Player* player, const int triggerId)
+bool Trigger::Check(Player& player, const int triggerId)
 {
     auto it = m_TriggerLst.find(triggerId);
     if (it != m_TriggerLst.end())
@@ -22,7 +22,7 @@ bool Trigger::Check(Player* player, const int triggerId)
     }
     return false;
 }
-bool Trigger::Check(Player* player, const std::vector<uint16>& triggerIds)
+bool Trigger::Check(Player& player, const std::vector<int>& triggerIds)
 {
     for (auto it : triggerIds)
     {
@@ -34,15 +34,12 @@ bool Trigger::Check(Player* player, const std::vector<uint16>& triggerIds)
 
 //----------------------------------------------------------
 //各类判断函数
-bool Trigger::IsUpLevel(Player* player, int64 val1, int64 val2)
+bool Trigger::IsUpLevel(Player& player, uint32 val1, uint32 val2)
 {
-    if (player)
-    {
-        //return player.GetLevel() >= val1;
-    }
+    //return player.GetLevel() >= val1;
     return false;
 }
-bool Trigger::IsDuringTime(Player* player, int64 val1, int64 val2)
+bool Trigger::IsDuringTime(Player& player, uint32 val1, uint32 val2)
 {
     int64 timeNow = GameApi::TimeNowSec();
 
