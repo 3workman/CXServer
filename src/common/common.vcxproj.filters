@@ -16,6 +16,9 @@
     <Filter Include="Timer">
       <UniqueIdentifier>{844a4f86-48ae-4678-8698-2009f47e6ebb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rand">
+      <UniqueIdentifier>{db5711a7-1adc-4da6-90c1-50d8ea21dac2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tool\buffer.h">
@@ -90,11 +93,11 @@
     <ClInclude Include="Service\ServiceMgr.h">
       <Filter>Service</Filter>
     </ClInclude>
-    <ClInclude Include="tool\rand.h">
-      <Filter>tool</Filter>
+    <ClInclude Include="Rand\rand.h">
+      <Filter>Rand</Filter>
     </ClInclude>
-    <ClInclude Include="tool\RandWeight.h">
-      <Filter>tool</Filter>
+    <ClInclude Include="Rand\RandWeight.h">
+      <Filter>Rand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -125,8 +128,8 @@
     <ClCompile Include="Service\ServiceMgr.cpp">
       <Filter>Service</Filter>
     </ClCompile>
-    <ClCompile Include="tool\rand.cpp">
-      <Filter>tool</Filter>
+    <ClCompile Include="Rand\rand.cpp">
+      <Filter>Rand</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
