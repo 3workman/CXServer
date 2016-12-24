@@ -90,6 +90,12 @@
     <ClInclude Include="Service\ServiceMgr.h">
       <Filter>Service</Filter>
     </ClInclude>
+    <ClInclude Include="tool\rand.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\RandWeight.h">
+      <Filter>tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">
@@ -118,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="Service\ServiceMgr.cpp">
       <Filter>Service</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\rand.cpp">
+      <Filter>tool</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

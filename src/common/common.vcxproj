@@ -30,6 +30,8 @@
     <ClInclude Include="tool\Mempool.h" />
     <ClInclude Include="tool\mkdir.h" />
     <ClInclude Include="tool\noncopyable.h" />
+    <ClInclude Include="tool\rand.h" />
+    <ClInclude Include="tool\RandWeight.h" />
     <ClInclude Include="tool\SafeQueue.h" />
     <ClInclude Include="tool\ScopeGuard.h" />
     <ClInclude Include="tool\thread.h" />
@@ -47,6 +49,7 @@
     <ClCompile Include="tool\DataSend.cpp" />
     <ClCompile Include="tool\DebugFile.cpp" />
     <ClCompile Include="tool\GameApi.cpp" />
+    <ClCompile Include="tool\rand.cpp" />
     <ClCompile Include="tool\UnitTest.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
