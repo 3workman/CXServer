@@ -3,27 +3,29 @@
 #include <stdlib.h>
 #include <time.h>
 
-Random::Random()
+Rand Rand::_assist_obj;
+
+Rand::Rand()
 {
     srand((unsigned)time(NULL));
 }
-int Random::Rand()
+int Rand::rand()
 {
-    return rand();
+    return ::rand();
 }
-int Random::Rand(int left, int right)
+int Rand::rand(int left, int right)
 {
     assert(right > left);
     int	range = right - left;
-    return left + (Rand() % range);
+    return left + (::rand() % range);
 }
-float Random::Randf()
+float Rand::randf()
 {
-    return float(rand() / (double)RAND_MAX);
+    return float(::rand() / (double)RAND_MAX);
 }
-float Random::Randf(float left, float right)
+float Rand::randf(float left, float right)
 {
     assert(right > left);
     float diff = right - left;
-    return left + Randf() * diff;
+    return left + randf() * diff;
 }
