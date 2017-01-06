@@ -25,3 +25,21 @@ template <typename T> typename std::vector<T*>::const_iterator RandWeight(const 
     assert(0);
     return vec.end();
 }
+int RandWeight(const IntPairVec& vec) //权重数值对<val, weight>
+{
+    int sumWeight = 0;
+    for (IntPairVec::const_iterator it = vec.begin(); it != vec.end(); ++it)
+    {
+        sumWeight += it->second;
+    }
+    int rendNum = Rand::rand(0, sumWeight);
+    for (IntPairVec::const_iterator it = vec.begin(); it != vec.end(); ++it)
+    {
+        if (rendNum < it->second)
+            return it->first;
+        else
+            rendNum -= it->second;
+    }
+    assert(0);
+    return -1;
+}

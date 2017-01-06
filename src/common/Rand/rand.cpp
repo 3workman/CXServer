@@ -15,7 +15,8 @@ int Rand::rand()
 }
 int Rand::rand(int left, int right)
 {
-    assert(right > left);
+    assert(right >= left);
+    if (left == right) return left;
     int	range = right - left;
     return left + (::rand() % range);
 }
@@ -25,7 +26,6 @@ float Rand::randf()
 }
 float Rand::randf(float left, float right)
 {
-    assert(right > left);
     float diff = right - left;
     return left + randf() * diff;
 }

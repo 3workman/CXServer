@@ -22,6 +22,8 @@ using namespace std;
 #define TimeElasped_Msec GetTickCount()
 #define ONE_DAY_SEC (24*3600)
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
+
 template <typename T> int SUM_ARR(T* arr, int size){
     if (size < 0) return 0;
     int sum(0);
