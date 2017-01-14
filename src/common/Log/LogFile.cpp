@@ -10,17 +10,19 @@
 
 LogFile* LogFile::g_log = NULL;
 
+static const int MAX_MSFBUFF_SIZE = 1024;
+static char g_logBuff[MAX_MSFBUFF_SIZE] = { '\0' };
+
 void LogFile::Log(const char* curFile, const int curLine, LogLv kLevel, const char* fmt, ...)
 {
-    static const int MAX_MSFBUFF_SIZE = 1024;
-    static char g_logBuff[MAX_MSFBUFF_SIZE] = { '\0' };
-
     if (kLevel < _level) return;
 
-    int idx = sprintf(g_logBuff, "[%s] ", LevelToString(kLevel));
+    int idx = sprintf(g_logBuff, "[%s]", LevelToString(kLevel));
     time_t t; time(&t);
-    idx += strftime(g_logBuff+idx, 32, "%Y-%m-%d %H:%M:%S ", localtime(&t));
-    idx += sprintf(g_logBuff+idx, "%s(%d):  ", Dir::FindName(curFile), curLine);
+    idx += strftime(g_logBuff+idx, 32, "[%Y-%m-%d %H:%M:%S]", localtime(&t));
+    idx += sprintf(g_logBuff+idx, "[%s(%d)]  ", Dir::FindName(curFile), curLine);
+
+    //TODO:[pid=15529][thread=0x12345]  进程id、线程id
 
     va_list ap;
     va_start(ap, fmt);

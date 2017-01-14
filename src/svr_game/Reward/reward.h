@@ -17,18 +17,26 @@
 ************************************************************************/
 #pragma once
 
+//Notice：须同道具表一致(item_proto)
+#undef Declare
+#undef Reward_Enum
+#define Declare(typ) typ,
+#define Reward_Enum\
+    Declare(Gold)       \
+    Declare(Diamond)    \
+    Declare(Exp)        \
+    Declare(HeroExp)    /*英雄经验*/\
+    Declare(Item)       /*物品*/\
+
+
 class Player;
 class Reward {
     bool _isCheck;
     bool _isWrite;
 public:
     typedef bool(Reward::*ResourceFunc)(Player&, int);
-    enum Type : uint { //Notice：须保持同cpp中函数注册顺序一致
-        Gold,
-        Diamond,
-        Exp,
-        HeroExp,    // 低8位:第几个Hero，高24位:经验值
-        Item,       // 低16位:物品ID，高16位:数量
+    enum Type : uint {
+        Reward_Enum
 
         MAX_ENUM
     };
@@ -39,14 +47,15 @@ public:
     bool _Change(Player& player, Type typ, int diff);
 
 	//辅助函数
-    static inline int PackHeroExp(uint8 heroIdx, int exp){ return (exp << 8) + heroIdx; } //Notice：优先级问题啊，不要想当然（。－_－。）
-    static inline int PackItem(uint16 itemId, uint16 cnt){ return (cnt << 16) + itemId; }
+    //Notice：优先级问题啊，不要想当然（。－_－。）
+    static inline int PackHeroExp(uint8 heroIdx, int exp){ return (exp << 8) + heroIdx; } // 低8位:第几个Hero，高24位:经验值
+    static inline int PackItem(uint16 itemId, uint16 cnt){ return (cnt << 16) + itemId; } // 低16位:物品ID，高16位:数量
 
     //各类资源变更函数
-    bool _SetGold(Player& player, int diff);
-    bool _SetDiamond(Player& player, int diff);
-    bool _SetExp(Player& player, int diff);
-    bool _SetHeroExp(Player& player, int diff);
-    bool _SetItem(Player& player, int diff);
+public:
+#undef Declare
+#define Declare(typ) bool _Set_##typ(Player& player, int diff);
+
+    Reward_Enum
 };
 #define sResource Reward::Instance()
