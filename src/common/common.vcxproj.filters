@@ -99,6 +99,9 @@
     <ClInclude Include="Rand\RandWeight.h">
       <Filter>Rand</Filter>
     </ClInclude>
+    <ClInclude Include="tool\rank.h">
+      <Filter>tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">

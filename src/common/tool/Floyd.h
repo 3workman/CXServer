@@ -27,7 +27,7 @@ private:
 
 Graph::Graph()
 {
-    memset(this, 0, sizeof(*this));
+    ZeroMemoryThis;
 
     //初始化图数据
     _curCnt = 4; assert(_curCnt <= MAX_NUM);
@@ -67,7 +67,8 @@ void Graph::_Floyd()
 std::vector<uint16> Graph::GetPath(uint16 from, uint16 to)
 {
     std::vector<uint16> retVec;
-    if (Distance[from][to] < Graph::INFINITE_LEN)
+
+    if (from < MAX_NUM || to < MAX_NUM && Distance[from][to] < Graph::INFINITE_LEN)
     {
         while (from != to)
         {

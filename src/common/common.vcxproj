@@ -32,6 +32,7 @@
     <ClInclude Include="tool\Mempool.h" />
     <ClInclude Include="tool\mkdir.h" />
     <ClInclude Include="tool\noncopyable.h" />
+    <ClInclude Include="tool\rank.h" />
     <ClInclude Include="tool\SafeQueue.h" />
     <ClInclude Include="tool\ScopeGuard.h" />
     <ClInclude Include="tool\thread.h" />

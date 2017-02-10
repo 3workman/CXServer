@@ -66,15 +66,9 @@ Realize(Exp)
 {
     return false;
 }
-Realize(HeroExp)
-{
-    int heroIdx = diff & 0xFF;
-    int exp = diff >> 8;
-    return false;
-}
 Realize(Item)
 {
-    int itemId = diff & 0xFFFF;
-    int cnt = diff >> 16;
+    int cnt = diff & 0xFF;
+    int itemId = diff >> 8;
     return false;
 }

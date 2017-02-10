@@ -7,10 +7,9 @@
 
     3、此类敏感数据，安全性做高些，尤其注意零值...配表为空，读出0，然后Cut成功，就惨了
 
-* @ return ((!_isCheck) || retCheck) && ((!_isWrite) || retWrite);
-    1、要检查，则检查结果由ret决定
-    2、不检查，则检查结果恒true
-    3、写入的情形一致的
+    4、枚举的设置，应根据项目表情况变通。比如可将资源也配在Item表中，枚举与itemId一致，g_handler变成map结构
+
+    5、PackItem()这样的接口最好删掉，太容易出错。找不到处理函数的，默认调物品接口。其它需要Pack**的类型就别放进来，业务层自己管
 
 * @ author zhoumf
 * @ date 2016-11-22
@@ -25,7 +24,6 @@
     Declare(Gold)       \
     Declare(Diamond)    \
     Declare(Exp)        \
-    Declare(HeroExp)    /*英雄经验*/\
     Declare(Item)       /*物品*/\
 
 
@@ -48,8 +46,7 @@ public:
 
 	//辅助函数
     //Notice：优先级问题啊，不要想当然（。－_－。）
-    static inline int PackHeroExp(uint8 heroIdx, int exp){ return (exp << 8) + heroIdx; } // 低8位:第几个Hero，高24位:经验值
-    static inline int PackItem(uint16 itemId, uint16 cnt){ return (cnt << 16) + itemId; } // 低16位:物品ID，高16位:数量
+    static inline int PackItem(int itemId, char cnt){ return (itemId << 8) + cnt; } // 低8位:数量，高24位:物品ID
 
     //各类资源变更函数
 public:

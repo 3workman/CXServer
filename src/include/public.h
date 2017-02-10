@@ -20,9 +20,10 @@ using namespace std;
 #define STATIC_ASSERT_ARRAY_ARRAY(arrA, arrB) STATIC_ASSERT(sizeof(arrA)/sizeof(arrA[0])==sizeof(arrB)/sizeof(arrB[0]), ___sizeErr##arr)
 
 #define TimeElasped_Msec GetTickCount()
-#define ONE_DAY_SEC (24*3600)
+#define ZeroMemoryThis  memset(this, 0, sizeof(*this))
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
+#define ONE_DAY_SEC   (24*3600)
 
 template <typename T> int SUM_ARR(T* arr, int size){
     if (size < 0) return 0;
