@@ -20,8 +20,10 @@ public:
     {
         _arr.resize(_amount + 1, NULL);
     }
-    void OnValueChange(T& obj)
+    bool OnValueChange(T& obj)
     {
+        const int oldRank = obj.rank;
+
         int newIdx = SearchInsertIdx(obj.GetRankVal());
         if (obj.rank > 0) //“—…œ∞Ò
         {
@@ -31,6 +33,7 @@ public:
         {
             InsertToIndex(newIdx, obj);
         }
+        return oldRank == obj.rank;
     }
     void Clear()
     {

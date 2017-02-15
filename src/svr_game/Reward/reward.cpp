@@ -2,8 +2,9 @@
 #include "reward.h"
 
 #undef Declare
-#define Declare(typ) &Reward::_Set_##typ,
+#define Declare(typ, n) &Reward::_Set_##typ,
 static const Reward::ResourceFunc g_handler[] = {
+    NULL,
     Reward_Enum
 };
 STATIC_ASSERT_ARRAY_LENGTH(g_handler, Reward::MAX_ENUM);
@@ -66,9 +67,9 @@ Realize(Exp)
 {
     return false;
 }
-Realize(Item)
-{
-    int cnt = diff & 0xFF;
-    int itemId = diff >> 8;
-    return false;
-}
+//Realize(Item)
+//{
+//    int cnt = diff & 0xFF;
+//    int itemId = diff >> 8;
+//    return false;
+//}

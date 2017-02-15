@@ -19,12 +19,12 @@
 //Notice：须同道具表一致(item_proto)
 #undef Declare
 #undef Reward_Enum
-#define Declare(typ) typ,
+#define Declare(typ, n) typ = n,
 #define Reward_Enum\
-    Declare(Gold)       \
-    Declare(Diamond)    \
-    Declare(Exp)        \
-    Declare(Item)       /*物品*/\
+    Declare(Gold        , 1) /*金币*/\
+    Declare(Diamond     , 2) /*钻石*/\
+    Declare(Exp         , 3) /*玩家经验*/\
+    /*Declare(Item)       / *物品* /*/\
 
 
 class Player;
@@ -46,12 +46,13 @@ public:
 
 	//辅助函数
     //Notice：优先级问题啊，不要想当然（。－_－。）
+    //这样的额外接口，跟常规不符，太容易漏了，不用的好。增删物品还是走另外的接口吧
     static inline int PackItem(int itemId, char cnt){ return (itemId << 8) + cnt; } // 低8位:数量，高24位:物品ID
 
     //各类资源变更函数
 public:
 #undef Declare
-#define Declare(typ) bool _Set_##typ(Player& player, int diff);
+#define Declare(typ, n) bool _Set_##typ(Player& player, int diff);
 
     Reward_Enum
 };

@@ -63,6 +63,31 @@ static time_t g_time_now = 0;
 time_t TimeNowSec() { return g_time_now; }
 void RefreshTimeNow() { g_time_now = ::time(NULL); }
 
+int TimeHour()
+{
+    time_t timep;
+    struct tm *p;
+    time(&timep);
+    p = localtime(&timep);
+    return p->tm_hour;
+}
+int TimeMonth()
+{
+    time_t timep;
+    struct tm *p;
+    time(&timep);
+    p = localtime(&timep);
+    return p->tm_mon;
+}
+int TimeDayOfWeek()
+{
+    time_t timep;
+    struct tm *p;
+    time(&timep);
+    p = localtime(&timep);
+    return p->tm_wday;
+}
+
 static time_t _GetCurDay(time_t sec){
     tm* t = ::localtime(&sec);
     time_t ret = t->tm_year;

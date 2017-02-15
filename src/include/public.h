@@ -19,8 +19,9 @@ using namespace std;
 #define STATIC_ASSERT_ARRAY_LENGTH(arr, len) STATIC_ASSERT(sizeof(arr)/sizeof(arr[0])==(len), ___sizeErr##arr)
 #define STATIC_ASSERT_ARRAY_ARRAY(arrA, arrB) STATIC_ASSERT(sizeof(arrA)/sizeof(arrA[0])==sizeof(arrB)/sizeof(arrB[0]), ___sizeErr##arr)
 
-#define TimeElasped_Msec GetTickCount()
-#define ZeroMemoryThis  memset(this, 0, sizeof(*this))
+#define TimeElasped_Msec        GetTickCount()
+#define ZeroMemoryThis          memset(this, 0, sizeof(*this))
+#define ZeroMemoryArray(arr)    memset(arr, 0, sizeof(arr))
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
 #define ONE_DAY_SEC   (24*3600)

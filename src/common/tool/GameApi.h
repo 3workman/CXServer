@@ -14,6 +14,10 @@ namespace GameApi {
     time_t TimeNowSec();
     void RefreshTimeNow();
 
+    int TimeHour();
+    int TimeMonth();
+    int TimeDayOfWeek();
+
     bool IsToday(time_t sec);
     bool IsSameDay(time_t sec1, time_t sec2);
 
