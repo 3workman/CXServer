@@ -13,10 +13,11 @@
 template <class T>
 class Rank {
     const int       _amount; //排多少人
+    int             _last;
     std::vector<T*> _arr;
 
 public:
-    Rank(int amount) : _amount(amount)
+    Rank(int amount) : _amount(amount), _last(0)
     {
         _arr.resize(_amount + 1, NULL);
     }
@@ -29,7 +30,7 @@ public:
         {
             MoveToIndex(newIdx, obj.rank);
         }
-        else if (_arr[_amount] == NULL || obj.GetRankVal() > _arr[_amount]->GetRankVal()) //未上榜但超过最后一名
+        else if (newIdx > 0) //之前未上榜
         {
             InsertToIndex(newIdx, obj);
         }
@@ -39,6 +40,13 @@ public:
     {
         memset(&_arr[0], 0, _arr.size() * sizeof(T*));
     }
+    T*  GetRanker(int rank)
+    {
+        assert(rank > 0 && rank <= _amount);
+
+        return _arr[rank];
+    }
+    int GetLastRank() { return _last; }
 
 private:
     int SearchInsertIdx(int dstVal)
@@ -55,22 +63,17 @@ private:
     }
     void MoveToIndex(int dst, int src)
     {
-        T* tmp = _arr[src];
-        if (src > dst)
-        {
-            //dst后移一步
-            memmove(&_arr[dst + 1], &_arr[dst], (src - dst) * sizeof(T*));
+        T* tmp = _arr[src]; assert(dst > 0 && src > 0);
+        if (src > dst) {
+            memmove(&_arr[dst + 1], &_arr[dst], (src - dst) * sizeof(T*)); //dst后移一步
             _arr[dst] = tmp;
 
             for (int i = dst; i <= src; ++i)
             {
                 if (_arr[i]) _arr[i]->rank = i;
             }
-        }
-        else if (src < dst)
-        {
-            //src+1前移一步
-            memmove(&_arr[src], &_arr[src + 1], (dst - src) * sizeof(T*));
+        } else if (src < dst) {
+            memmove(&_arr[src], &_arr[src + 1], (dst - src) * sizeof(T*)); //src+1前移一步
             _arr[dst] = tmp;
 
             for (int i = src; i <= dst; ++i)
@@ -81,6 +84,10 @@ private:
     }
     void InsertToIndex(int idx, T& obj)
     {
+        assert(idx > 0);
+
+        if (idx > _last) _last = idx;
+
         if (_arr[_amount]) _arr[_amount]->rank = 0; //尾名被挤出
 
         memmove(&_arr[idx + 1], &_arr[idx], (_amount - idx) * sizeof(T*));
