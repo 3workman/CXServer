@@ -24,7 +24,8 @@ CTimerMgr::~CTimerMgr() {
 void TimerNode::_Callback(){
     loop -= interval;
     if (loop >= 0) {
-        timeDead = TimeElasped_Msec + interval;
+        //timeDead = TimeElasped_Msec + interval;
+        timeDead += interval; //Notice：周期执行的函数，服务器卡顿应该追帧，再取系统当前时间是错的
         CTimerMgr::Instance()._AddTimerNode(interval, this);
         func(); //must at the last line; timer may be deleted in _func();
     } else {
