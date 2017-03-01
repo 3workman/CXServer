@@ -9,6 +9,14 @@
 ************************************************************************/
 #pragma once
 
+#undef Declare
+#undef Trigger_Enum
+#define Declare(typ, n) typ = n,
+#define Trigger_Enum\
+    Declare(UpLevel        , 1) /*等级超过*/\
+    Declare(DuringTime     , 2) /*在两时间点之间*/\
+
+
 class Player;
 struct TriggerTable
 {
@@ -24,9 +32,8 @@ class Trigger {
     Trigger();
 public:
     typedef bool(Trigger::*TriggerFunc)(Player*, int32, int32);
-    enum {
-        UpLevel,
-        DuringTheTime,
+    enum Type : uint {
+        Trigger_Enum
 
         MAX_ENUM
     };
@@ -36,7 +43,10 @@ public:
     bool Check(Player* player, const std::vector<int>& triggerIds);
 
     //各类判断函数，这里就不检查空指针了，逻辑层负责
-    bool IsUpLevel(Player* player, int32 val1, int32 val2);
-    bool IsDuringTime(Player* player, int32 val1, int32 val2);
+public:
+#undef Declare
+#define Declare(typ, n) bool _Is_##typ(Player* player, int32 val1, int32 val2);
+
+    Trigger_Enum
 };
 #define sTrigger Trigger::Instance()

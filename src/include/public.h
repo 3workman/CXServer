@@ -27,7 +27,6 @@ using namespace std;
 #define ONE_DAY_SEC   (24*3600)
 
 template <typename T> int SUM_ARR(T* arr, int size){
-    if (size < 0) return 0;
     int sum(0);
     for (int j = 0; j < size; ++j) sum += arr[j];
     return sum;

@@ -2,9 +2,11 @@
 #include "trigger.h"
 #include "tool\GameApi.h"
 
+#undef Declare
+#define Declare(typ, n) &Trigger::_Is_##typ,
 static const Trigger::TriggerFunc g_handler[] = {
-    &Trigger::IsUpLevel,
-    &Trigger::IsDuringTime,
+    NULL,
+    Trigger_Enum
 };
 STATIC_ASSERT_ARRAY_LENGTH(g_handler, Trigger::MAX_ENUM);
 
@@ -34,12 +36,15 @@ bool Trigger::Check(Player* player, const std::vector<int>& triggerIds)
 
 //----------------------------------------------------------
 //¸÷ÀàÅÐ¶Ïº¯Êý
-bool Trigger::IsUpLevel(Player* player, int32 val1, int32 val2)
+#undef Realize
+#define Realize(typ) bool Trigger::_Is_##typ(Player* player, int32 val1, int32 val2)
+
+Realize(UpLevel)
 {
-    //return player->GetLevel() >= val1;
+    //return player.GetLevel() >= val1;
     return false;
 }
-bool Trigger::IsDuringTime(Player* player, int32 val1, int32 val2)
+Realize(DuringTime)
 {
     int64 timeNow = GameApi::TimeNowSec();
 
