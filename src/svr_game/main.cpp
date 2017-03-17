@@ -12,20 +12,16 @@
 void BindPlayerLink(void*& refPlayer, ServLink* p, void* pMsg)
 {
     switch (((stMsg*)pMsg)->msgId){
-    case C2S_Login:
-    {
+    case C2S_Login: {
         refPlayer = new Player(p);
-    }
-    break;
-    case C2S_ReConnect:
-    {
+    } break;
+    case C2S_ReConnect: {
         ReConnectMsg* msg = (ReConnectMsg*)pMsg;
         if (Player* player = Player::FindByIdx(msg->playerIdx))
         {
             player->SetServLink(p);
         }
-    }
-    break;
+    } break;
     default: assert(0); break;
     }
 }

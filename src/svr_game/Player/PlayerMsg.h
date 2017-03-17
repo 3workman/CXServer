@@ -9,4 +9,5 @@
 ************************************************************************/
 
 Msg_Declare(C2S_Login);
+Msg_Declare(C2S_ReConnect);
 Msg_Declare(C2S_Echo);

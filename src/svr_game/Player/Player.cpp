@@ -19,12 +19,16 @@ void Player::SendMsg(stMsg& msg, DWORD size)
 
 Msg_Realize(C2S_Login)
 {
-    printf("aaaaaaaaaaaaaaaa\n");
+    printf("aaa\n");
+}
+Msg_Realize(C2S_ReConnect)
+{
+    printf("bbb\n");
 }
 Msg_Realize(C2S_Echo)
 {
     TestMsg& msg = (TestMsg&)req;
-    char* str = ((char*)&msg) + 4;
-    SendMsg(msg, 4 + strlen(str) + 1);
+    char* str = msg.data;
+    SendMsg(msg, msg.size());
     printf("Echo: %s\n", str);
 }

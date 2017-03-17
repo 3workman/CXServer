@@ -37,5 +37,8 @@
     <ClInclude Include="..\msg\TestMsg.h">
       <Filter>msg</Filter>
     </ClInclude>
+    <ClInclude Include="..\msg\LoginMsg.h">
+      <Filter>msg</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -467,31 +467,31 @@ char* ServLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 	LastRecvIOTime(_pMgr->_timeNow);
 
 	_recvBuf.writerMove(dwBytesTransferred); // IO完成回调，接收字节递增
-	const DWORD c_off = sizeof(DWORD);
+	const DWORD c_off = sizeof(uint16);
 	char* pPack = _recvBuf.beginRead();
 	while (_recvBuf.readableBytes() >= c_off)
 	{
-		const DWORD c_msgSize = *((DWORD*)pPack);	// 【网络包：头4字节为消息体大小】
-		const DWORD c_packSize = c_msgSize + c_off;	// 【网络包长 = 消息体大小 + 头长度】
-		char* pMsg = pPack + c_off;                 // 【后移4字节得：消息体指针】
+        const DWORD kMsgSize = *((uint16*)pPack);	// 【网络包：头2字节为消息体大小】
+		const DWORD kPackSize = kMsgSize + c_off;	// 【网络包长 = 消息体大小 + 头长度】
+		char* pMsg = pPack + c_off;                 // 【后移2字节得：消息体指针】
 
 		// 1、检查消息大小
-		if (Config().nMaxPackage && c_msgSize >= Config().nMaxPackage) //消息太大
+		if (Config().nMaxPackage && kMsgSize >= Config().nMaxPackage) //消息太大
 		{
 			_recvBuf.clear();
-			printf("TooHugePacket: Msg size %d Msg type %d", c_msgSize, *((DWORD*)pMsg)); // 【消息体：头4字节为消息类型】
+			printf("TooHugePacket: Msg size(%d) Msg ID(%d)", kMsgSize, *((uint16*)pMsg)); // 【消息体：头2字节为消息ID】
 			OnInvalidMessage(Message_TooHugePacket, 0, true);
 			return _recvBuf.beginWrite();
 		}
 		// 2、是否接到完整包
-		if (c_packSize > _recvBuf.readableBytes()) break; // 【包未收完：接收字节 < 包大小】
+		if (kPackSize > _recvBuf.readableBytes()) break; // 【包未收完：接收字节 < 包大小】
 
 		// 3、消息解码、处理 decode, unpack and ungroup
-		RecvMsg(pMsg, c_msgSize);
+		RecvMsg(pMsg, kMsgSize);
 
 		// 4、消息处理完毕，接收字节/包指针更新(处理下一个包)
-		_recvBuf.readerMove(c_packSize);
-		pPack += c_packSize;
+		_recvBuf.readerMove(kPackSize);
+		pPack += kPackSize;
 	}
 
 	/* 5、未处理的缓存内容(非完整包)，前移(抛弃处理掉的那些pack)
@@ -579,7 +579,7 @@ bool ServLink::SendMsg(void* pMsg, DWORD msgSize)
 	cLock lock(_csLock);
 
 	//【brief.6】TODO：限制buf能增长到的最大长度，避免整体延时的内存占用；给append加个bool返回值
-	_sendBuf.append(msgSize);
+	_sendBuf.append<uint16>(msgSize);
     _sendBuf.append(pMsg, msgSize);
 
 	//【brief.7】并包优化，同时要在其它线程定期发送所有数据，避免消息延时

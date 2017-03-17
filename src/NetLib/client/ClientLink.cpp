@@ -250,22 +250,22 @@ bool ClientLink::PostRecv(char* buffer, DWORD nLen)
 void ClientLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 {
 	_recvBuf.writerMove(dwBytesTransferred); // IO完成回调，接收字节递增
-	const DWORD c_off = sizeof(DWORD);
+    const DWORD c_off = sizeof(uint16);
 	char* pPack = _recvBuf.beginRead();
 	while (_recvBuf.readableBytes() >= c_off)
 	{
-		const DWORD c_msgSize = *((DWORD*)pPack);	// 【网络包：头4字节为消息体大小】
-		const DWORD c_packSize = c_msgSize + c_off;	// 【网络包长 = 消息体大小 + 头长度】
+        const DWORD kMsgSize = *((uint16*)pPack);	// 【网络包：头2字节为消息体大小】
+		const DWORD kPackSize = kMsgSize + c_off;	// 【网络包长 = 消息体大小 + 头长度】
 		char* pMsg = pPack + c_off;                 // 【后移4字节得：消息体指针】
 
-		if (c_packSize > _recvBuf.readableBytes()) break;         // 【包未收完：接收字节 < 包大小】
+		if (kPackSize > _recvBuf.readableBytes()) break; // 【包未收完：接收字节 < 包大小】
 
 		// 2、消息解码、处理 decode, unpack and ungroup
-		RecvMsg(pMsg, c_msgSize);
+		RecvMsg(pMsg, kMsgSize);
 
 		// 3、消息处理完毕，接收字节/包指针更新(处理下一个包)
-		_recvBuf.readerMove(c_packSize);
-		pPack += c_packSize;
+		_recvBuf.readerMove(kPackSize);
+		pPack += kPackSize;
 	}
 }
 void ClientLink::RecvMsg(char* pMsg, DWORD size)
@@ -276,7 +276,7 @@ void ClientLink::SendMsg(void* pMsg, DWORD size)
 {
 	cLock lock(_csWrite);
 
-	_sendBuf.append(size);
+    _sendBuf.append<uint16>(size);
     _sendBuf.append(pMsg, size);
 
 	//客户端无需像服务器似的，消息积累超长才投递，见ServLink::SendMsg

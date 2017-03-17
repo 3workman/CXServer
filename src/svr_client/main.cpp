@@ -2,6 +2,7 @@
 #include "..\NetLib\client\ClientLink.h"
 #include "..\msg\MsgEnum.h"
 #include "..\msg\TestMsg.h"
+#include "..\msg\LoginMsg.h"
 
 
 ClientLinkConfig config;
@@ -9,9 +10,14 @@ ClientLink g_link(config);
 
 void HandleServerMsg(void* p, DWORD size)
 {
-    if (C2S_Echo == ((stMsg*)p)->msgId)
+    switch (((stMsg*)p)->msgId) {
+    case C2S_Echo:
     {
-        printf("Echo: %s\n", ((char*)p) + 4);
+        TestMsg* msg = (TestMsg*)p;
+        printf("Echo: %s\n", msg->data);
+    }
+    break;
+    default:break;
     }
 }
 void RunClientIOCP(ClientLink& link)
@@ -26,7 +32,10 @@ void RunClientIOCP(ClientLink& link)
 int _tmain(int argc, _TCHAR* argv[])
 {
     RunClientIOCP(g_link);
-
+    {
+        LoginMsg msg; msg.msgId = C2S_Login;
+        g_link.SendMsg(&msg, sizeof(msg));
+    }
     TestMsg msg; msg.msgId = C2S_Echo;
     // 立即发送一条数据，及时触发服务器端的AcceptExDoneIOCallback
     // 测试结果显示：客户端仅仅connect但不发送数据，不会触发服务器DoneIO回调

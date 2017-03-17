@@ -24,15 +24,16 @@ class NetPack
 private:
     Pool_Obj_Define(NetPack, 1024)
 
-    static const size_t HEADER_SIZE = sizeof(uint16)* 2 + sizeof(char); // len & Opcode & packetType
-    static const size_t SIZE_INDEX = 0;
-    static const size_t OPCODE_INDEX = 2;
-    static const size_t TYPE_INDEX = 4;
+    static const size_t HEADER_SIZE     = sizeof(uint16) + sizeof(char); // Opcode & packetType
+    static const size_t OPCODE_INDEX    = 0;
+    static const size_t TYPE_INDEX      = 2;
 
 private:
     ByteBuffer  m_buf;
 
 public:
+    static size_t GetHeaderSize() { return HEADER_SIZE; }
+
     NetPack(uint16 opCode, int size = 256)
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
@@ -44,7 +45,6 @@ public:
         m_buf.resize(HEADER_SIZE);
         m_buf.rpos(HEADER_SIZE);
         SetPacketType(type);
-        SetBodySize(bodySize);
         SetOpCode(opCode);
     }
     NetPack(const NetPack& other)
@@ -55,20 +55,18 @@ public:
         m_buf.resize(HEADER_SIZE);
         m_buf.rpos(HEADER_SIZE);
     }
-    void Resize(size_t size) {
-        m_buf.resize(size);
-        m_buf.rpos(HEADER_SIZE);
-    }
 public:
     void SetOpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }
     uint16 GetOpcode() const { return m_buf.show<uint16>(OPCODE_INDEX); }
 
-    void SetBodySize(uint16 size) { m_buf.put(SIZE_INDEX, size); }
-    uint16 GetBodySize() const { return m_buf.show<uint16>(SIZE_INDEX); }
-    uint16 BodyBytes() const { return m_buf.size() - HEADER_SIZE; }
-
     void SetPacketType(char packType) { m_buf.put(TYPE_INDEX, packType); }
     char GetPacketType() const { return m_buf.show<char>(TYPE_INDEX); }
+
+    void Resize(size_t size) {
+        m_buf.resize(size);
+        m_buf.rpos(HEADER_SIZE);
+    }
+    uint16 BodyBytes() const { return m_buf.size() - HEADER_SIZE; }
 
 	template<class T> NetPack& operator << (const T& data) {
 		m_buf << data;
