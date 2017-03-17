@@ -47,7 +47,7 @@
 #include <thread>
 #include <memory> // std::shared_ptr
 #include "..\tool\cLock.h"
-#include "..\tool\buffer.h"
+#include "..\Buffer\buffer.h"
 
 class AsyncLog{
 public:

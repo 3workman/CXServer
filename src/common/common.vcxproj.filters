@@ -19,11 +19,14 @@
     <Filter Include="Rand">
       <UniqueIdentifier>{db5711a7-1adc-4da6-90c1-50d8ea21dac2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rank">
+      <UniqueIdentifier>{a6778e58-571e-4481-b7c8-9c5d49b3020c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer">
+      <UniqueIdentifier>{8c68f065-a506-4b7d-b000-a37422bddc25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tool\buffer.h">
-      <Filter>tool</Filter>
-    </ClInclude>
     <ClInclude Include="tool\cLock.h">
       <Filter>tool</Filter>
     </ClInclude>
@@ -41,12 +44,6 @@
     </ClInclude>
     <ClInclude Include="..\include\stdafx.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="tool\bytebuffer.h">
-      <Filter>tool</Filter>
-    </ClInclude>
-    <ClInclude Include="tool\DataSend.h">
-      <Filter>tool</Filter>
     </ClInclude>
     <ClInclude Include="tool\DebugFile.h">
       <Filter>tool</Filter>
@@ -99,16 +96,25 @@
     <ClInclude Include="Rand\RandWeight.h">
       <Filter>Rand</Filter>
     </ClInclude>
-    <ClInclude Include="tool\rank.h">
-      <Filter>tool</Filter>
+    <ClInclude Include="Rank\rank.h">
+      <Filter>Rank</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer\buffer.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer\bytebuffer.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer\NetPack.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer\DataSend.h">
+      <Filter>Buffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">
       <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="tool\DataSend.cpp">
-      <Filter>tool</Filter>
     </ClCompile>
     <ClCompile Include="tool\DebugFile.cpp">
       <Filter>tool</Filter>
@@ -133,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="Rand\rand.cpp">
       <Filter>Rand</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer\DataSend.cpp">
+      <Filter>Buffer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

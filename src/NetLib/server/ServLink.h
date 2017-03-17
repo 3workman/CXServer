@@ -51,7 +51,7 @@
 #include <winsock2.h>
 //////////////////////////////////////////////////////////////////////////
 #include <Mswsock.h> // AcceptEx
-#include "tool\buffer.h"
+#include "Buffer\buffer.h"
 #include "tool\cLock.h"
 #include "define.h"
 #include <time.h>

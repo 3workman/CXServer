@@ -38,7 +38,7 @@ namespace net
 		}
         ~Buffer()
         {
-			printf("---Buffer析构---%s (%d)\n", read<string>().c_str(), size());// 测试 AsyncLog
+			printf("---Buffer析构---%s (%d)\n", read<std::string>().c_str(), size());// 测试 AsyncLog
         }
 
         char* beginRead(){ return begin() + _rpos; }
@@ -70,10 +70,10 @@ namespace net
 			}
 			std::copy(p, p + len, beginRead());
 		}
-		template <typename T> void append(T x) {
+		template <typename T> void append(const T& x) {
 			append(&x, sizeof(x));
 		}
-		template <typename T> bool prepend(T x) {
+		template <typename T> bool prepend(const T& x) {
 			return prepend(&x, sizeof(x));
 		}
 		// NOTICE：常量字符串不会隐式转换为string
@@ -115,6 +115,7 @@ namespace net
 			readerMove(len + 1); // NOTICE：把'/0'结尾读走
 			return std::string(begin, len);
 		}
+
 		void readerMove(size_t len)
 		{
 			if (len < readableBytes())

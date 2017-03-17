@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////
 #include <mswsock.h>
 #include "tool\cLock.h"
-#include "tool\buffer.h"
+#include "Buffer\buffer.h"
 #include "config_client.h"
 
 class ClientLink;

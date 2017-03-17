@@ -36,9 +36,8 @@ public:
 
 	//vector的reserve增加了vector的capacity，但是它的size没有改变！而resize改变了vector的capacity同时也增加了它的size
 	//reserve是容器预留空间，但在空间内不真正创建元素对象，所以在没有添加新的对象之前，不能引用容器内的元素
-	//resize是改变容器的大小，且在创建对象，因此调用这个函数之后，就可以引用容器内的对象了
-	//resize函数可以有两个参数，第一个参数是容器新的大小， 第二个参数是要加入容器中的新元素，如果这个参数被省略，那么就调用元素对象的默认构造函数
-	//两者都会保留原容器内的数据
+	//resize是改变容器的大小，且在创建对象，因此调用这个函数之后，就可以引用容器内的对象了【】
+	//resize【如果比原容器更小，清除尾部多出的元素】
 	ByteBuffer() : _rpos(0), _wpos(0) {
 		_storage.reserve(DEFAULT_SIZE);
 	}
@@ -47,10 +46,8 @@ public:
 	}
 	ByteBuffer(const ByteBuffer &buf) : _rpos(buf._rpos), _wpos(buf._wpos), _storage(buf._storage) { }
 
-	void clear() {
-		_storage.clear();
-		_rpos = _wpos = 0;
-	}
+	void clear() { _storage.clear(); _rpos = _wpos = 0; }
+
     size_t size() const { return _storage.size(); }//tolua_export
     // one should never use resize probably
     void resize(size_t newsize) {//tolua_export
@@ -58,23 +55,116 @@ public:
         _wpos = _storage.size();
         _rpos = 0;
     }//tolua_export
-    void reserve(size_t ressize) {//tolua_export
-        if (ressize > size()) _storage.reserve(ressize);
+    void reserve(size_t ressize) { if (ressize > size()) _storage.reserve(ressize); }//tolua_export
+
+    template <typename T> T show(size_t pos) const {
+        if (pos + sizeof(T) > size()) {
+            return (T)(0);
+        } else {
+            return *((T*)&_storage[pos]);
+        }
+    }
+    uint8 operator[](size_t pos) { return show<uint8>(pos); }
+
+    const uint8* contents() const { assert(_storage.size()); &_storage[0]; }//tolua_export
+    const uint8* contentsRpos() const { return &_storage[_rpos]; }
+    const uint8* contentsWpos() const { return &_storage[_wpos]; }
+
+    size_t rpos() { return _rpos; }//tolua_export
+    size_t wpos() { return _wpos; }//tolua_export
+    size_t rpos(size_t rpos) { _rpos = rpos; return _rpos; }//tolua_export
+    size_t wpos(size_t wpos) { _wpos = wpos; return _wpos; }//tolua_export
+
+    template <typename T> T read() {
+        T r = show<T>(_rpos);
+        _rpos += sizeof(T);
+        return r;
+    }
+    void read(uint8 *dest, size_t len) {//tolua_export
+        if (_rpos + len <= size()) {
+            memcpy(dest, &_storage[_rpos], len);
+        } else {
+            //throw error();
+            memset(dest, 0, len);
+        }
+        _rpos += len;
+    }//tolua_export
+    void read(std::string& value) {
+        uint16 len = read<uint16>();
+        value.assign((const char*)contentsRpos(), len);
+        _rpos += len;
+    }
+    //void read(std::string& value, size_t len) {
+    //	value.clear();
+    //	while (--len >= 0) {
+    //		char c = read<char>();
+    //		value += c; // 生成临时string对象再拼接，/(ㄒoㄒ)/~~
+    //	}
+    //	/* 这个接口不安全异常情况：
+    //		1、len超长
+    //		2、buf中有多个'/0'
+    //	*/
+    //}
+
+    // appending to the end of buffer
+    void append(const std::string& str) {//tolua_export
+        uint16 len = str.size();
+        append(len);
+        append((uint8*)str.c_str(), len);
     }//tolua_export
 
-	//template <typename T> void insert(size_t pos, T value) {
-	//  insert(pos, (uint8 *)&value, sizeof(value));
-	//}
-	template <typename T> void put(size_t pos, T value) {
-		put(pos, (uint8 *)&value, sizeof(value));
-	}
-    void put(size_t pos, const uint8 *src, size_t cnt) {//tolua_export
-        assert(pos + cnt <= size());
-        memcpy(&_storage[pos], src, cnt);
+    // NOTICE：常量字符串不会隐式转换为string
+    // NOTICE：若无const char* 重载，会匹配进template函数
+    void append(const char* str) {
+        uint16 len = strlen(str);
+        append(len);
+        append((const uint8*)str, len);
+    }
+    void append(char* str) {
+        uint16 len = strlen(str);
+        append(len);
+        append((const uint8*)str, len);
+    }
+    void append(const uint8 *src, size_t cnt) {//tolua_export
+        if (!cnt) return;
+
+        // noone should even need uint8buffer longer than 10mb
+        // if you DO need, think about it
+        // then think some more
+        // then use something else
+        // -- qz
+        assert(size() < 10000000);
+
+        if (_storage.size() < _wpos + cnt)
+            _storage.resize(_wpos + cnt);
+        memcpy(&_storage[_wpos], src, cnt);
+        _wpos += cnt;
     }//tolua_export
+    void append(const ByteBuffer& buffer) { append(buffer.contents(), buffer.size()); }//tolua_export
+    template <typename T> void append(const T& value) {
+        append((const uint8*)&value, sizeof(value));
+    }
+
+    //template <typename T> void insert(size_t pos, const T& value) {
+    //  insert(pos, (const uint8*)&value, sizeof(value));
+    //}
     //void insert(size_t pos, const uint8 *src, size_t cnt) {
     //  std::copy(src, src + cnt, inserter(_storage, _storage.begin() + pos));
     //}
+    template <typename T> inline void put(size_t pos, const T& value) {
+        put(pos, (const uint8*)&value, sizeof(value));
+    }
+    inline void put(size_t pos, const uint8 *src, size_t cnt) {
+        assert(pos + cnt <= size());
+        memcpy(&_storage[pos], src, cnt);
+    }
+    inline void reverse() {
+        std::reverse(_storage.begin(), _storage.end());
+    }
+    inline void swap(ByteBuffer &buf) {
+        _storage.swap(buf._storage);
+    }
+
 
 	// stream like operators for storing data
 	ByteBuffer &operator<<(bool value) {//tolua_export
@@ -135,7 +225,6 @@ public:
 		append(str);
 		return *this;
 	}//tolua_export
-
 	// stream like operators for reading data
 	ByteBuffer &operator>>(bool &value) {//tolua_export
 		value = read<char>() > 0 ? true : false;
@@ -188,111 +277,6 @@ public:
 		return *this;
 	}//tolua_export
 
-	uint8 operator[](size_t pos) {
-		return show<uint8>(pos);
-	}
-    template <typename T> T show(size_t pos) const {
-        //ASSERT(pos + sizeof(T) <= size());
-        if (pos + sizeof(T) > size())
-        {
-            return (T)(0);
-        }
-        else {
-            return *((T*)&_storage[pos]);
-        }
-    }
-
-	size_t rpos() {//tolua_export
-		return _rpos;
-	}//tolua_export
-	size_t rpos(size_t rpos) {//tolua_export
-		_rpos = rpos;
-		return _rpos;
-	}//tolua_export
-	size_t wpos() {//tolua_export
-		return _wpos;
-	}//tolua_export
-	size_t wpos(size_t wpos) {//tolua_export
-		_wpos = wpos;
-		return _wpos;
-	}//tolua_export
-
-	template <typename T> T read() {
-		T r = show<T>(_rpos);
-		_rpos += sizeof(T);
-		return r;
-	}
-	void read(uint8 *dest, size_t len) {//tolua_export
-		if (_rpos + len <= size()) {
-			memcpy(dest, &_storage[_rpos], len);
-		} else {
-			//throw error();
-			memset(dest, 0, len);
-		}
-		_rpos += len;
-	}//tolua_export
-    void read(std::string& value) {
-        uint16 len = read<uint16>();
-        value.assign((const char*)contentsRpos(), len);
-        _rpos += len;
-    }
-	//void read(std::string& value, size_t len) {
-	//	value.clear();
-	//	while (--len >= 0) {
-	//		char c = read<char>();
-	//		value += c; // 生成临时string对象再拼接，/(ㄒoㄒ)/~~
-	//	}
-	//	/* 这个接口不安全异常情况：
-	//		1、len超长
-	//		2、buf中有多个'/0'
-	//	*/
-	//}
-
-	const uint8* contents() const { assert(_storage.size()); return _storage.size() ? &_storage[0] : NULL; }//tolua_export
-	const uint8* contentsRpos() const { return &_storage[_rpos]; }
-	const uint8* contentsWpos() const { return &_storage[_wpos]; }
-
-	// appending to the end of buffer
-	void append(const std::string& str) {//tolua_export
-        uint16 len = str.size();
-        append(len);
-        append((uint8*)str.c_str(), len);
-	}//tolua_export
-
-	// NOTICE：常量字符串不会隐式转换为string
-	// NOTICE：若无const char* 重载，会匹配进template函数
-	void append(const char* str) {
-        uint16 len = strlen(str);
-        append(len);
-        append((const uint8*)str, len);
-	}
-    void append(char* str) {
-        uint16 len = strlen(str);
-        append(len);
-        append((const uint8*)str, len);
-    }
-	void append(const uint8 *src, size_t cnt) {//tolua_export
-		if (!cnt) return;
-
-		// noone should even need uint8buffer longer than 10mb
-		// if you DO need, think about it
-		// then think some more
-		// then use something else
-		// -- qz
-		assert(size() < 10000000);
-
-		if (_storage.size() < _wpos + cnt)
-			_storage.resize(_wpos + cnt);
-		memcpy(&_storage[_wpos], src, cnt);
-		_wpos += cnt;
-	}//tolua_export
-	void append(const ByteBuffer& buffer) {//tolua_export
-		if (buffer.size() > 0) append(buffer.contents(), buffer.size());
-	}//tolua_export
-    template <typename T> void append(T value) {
-        append((uint8 *)&value, sizeof(value));
-    }
-
 	void hexlike()
 	{
 		uint8 val = 0;
@@ -326,10 +310,6 @@ public:
 		}
 		printf("\n");
 	}
-
-	void reverse() {//tolua_export
-		std::reverse(_storage.begin(), _storage.end());
-	}//tolua_export
 
 	//compare
 	bool operator== (ByteBuffer & bb2)
