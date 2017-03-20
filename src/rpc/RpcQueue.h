@@ -12,22 +12,20 @@
 * @ date 2016-12-12
 ************************************************************************/
 #pragma once
-#include "tool\Mempool.h"
-#include "..\msg\MsgEnum.h"
+#include "tool\SafeQueue.h"
 
 class Player;
-struct stMsg;
-class MsgPool {
-    typedef void(Player::*HandleMsgFunc)(stMsg&);
+class NetPack;
+class RpcQueue {
+    typedef void(Player::*RpcFunc)(NetPack&);
 
-    CPoolPage           _pool;
-    HandleMsgFunc       _func[MSG_MAX_CNT];
-    SafeQueue< std::pair<Player*, stMsg*> >  _queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
+    std::map<int, RpcFunc>  _func;
+    SafeQueue< std::pair<Player*, NetPack*> >  _queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
 public:
-    static MsgPool& Instance(){ static MsgPool T; return T; }
-    MsgPool();
+    static RpcQueue& Instance(){ static RpcQueue T; return T; }
+    RpcQueue();
 
-    void Insert(Player* player, stMsg* msg, DWORD size); //Notice：须考虑线程安全
+    void Insert(Player* player, void* pData, DWORD size); //Notice：须考虑线程安全
     void Handle(); //主循环，每帧调一次
 };
-#define sMsgPool MsgPool::Instance()
+#define sRpcQueue RpcQueue::Instance()

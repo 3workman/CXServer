@@ -22,7 +22,7 @@ enum PacketTypeEnum
 class NetPack
 {
 private:
-    Pool_Obj_Define(NetPack, 1024)
+    Pool_Obj_Define(NetPack, 4096)
 
     static const size_t HEADER_SIZE     = sizeof(uint16) + sizeof(char); // Opcode & packetType
     static const size_t OPCODE_INDEX    = 0;
@@ -40,12 +40,10 @@ public:
         m_buf.rpos(HEADER_SIZE);
         SetOpCode(opCode);
     }
-    NetPack(char type, uint16 opCode, uint16 bodySize)
-        :m_buf(bodySize + HEADER_SIZE) {
-        m_buf.resize(HEADER_SIZE);
+    NetPack(const void* pData, int size)
+        :m_buf(size + HEADER_SIZE) {
+        m_buf.append(pData, size);
         m_buf.rpos(HEADER_SIZE);
-        SetPacketType(type);
-        SetOpCode(opCode);
     }
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
@@ -62,11 +60,9 @@ public:
     void SetPacketType(char packType) { m_buf.put(TYPE_INDEX, packType); }
     char GetPacketType() const { return m_buf.show<char>(TYPE_INDEX); }
 
-    void Resize(size_t size) {
-        m_buf.resize(size);
-        m_buf.rpos(HEADER_SIZE);
-    }
+    uint16 Size() const { return m_buf.size(); }
     uint16 BodyBytes() const { return m_buf.size() - HEADER_SIZE; }
+    const uint8* Buffer() const { return m_buf.contents(); }
 
 	template<class T> NetPack& operator << (const T& data) {
 		m_buf << data;
@@ -77,15 +73,15 @@ public:
 		return *this;
 	}
 	template<class T> NetPack& AppendStruct(const T& data) {
-        m_buf.append(reinterpret_cast<const uint8*>(&data), sizeof(data));
+        m_buf.append(reinterpret_cast<const void*>(&data), sizeof(data));
         return *this;
 	}
 	template<class T> NetPack& ReadStruct(T& data) {
-        m_buf.read(reinterpret_cast<uint8*>(&data), sizeof(data));
+        m_buf.read(reinterpret_cast<void*>(&data), sizeof(data));
         return *this;
 	}
 	NetPack& Append(const void* data, size_t len) {
-        m_buf.append(reinterpret_cast<const uint8*>(data), len);
+        m_buf.append(data, len);
         return *this;
 	}
 
@@ -121,8 +117,4 @@ public:
         //return std::move(str);
         return str; // c++11 右值引用，移动构造
     }
-
-    // lua 那边单线程使用的，所以用静态
-    const char* GetString() { static std::string str; m_buf >> str; return str.c_str(); }
-    void SetString(const char* pStr) { m_buf << pStr; }
 };

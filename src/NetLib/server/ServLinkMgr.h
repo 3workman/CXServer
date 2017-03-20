@@ -60,7 +60,7 @@ public:
 
 	bool AssistThreadLoop();
 	bool _AssistLoop();
-	void BroadcastMsg(void* pMsg, DWORD msgSize);
+	void BroadcastMsg(const void* pMsg, uint16 msgSize);
 
 	// 检查sClient(ServerLink)，若Accept数量不够(创建监听socket时预先投递了几个Accept)，继续增加
 	void Maintain(time_t timenow);

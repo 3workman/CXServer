@@ -21,6 +21,9 @@
     <Filter Include="msg">
       <UniqueIdentifier>{283c6b73-606a-48d0-a55d-ac52100744f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rpc">
+      <UniqueIdentifier>{8850c8ca-fcd3-45c7-a5b6-f7474bc893de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -32,24 +35,21 @@
     <ClCompile Include="Player\Player.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="Player\MsgPool.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
     <ClCompile Include="Trigger\trigger.cpp">
       <Filter>Trigger</Filter>
     </ClCompile>
     <ClCompile Include="Reward\reward.cpp">
       <Filter>Reward</Filter>
     </ClCompile>
+    <ClCompile Include="..\msg\MsgPool.cpp">
+      <Filter>msg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rpc\RpcQueue.cpp">
+      <Filter>rpc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player\Player.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Player\PlayerMsg.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Player\MsgPool.h">
       <Filter>Player</Filter>
     </ClInclude>
     <ClInclude Include="Trigger\trigger.h">
@@ -65,6 +65,15 @@
       <Filter>msg</Filter>
     </ClInclude>
     <ClInclude Include="..\msg\LoginMsg.h">
+      <Filter>msg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\RpcEnum.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\RpcQueue.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\msg\MsgPool.h">
       <Filter>msg</Filter>
     </ClInclude>
   </ItemGroup>

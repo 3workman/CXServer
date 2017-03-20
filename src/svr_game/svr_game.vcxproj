@@ -14,8 +14,9 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\msg\MsgPool.cpp" />
+    <ClCompile Include="..\rpc\RpcQueue.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Player\MsgPool.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Reward\reward.cpp" />
     <ClCompile Include="Trigger\trigger.cpp" />
@@ -23,10 +24,11 @@
   <ItemGroup>
     <ClInclude Include="..\msg\LoginMsg.h" />
     <ClInclude Include="..\msg\MsgEnum.h" />
+    <ClInclude Include="..\msg\MsgPool.h" />
     <ClInclude Include="..\msg\TestMsg.h" />
-    <ClInclude Include="Player\MsgPool.h" />
+    <ClInclude Include="..\rpc\RpcEnum.h" />
+    <ClInclude Include="..\rpc\RpcQueue.h" />
     <ClInclude Include="Player\Player.h" />
-    <ClInclude Include="Player\PlayerMsg.h" />
     <ClInclude Include="Reward\reward.h" />
     <ClInclude Include="Trigger\trigger.h" />
   </ItemGroup>

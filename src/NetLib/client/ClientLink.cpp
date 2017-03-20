@@ -4,7 +4,6 @@
 #pragma comment (lib,"Ws2_32.lib")
 
 const DWORD IN_BUFFER_SIZE = 1024 * 4;
-const DWORD MAX_MESSAGE_LENGTH = 1024 * 1024;
 
 void CALLBACK ClientLink::DoneIO(DWORD dwErrorCode,
 	DWORD dwNumberOfBytesTransferred,
@@ -272,11 +271,11 @@ void ClientLink::RecvMsg(char* pMsg, DWORD size)
 {
     _HandleServerMsg(pMsg, size);
 }
-void ClientLink::SendMsg(void* pMsg, DWORD size)
+void ClientLink::SendMsg(const void* pMsg, uint16 size)
 {
 	cLock lock(_csWrite);
 
-    _sendBuf.append<uint16>(size);
+    _sendBuf.append(size);
     _sendBuf.append(pMsg, size);
 
 	//客户端无需像服务器似的，消息积累超长才投递，见ServLink::SendMsg

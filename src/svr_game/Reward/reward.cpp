@@ -1,15 +1,18 @@
 #include "stdafx.h"
 #include "reward.h"
 
+
+static std::map<int, Reward::RewardFunc> g_handler;
+
+Reward::Reward()
+{
+    _isCheck = _isWrite = false;
+
 #undef Declare
-#define Declare(typ, n) &Reward::_Set_##typ,
-static const Reward::ResourceFunc g_handler[] = {
-    NULL,
+#define Declare(typ, n) g_handler[typ] = &Reward::_Change_##typ;
+
     Reward_Enum
-};
-STATIC_ASSERT_ARRAY_LENGTH(g_handler, Reward::MAX_ENUM);
-
-
+}
 bool Reward::Change(Player& player, Type typ, const int diff)
 {
     _isCheck = _isWrite = true;
@@ -34,17 +37,34 @@ bool Reward::_Change(Player& player, Type typ, int diff)
 {
     if (diff == 0) return false;
 
-    if (typ < MAX_ENUM)
-        return (this->*g_handler[typ])(player, diff);
+    Reward::RewardFunc func = g_handler[typ];
+    if (func == NULL)
+        return ChangeItem(player, typ, diff);
     else
-        return false;
+        return (this->*func)(player, diff);
 }
 
 //----------------------------------------------------------
 //各类资源变更函数
-#undef Realize
-#define Realize(typ) bool Reward::_Set_##typ(Player& player, int diff)
+bool Reward::ChangeItem(Player& player, int itemId, int diff)
+{
+    //if (_isCheck) {
+    //    if (player.m_bag->CountItem(itemId) + diff < 0)
+    //        return false;
+    //}
+    //if (_isWrite) {
+    //    if (diff > 0) {
+    //        player.CreateItem(pb::IR_OPERATION_REWARD_GET, itemId, diff);
+    //    }
+    //    else {
+    //        player.DestroyItem(pb::IR_LOTTO_COST, itemId, -diff);
+    //    }
+    //}
+    return true;
+}
 
+#undef Realize
+#define Realize(typ) bool Reward::_Change_##typ(Player& player, int diff)
 Realize(Gold)
 {
     if (_isCheck)

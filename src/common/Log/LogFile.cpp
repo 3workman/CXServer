@@ -1,5 +1,4 @@
 #include "stdafx.h"
-
 #include <time.h>
 #include <stdarg.h>
 #include <ctype.h>

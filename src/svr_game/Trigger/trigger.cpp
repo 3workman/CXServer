@@ -3,9 +3,8 @@
 #include "tool\GameApi.h"
 
 #undef Declare
-#define Declare(typ, n) &Trigger::_Is_##typ,
+#define Declare(typ) &Trigger::_Is_##typ,
 static const Trigger::TriggerFunc g_handler[] = {
-    NULL,
     Trigger_Enum
 };
 STATIC_ASSERT_ARRAY_LENGTH(g_handler, Trigger::MAX_ENUM);
@@ -38,7 +37,6 @@ bool Trigger::Check(Player* player, const std::vector<int>& triggerIds)
 //¸÷ÀàÅÐ¶Ïº¯Êý
 #undef Realize
 #define Realize(typ) bool Trigger::_Is_##typ(Player* player, int32 val1, int32 val2)
-
 Realize(UpLevel)
 {
     //return player.GetLevel() >= val1;

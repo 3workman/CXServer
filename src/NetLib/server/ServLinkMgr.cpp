@@ -196,7 +196,7 @@ void ServLinkMgr::Maintain(time_t timenow)
 	}
 }
 
-void ServLinkMgr::BroadcastMsg(void* pMsg, DWORD msgSize)
+void ServLinkMgr::BroadcastMsg(const void* pMsg, uint16 msgSize)
 {
 	for (auto& it : _vecLink)
 	{

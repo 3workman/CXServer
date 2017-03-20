@@ -27,7 +27,6 @@
 */
 
 const DWORD IN_BUFFER_SIZE = 1024 * 4;
-const DWORD MAX_MESSAGE_LENGTH = 1024 * 1024;
 
 WORD ServLink::s_nID = 0;
 
@@ -566,7 +565,7 @@ void ServLink::HandleClientMessage(void* pMsg, DWORD size)
     _pMgr->_HandleClientMsg(_player, pMsg, size);
 }
 
-bool ServLink::SendMsg(void* pMsg, DWORD msgSize)
+bool ServLink::SendMsg(const void* pMsg, uint16 msgSize)
 {
 	if (_bInvalid) return false;
 
@@ -579,7 +578,7 @@ bool ServLink::SendMsg(void* pMsg, DWORD msgSize)
 	cLock lock(_csLock);
 
 	//【brief.6】TODO：限制buf能增长到的最大长度，避免整体延时的内存占用；给append加个bool返回值
-	_sendBuf.append<uint16>(msgSize);
+	_sendBuf.append(msgSize);
     _sendBuf.append(pMsg, msgSize);
 
 	//【brief.7】并包优化，同时要在其它线程定期发送所有数据，避免消息延时

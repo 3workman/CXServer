@@ -102,7 +102,7 @@ public:
 
 	void Maintain(time_t timenow);
 
-	bool SendMsg(void* pMsg, DWORD msgSize);
+	bool SendMsg(const void* pMsg, uint16 msgSize);
 
 	LPCSTR GetIP(){ return _szIP; }
 	int GetID(){ return _nLinkID; }

@@ -31,12 +31,11 @@ class Player;
 class Reward {
     bool _isCheck;
     bool _isWrite;
+    Reward();
 public:
-    typedef bool(Reward::*ResourceFunc)(Player&, int);
+    typedef bool(Reward::*RewardFunc)(Player&, int);
     enum Type : uint {
         Reward_Enum
-
-        MAX_ENUM
     };
     static Reward& Instance(){ static Reward T; return T; }
 
@@ -50,10 +49,10 @@ public:
     static inline int PackItem(int itemId, char cnt){ return (itemId << 8) + cnt; } // 低8位:数量，高24位:物品ID
 
     //各类资源变更函数
-public:
+private:
+    bool ChangeItem(Player& player, int itemId, int diff);
 #undef Declare
-#define Declare(typ, n) bool _Set_##typ(Player& player, int diff);
-
+#define Declare(typ, n) bool _Change_##typ(Player& player, int diff);
     Reward_Enum
 };
 #define sResource Reward::Instance()

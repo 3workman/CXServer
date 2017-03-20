@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "..\NetLib\server\ServLinkMgr.h"
 #include "..\NetLib\server\define.h"
-#include "Player\MsgPool.h"
+#include "..\msg\MsgPool.h"
+#include "..\rpc\RpcQueue.h"
 #include "Player\Player.h"
 #include "Service\ServiceMgr.h"
 #include "Timer\TimerWheel.h"
@@ -27,7 +28,8 @@ void BindPlayerLink(void*& refPlayer, ServLink* p, void* pMsg)
 }
 void HandleClientMsg(void* player, void* pMsg, DWORD size)
 {
-    sMsgPool.Insert((Player*)player, (stMsg*)pMsg, size);
+    //sMsgPool.Insert((Player*)player, pMsg, size);
+    sRpcQueue.Insert((Player*)player, pMsg, size);
 }
 void ReportErrorMsg(void* player, int InvalidEnum, int nErrorCode, int nParam)
 {
@@ -56,7 +58,8 @@ int _tmain(int argc, _TCHAR* argv[])
         sTimerMgr.Refresh(timeNow);
         GameApi::RefreshTimeNow();
 
-        sMsgPool.Handle();
+        //sMsgPool.Handle();
+        sRpcQueue.Handle();
 
         Sleep(100);
     }

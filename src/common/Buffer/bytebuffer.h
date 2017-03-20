@@ -66,7 +66,7 @@ public:
     }
     uint8 operator[](size_t pos) { return show<uint8>(pos); }
 
-    const uint8* contents() const { assert(_storage.size()); &_storage[0]; }//tolua_export
+    const uint8* contents() const { assert(_storage.size()); return &_storage[0]; }//tolua_export
     const uint8* contentsRpos() const { return &_storage[_rpos]; }
     const uint8* contentsWpos() const { return &_storage[_wpos]; }
 
@@ -80,7 +80,7 @@ public:
         _rpos += sizeof(T);
         return r;
     }
-    void read(uint8 *dest, size_t len) {//tolua_export
+    void read(void* dest, size_t len) {//tolua_export
         if (_rpos + len <= size()) {
             memcpy(dest, &_storage[_rpos], len);
         } else {
@@ -110,7 +110,7 @@ public:
     void append(const std::string& str) {//tolua_export
         uint16 len = str.size();
         append(len);
-        append((uint8*)str.c_str(), len);
+        append(str.c_str(), len);
     }//tolua_export
 
     // NOTICE：常量字符串不会隐式转换为string
@@ -118,14 +118,14 @@ public:
     void append(const char* str) {
         uint16 len = strlen(str);
         append(len);
-        append((const uint8*)str, len);
+        append(str, len);
     }
     void append(char* str) {
         uint16 len = strlen(str);
         append(len);
-        append((const uint8*)str, len);
+        append(str, len);
     }
-    void append(const uint8 *src, size_t cnt) {//tolua_export
+    void append(const void* src, size_t cnt) {//tolua_export
         if (!cnt) return;
 
         // noone should even need uint8buffer longer than 10mb
@@ -142,19 +142,19 @@ public:
     }//tolua_export
     void append(const ByteBuffer& buffer) { append(buffer.contents(), buffer.size()); }//tolua_export
     template <typename T> void append(const T& value) {
-        append((const uint8*)&value, sizeof(value));
+        append(&value, sizeof(value));
     }
 
     //template <typename T> void insert(size_t pos, const T& value) {
-    //  insert(pos, (const uint8*)&value, sizeof(value));
+    //  insert(pos, &value, sizeof(value));
     //}
-    //void insert(size_t pos, const uint8 *src, size_t cnt) {
+    //void insert(size_t pos, const void* src, size_t cnt) {
     //  std::copy(src, src + cnt, inserter(_storage, _storage.begin() + pos));
     //}
     template <typename T> inline void put(size_t pos, const T& value) {
-        put(pos, (const uint8*)&value, sizeof(value));
+        put(pos, &value, sizeof(value));
     }
-    inline void put(size_t pos, const uint8 *src, size_t cnt) {
+    inline void put(size_t pos, const void* src, size_t cnt) {
         assert(pos + cnt <= size());
         memcpy(&_storage[pos], src, cnt);
     }

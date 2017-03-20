@@ -49,7 +49,7 @@ public:
 
     bool CreateLinkAndConnect(HandleMsgFunc handleMsg);
     void CloseClient(int nErrorCode);
-    void SendMsg(void* pMsg, DWORD size);
+    void SendMsg(const void* pMsg, uint16 size);
     bool IsConnect(){ return _eState == State_Connected; }
 
 private:
