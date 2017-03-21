@@ -99,6 +99,7 @@ public:
     void    WriteFloat(float val) { m_buf.append(val); }
     void    WriteDouble(double val) { m_buf.append(val); }
     void    WriteString(const std::string& val) { m_buf.append(val); }
+    void    WriteString(const char* val) { m_buf.append(val); }
 
     bool    ReadBool() { return m_buf.read<bool>(); }
     int8    ReadInt8() { return m_buf.read<int8>(); }

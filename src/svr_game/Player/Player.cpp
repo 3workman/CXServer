@@ -50,6 +50,7 @@ Rpc_Realize(rpc_echo)
 {
     string str = recvBuf.ReadString();
     printf("Echo: %s\n", str.c_str());
+
     NetPack& backBuffer = BackBuffer();
     backBuffer << str;
 }

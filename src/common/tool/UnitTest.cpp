@@ -31,7 +31,7 @@ namespace unittest
 
 		while (current)
 		{
-			printf("UnitTest => %s(%d)\n", current->file.c_str(), current->line);
+			printf("\nUnitTest => %s(%d)\n", current->file.c_str(), current->line);
 			current->func();
 			auto temp = current;
 			current = current->next;

@@ -24,14 +24,14 @@
 class ScopeGuard : boost::noncopyable{
     std::function<void()> _onExitScope;
 public:
-    explicit ScopeGuard(std::function<void()> func) : _onExitScope(func){}
+    explicit ScopeGuard(const std::function<void()>& func) : _onExitScope(func){}
     ~ScopeGuard(){ _onExitScope(); }
 };
 class CRollBack : boost::noncopyable{
     std::function<void()> _onExitScope;
     bool _valid;
 public:
-    explicit CRollBack(std::function<void()> func)
+    explicit CRollBack(const std::function<void()>& func)
         : _onExitScope(func)
         , _valid(true)
     { }

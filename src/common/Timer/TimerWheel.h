@@ -31,7 +31,7 @@ struct TimerNode {
     int loop;        //总共循环多久
     std::function<void()> func;
 
-    TimerNode(std::function<void()> f, uint32 cd = 0, int total = 0)
+    TimerNode(const std::function<void()>& f, uint32 cd = 0, int total = 0)
         : interval(cd)
         , loop(total)
         , func(f){};
@@ -70,7 +70,7 @@ public:
     static CTimerMgr& Instance(){ static CTimerMgr T; return T; }
     void Refresh(const uint32 timenow);
 
-    TimerNode* AddTimer(std::function<void()> f, uint32 delaySec, uint32 cdSec = 0, int totalSec = 0);
+    TimerNode* AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec = 0, int totalSec = 0);
     void _AddTimerNode(uint32 milseconds, TimerNode* node);
 
     void RemoveTimer(TimerNode* node);

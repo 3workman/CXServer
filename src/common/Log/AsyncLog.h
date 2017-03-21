@@ -57,7 +57,7 @@ public:
     typedef std::function<void(const BufferVec&)> WriteLogFunc; //Notice：声明成std::function可用带捕获的lambda
     //typedef void(*WriteLogFunc)(const BufferVec&);
 
-    AsyncLog(size_t maxSize, WriteLogFunc func);
+    AsyncLog(size_t maxSize, const WriteLogFunc& func);
     ~AsyncLog();
 
     void Append(const void* data, size_t len);

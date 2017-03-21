@@ -84,7 +84,7 @@ typedef std::function<void(NetPack&)>   WriteRpcParam;
 typedef std::function<void(NetPack&)>   ReadRpcBack;
 std::map<int, ReadRpcBack> g_RpcHandle;     //TODO:zhoumf：本模块实现的rpc，由静态声明决定，参见RpcQueue::_func
 std::map<int, ReadRpcBack> g_RecvHandle;    //挂接Socket Link的回包处理函数集，由g_RpcHandle、CallRpc()动态加入的lambda两大块构成
-void CallRpc(uint16 opCode, WriteRpcParam func)
+void CallRpc(uint16 opCode, const WriteRpcParam& func)
 {
     //“同名rpc混乱”：client rpc server且有回包；若server那边也有个同名rpc client，那client就不好区分底层收到的包，是自己rpc的回复，还是对方主动rpc
     //远程调用其它模块的rpc，应是本模块未声明实现的。避免同名rpc的混乱
@@ -95,7 +95,7 @@ void CallRpc(uint16 opCode, WriteRpcParam func)
     func(msg);
     g_link.SendMsg(msg.Buffer(), msg.Size());
 }
-void CallRpc(uint16 opCode, WriteRpcParam fun1, ReadRpcBack fun2)
+void CallRpc(uint16 opCode, const WriteRpcParam& fun1, const ReadRpcBack& fun2)
 {
     CallRpc(opCode, fun1);
 
@@ -126,7 +126,7 @@ int _tmain(int argc, _TCHAR* argv[])
         cin >> tmpStr;
 
         CallRpc(rpc_echo, [&](NetPack& buf){
-            buf << tmpStr;
+            buf.WriteString(tmpStr); // buf << tmpStr;
         }, 
             [](NetPack& recvBuf){
             printf("Echo: %s\n", recvBuf.ReadString().c_str());

@@ -33,7 +33,7 @@ void TimerNode::_Callback(){
         delete this;
     }
 }
-TimerNode* CTimerMgr::AddTimer(std::function<void()> f, uint32 delaySec, uint32 cdSec /* = 0 */, int totalSec /* = 0 */) {
+TimerNode* CTimerMgr::AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec /* = 0 */, int totalSec /* = 0 */) {
     TimerNode* node = new TimerNode(f, cdSec * 1000, totalSec * 1000);
     node->timeDead = TimeElasped_Msec + delaySec * 1000;
     _AddTimerNode(delaySec * 1000, node);

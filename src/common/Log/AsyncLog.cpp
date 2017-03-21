@@ -3,7 +3,7 @@
 
 static const DWORD Flush_Interval_MS = 180 * 1000; //INFINITE
 
-AsyncLog::AsyncLog(size_t maxSize, WriteLogFunc func)
+AsyncLog::AsyncLog(size_t maxSize, const WriteLogFunc& func)
     : _curBuf(new Buffer(maxSize))
     , _nextBuf(new Buffer(maxSize))
     , _writeLogFunc(func)
