@@ -2,7 +2,6 @@
 #include "ServLink.h"
 #include "ServLinkMgr.h"
 
-#pragma comment (lib,"Ws2_32.lib")
 #pragma comment(lib,"Mswsock.lib")
 
 #define MAX_Connect_Seconds	3  // 几秒连接不上，踢掉
@@ -32,7 +31,7 @@ WORD ServLink::s_nID = 0;
 
 ServLink::ServLink(ServLinkMgr* pMgr)
 	: _sendBuf(IN_BUFFER_SIZE)
-	, _recvBuf(2 * IN_BUFFER_SIZE) //_recvBuf开两倍大小，避免接收缓冲不够，见PostRecv()的Notice
+	, _recvBuf(IN_BUFFER_SIZE * 2) //_recvBuf开两倍大小，避免接收缓冲不够，见PostRecv()的Notice
 	, _pMgr(pMgr)
     , _nLinkID(++s_nID) // LinkID从1开始
 {
@@ -115,8 +114,7 @@ void ServLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 
 		if (_eState == STATE_CONNECTED)  // 【3、AcceptEx完成后 绑定客户socket成功，回调至此】
 		{
-			char* buf = OnRead_DoneIO(dwNumberOfBytesTransferred);
-			PostRecv(buf);
+			OnRead_DoneIO(dwNumberOfBytesTransferred);
 		}
 		else{
 			Err("DoneIOCallback NotConnect");
@@ -135,7 +133,7 @@ bool ServLink::CreateLinkAndAccept()
 	_ovRecv.SetLink(this);
 	_sendBuf.clear();
 	_recvBuf.clear();
-	_bCanWrite = true;
+	_bCanWrite = false;
 	_bInvalid = false;
 	_timeInvalid = 0;
 	strcpy_s(_szIP, "Unknow");
@@ -220,6 +218,7 @@ void ServLink::OnConnect()	// state Move from ACCEPTING to CONNECTED
 {
 	assert(_eState == STATE_ACCEPTING);
 	m_dwLastHeart = -1;
+    _bCanWrite = true;
 
 	SOCKET listen = _pMgr->GetListener();
 	if (setsockopt(_sClient, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char*)(&listen), sizeof(listen)) == SOCKET_ERROR)
@@ -379,12 +378,7 @@ void ServLink::OnSend_DoneIO(DWORD dwNumberOfBytesTransferred)
 
 	_bCanWrite = true;
 
-	if (_sendBuf.readableBytes() < dwNumberOfBytesTransferred) //消息长度小于实际操作的字节数
-	{
-		assert(0);
-		OnInvalidMessage(Message_NoError, 0, false);
-		return;
-	}
+    assert(_sendBuf.readableBytes() >= dwNumberOfBytesTransferred);
 
 	_sendBuf.readerMove(dwNumberOfBytesTransferred); //否则，移动消息指针，继续发送多余部分
 
@@ -435,18 +429,20 @@ bool ServLink::PostSend(char* buffer, DWORD nLen)
 	}
 	return true;
 }
-bool ServLink::PostRecv(char* buf)
+bool ServLink::PostRecv()
 {
 	if (_eState == STATE_CONNECTED)
 	{
 		//memset((char *)&_ovRecv, 0, sizeof(OVERLAPPED)); //清空ov头貌似没必要
 
+        _recvBuf.ensureWritableBytes(IN_BUFFER_SIZE);
+
 		//Notice：len是固定的，如果buf指向的内存块实际没这么大，有内存越界风险（所以_recvBuf开了两倍大小）
 		//Notice：长度太短的性能损失
 		WSABUF wbuf;
-		wbuf.buf = buf;
 		wbuf.len = IN_BUFFER_SIZE;   //dont read so much...
-		DWORD dwBytes(0), dwFlags(0);
+        wbuf.buf = _recvBuf.beginWrite();
+        DWORD dwBytes(0), dwFlags(0);
 		if (WSARecv(_sClient, &wbuf, 1, &dwBytes, &dwFlags, &_ovRecv, 0) == SOCKET_ERROR)
 		{
 			int nLastError = WSAGetLastError();
@@ -461,7 +457,7 @@ bool ServLink::PostRecv(char* buf)
 	return false;
 }
 
-char* ServLink::OnRead_DoneIO(DWORD dwBytesTransferred)
+void ServLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 {
 	LastRecvIOTime(_pMgr->_timeNow);
 
@@ -480,7 +476,6 @@ char* ServLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 			_recvBuf.clear();
 			printf("TooHugePacket: Msg size(%d) Msg ID(%d)", kMsgSize, *((uint16*)pMsg)); // 【消息体：头2字节为消息ID】
 			OnInvalidMessage(Message_TooHugePacket, 0, true);
-			return _recvBuf.beginWrite();
 		}
 		// 2、是否接到完整包
 		if (kPackSize > _recvBuf.readableBytes()) break; // 【包未收完：接收字节 < 包大小】
@@ -499,7 +494,8 @@ char* ServLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 		memmove(_recvBuf, pPack, _nRecvSize); // net::Buffer可节省memmove，只在内存不足时，才会将数据移动至头部，见Buffer::makeSpace
 	}
 	return _recvBuf + _nRecvSize; // 6、返回可用缓冲区(前面的已被写了)*/
-	return _recvBuf.beginWrite();
+
+    PostRecv();
 }
 int ServLink::RecvMsg(char* pMsg, DWORD size)
 {

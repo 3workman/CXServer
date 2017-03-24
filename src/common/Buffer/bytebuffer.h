@@ -52,8 +52,7 @@ public:
     // one should never use resize probably
     void resize(size_t newsize) {//tolua_export
         _storage.resize(newsize);
-        _wpos = _storage.size();
-        _rpos = 0;
+        _rpos = _wpos = _storage.size();
     }//tolua_export
     void reserve(size_t ressize) { if (ressize > size()) _storage.reserve(ressize); }//tolua_export
 
@@ -72,8 +71,8 @@ public:
 
     size_t rpos() { return _rpos; }//tolua_export
     size_t wpos() { return _wpos; }//tolua_export
-    size_t rpos(size_t rpos) { _rpos = rpos; return _rpos; }//tolua_export
-    size_t wpos(size_t wpos) { _wpos = wpos; return _wpos; }//tolua_export
+    size_t rpos(size_t rpos) { assert(_rpos <= size()); _rpos = rpos; return _rpos; }//tolua_export
+    size_t wpos(size_t wpos) { assert(_wpos <= size()); _wpos = wpos; return _wpos; }//tolua_export
 
     template <typename T> T read() {
         T r = show<T>(_rpos);

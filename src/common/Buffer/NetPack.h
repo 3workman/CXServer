@@ -1,3 +1,11 @@
+/***********************************************************************
+* @ 业务层使用的网络包
+* @ brief
+    1、应设计为可替换【网络库】和【协议】的
+
+* @ author zhoumf
+* @ date 2016-3-21
+************************************************************************/
 #pragma once
 #include "bytebuffer.h"
 #include "..\tool\Mempool.h"
@@ -21,29 +29,28 @@ enum PacketTypeEnum
 
 class NetPack
 {
-private:
     Pool_Obj_Define(NetPack, 4096)
-
-    static const size_t HEADER_SIZE     = sizeof(uint16) + sizeof(char); // Opcode & packetType
-    static const size_t OPCODE_INDEX    = 0;
-    static const size_t TYPE_INDEX      = 2;
-
 private:
+    static const size_t HEADER_SIZE     = sizeof(uint8)+sizeof(uint16); // packetType & Opcode
+    static const size_t TYPE_INDEX      = 0;
+    static const size_t OPCODE_INDEX    = 1;
+
     ByteBuffer  m_buf;
 
 public:
     static size_t GetHeaderSize() { return HEADER_SIZE; }
 
-    NetPack(uint16 opCode, int size = 256)
+    NetPack(uint16 opCode, int size = 64)
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
-        m_buf.rpos(HEADER_SIZE);
         SetOpCode(opCode);
+        SetPacketType(135);
     }
     NetPack(const void* pData, int size)
-        :m_buf(size + HEADER_SIZE) {
+        :m_buf(size) {
         m_buf.append(pData, size);
         m_buf.rpos(HEADER_SIZE);
+        SetPacketType(135);
     }
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
@@ -51,14 +58,14 @@ public:
     void Clear() { 
         m_buf.clear();
         m_buf.resize(HEADER_SIZE);
-        m_buf.rpos(HEADER_SIZE);
+        SetPacketType(135);
     }
 public:
     void SetOpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }
     uint16 GetOpcode() const { return m_buf.show<uint16>(OPCODE_INDEX); }
 
-    void SetPacketType(char packType) { m_buf.put(TYPE_INDEX, packType); }
-    char GetPacketType() const { return m_buf.show<char>(TYPE_INDEX); }
+    void SetPacketType(uint8 packType) { m_buf.put(TYPE_INDEX, packType); }
+    uint8 GetPacketType() const { return m_buf.show<uint8>(TYPE_INDEX); }
 
     uint16 Size() const { return m_buf.size(); }
     uint16 BodyBytes() const { return m_buf.size() - HEADER_SIZE; }

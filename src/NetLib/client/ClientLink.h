@@ -48,9 +48,10 @@ public:
 	static bool CleanWinsock();
 
     bool CreateLinkAndConnect(HandleMsgFunc handleMsg);
-    void CloseClient(int nErrorCode);
+    void CloseLink(int nErrorCode);
     void SendMsg(const void* pMsg, uint16 size);
     bool IsConnect(){ return _eState == State_Connected; }
+    bool IsClose(){ return _eState == State_Close; }
 
 private:
     static void CALLBACK DoneIO(DWORD, DWORD, LPOVERLAPPED);
@@ -60,7 +61,7 @@ private:
 	void OnConnect();
 
 	bool PostSend(char* buffer, DWORD nLen);
-	bool PostRecv(char* buffer, DWORD nLen);
+	bool PostRecv();
 
 	void OnSend_DoneIO(DWORD dwBytesTransferred);
 	void OnRead_DoneIO(DWORD dwBytesTransferred);
@@ -74,9 +75,8 @@ private:
 	net::Buffer _recvBuf;
 	net::Buffer _sendBuf;
 
-	bool _bCanWrite = true;
+	bool _bCanWrite;
 
-    cMutex _csRead;
     cMutex _csWrite;
 
 	const ClientLinkConfig& _config;

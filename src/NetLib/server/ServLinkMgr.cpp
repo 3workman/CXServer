@@ -4,7 +4,7 @@
 #include "ServLink.h"
 #include "..\..\common\tool\thread.h"
 
-#pragma comment (lib,"Ws2_32.lib")
+#pragma comment(lib,"Ws2_32.lib")
 
 #define CHECK_INTERVAL		1000
 

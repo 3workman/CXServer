@@ -92,12 +92,12 @@ public:
 
 	void DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type);
 
-	bool _bCanWrite = true;     // 一次::WSASend()完毕，才能做下一次
+	bool _bCanWrite;            // 一次::WSASend()完毕，才能做下一次
 	void OnSend_DoneIO(DWORD dwNumberOfBytesTransferred);
 	void ServerRun_SendIO();	// 外部线程调用
-	bool PostSend(char* buffer, DWORD size);		// 投递一个发送IO(写)请求，Add a packet to output buffer
-	char* OnRead_DoneIO(DWORD size);		        // Retrieve a packet from input buffer
-	bool PostRecv(char* buf);		                // 投递一个接收IO(读)请求，Do actual receive
+	bool PostSend(char* buffer, DWORD size);	// 投递一个发送IO(写)请求，Add a packet to output buffer
+	void OnRead_DoneIO(DWORD size);		        // Retrieve a packet from input buffer
+	bool PostRecv();		                    // 投递一个接收IO(读)请求，Do actual receive
     int RecvMsg(char* pMsg, DWORD size);
 
 	void Maintain(time_t timenow);

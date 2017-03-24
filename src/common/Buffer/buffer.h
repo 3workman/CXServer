@@ -128,6 +128,12 @@ namespace net
 			ensureWritableBytes(len);
 			_wpos += len;
 		}
+        void ensureWritableBytes(size_t len) //确保剩余空间足够，一定能写入
+        {
+            if (writableBytes() < len) makeSpace(len);
+
+            assert(writableBytes() >= len);
+        }
 
 //---------------------------重置大小，旧内容保留------------------------------------
         void shrink(size_t reserve)
@@ -147,12 +153,6 @@ namespace net
 	private:
 		char* begin(){ return &*_buffer.begin(); }
 
-		void ensureWritableBytes(size_t len) //确保剩余空间足够，一定能写入
-		{
-			if (writableBytes() < len) makeSpace(len);
-
-			assert(writableBytes() >= len);
-		}
 		void makeSpace(size_t len)
 		{
 			if (writableBytes() + prependBytes() < len + kCheapPrepend)
