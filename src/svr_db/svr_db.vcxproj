@@ -14,7 +14,7 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="svr_db.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4F8FE012-B86A-4A7F-AD22-7AC3A735AFDE}</ProjectGuid>

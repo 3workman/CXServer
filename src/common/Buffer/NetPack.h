@@ -44,13 +44,13 @@ public:
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
         SetOpCode(opCode);
-        SetPacketType(135);
+        SetPacketType(135); //udp临时标记
     }
     NetPack(const void* pData, int size)
         :m_buf(size) {
         m_buf.append(pData, size);
         m_buf.rpos(HEADER_SIZE);
-        SetPacketType(135);
+        SetPacketType(135); //udp临时标记
     }
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
@@ -58,7 +58,7 @@ public:
     void Clear() { 
         m_buf.clear();
         m_buf.resize(HEADER_SIZE);
-        SetPacketType(135);
+        SetPacketType(135); //udp临时标记
     }
 public:
     void SetOpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }

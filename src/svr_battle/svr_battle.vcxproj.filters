@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="svr_battle.cpp" />
+    <ClCompile Include="..\include\stdafx.cpp" />
+    <ClCompile Include="UdpServer\UdpClientAgent.cpp">
+      <Filter>UdpServer</Filter>
+    </ClCompile>
+    <ClCompile Include="UdpServer\UdpServer.cpp">
+      <Filter>UdpServer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="UdpServer">
+      <UniqueIdentifier>{e57de665-e33b-4244-be5a-2af4fbde6469}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UdpServer\UdpClientAgent.h">
+      <Filter>UdpServer</Filter>
+    </ClInclude>
+    <ClInclude Include="UdpServer\UdpServer.h">
+      <Filter>UdpServer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -10,32 +10,10 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\include\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\msg\MsgPool.cpp" />
-    <ClCompile Include="..\rpc\RpcQueue.cpp" />
-    <ClCompile Include="svr_game.cpp" />
-    <ClCompile Include="Player\Player.cpp" />
-    <ClCompile Include="Reward\reward.cpp" />
-    <ClCompile Include="Trigger\trigger.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\msg\LoginMsg.h" />
-    <ClInclude Include="..\msg\MsgEnum.h" />
-    <ClInclude Include="..\msg\MsgPool.h" />
-    <ClInclude Include="..\msg\TestMsg.h" />
-    <ClInclude Include="..\rpc\RpcEnum.h" />
-    <ClInclude Include="..\rpc\RpcQueue.h" />
-    <ClInclude Include="Player\Player.h" />
-    <ClInclude Include="Reward\reward.h" />
-    <ClInclude Include="Trigger\trigger.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{84F42B32-FECA-4622-A114-9465CC07490D}</ProjectGuid>
+    <ProjectGuid>{66D679CD-FAD6-4A59-9800-85E2597CA616}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>svr_game</RootNamespace>
+    <RootNamespace>svr_battle</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -81,8 +59,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>common.lib;NetLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)build</AdditionalLibraryDirectories>
+      <AdditionalDependencies>common.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -102,6 +80,12 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\include\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="svr_center.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

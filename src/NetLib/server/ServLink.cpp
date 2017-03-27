@@ -4,7 +4,7 @@
 
 #pragma comment(lib,"Mswsock.lib")
 
-#define MAX_Connect_Seconds	3  // 几秒连接不上，踢掉
+#define MAX_Connect_Seconds	5  // 几秒连接不上，踢掉
 #define MAX_Silent_Seconds	5  // 几秒没收到数据，检查是否发生socket close
 #define MAX_Invalid_Seconds 5  // 链接无效持续几秒，closesocket【本程序中需断开链接时，先shutdown成无效链接，再才真正回收socket】
 
@@ -72,18 +72,14 @@ void CALLBACK ServLink::DoneIO(DWORD dwErrorCode,
 void ServLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 {
 	//【优化Maintain里的轮询FD_CLOSE】
-	if (0 == dwNumberOfBytesTransferred)
-	{
+	if (0 == dwNumberOfBytesTransferred) {
 		WSANETWORKEVENTS events;
-		if (WSAEnumNetworkEvents(_sClient, _hEventClose, &events) == 0)
-		{
-			if (events.lNetworkEvents & FD_CLOSE)
-			{
+		if (WSAEnumNetworkEvents(_sClient, _hEventClose, &events) == 0) {
+			if (events.lNetworkEvents & FD_CLOSE) {
 				printf("Maintenance FD_CLOSE shutdown socket ID:%d \n", _nLinkID);
 				OnInvalidMessage(Net_Dead, 0, false);
 			}
-		}
-		else{
+		} else {
 			Err("ErrorAPI_WSAEnumNetworkEvents");
 		}
 		return;
@@ -94,8 +90,8 @@ void ServLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 		if (_eState == STATE_CONNECTED) OnSend_DoneIO(dwNumberOfBytesTransferred); // 仍连接时，要处理发送缓冲的更新(有东西已发走了)
 
 	}else if (type == IO_Read){  // 处理读IO的完成回调
-		if (_bInvalid)
-		{
+
+		if (_bInvalid) {
 			Err("DoneIOCallback IO_Read Invalid! State:", _eState);
 			return;
 		}
@@ -105,18 +101,15 @@ void ServLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 			UpdateAcceptAddr();
 			if (ServLinkMgr::IsValidIP(_szIP)){
 				OnConnect();            // 【2、AcceptEx完成后，绑定客户socket到完成端口，状态更新为连接】
-			}
-			else{
+			} else {
 				OnInvalidMessage(Net_InvalidIP, 0, true);
 				return;
 			}
 		}
 
-		if (_eState == STATE_CONNECTED)  // 【3、AcceptEx完成后 绑定客户socket成功，回调至此】
-		{
+		if (_eState == STATE_CONNECTED){ // 【3、AcceptEx完成后 绑定客户socket成功，回调至此】
 			OnRead_DoneIO(dwNumberOfBytesTransferred);
-		}
-		else{
+		} else {
 			Err("DoneIOCallback NotConnect");
 		}
 	}
@@ -556,7 +549,7 @@ void ServLink::HandleClientMessage(void* pMsg, DWORD size)
     */
     if (_player == NULL)
     {
-        _pMgr->_BindLinkAndPlayer(_player, this, pMsg);
+        _pMgr->_BindLinkAndPlayer(_player, this, pMsg, size);
     }
     _pMgr->_HandleClientMsg(_player, pMsg, size);
 }

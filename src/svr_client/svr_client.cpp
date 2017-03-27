@@ -6,6 +6,8 @@
 #include "Buffer\NetPack.h"
 #include "..\rpc\RpcEnum.h"
 #include <functional>
+#include "UdpClient\UdpClient.h"
+#include "tool\thread.h"
 
 
 ClientLinkConfig config;
@@ -13,18 +15,12 @@ ClientLink g_link(config);
 
 SafeQueue<NetPack*>  g_queue;
 
-/*
+Thread* g_thread;
+
 void HandleServerMsg(void* p, DWORD size)
 {
-    switch (((stMsg*)p)->msgId) {
-    case C2S_Echo:
-    {
-        TestMsg* msg = (TestMsg*)p;
-        printf("Echo: %s\n", msg->data);
-    }
-    break;
-    default:break;
-    }
+    NetPack& recvBuf = *new NetPack(p, size);
+    g_queue.push(new NetPack(p, size));
 }
 void RunClientIOCP(ClientLink& link)
 {
@@ -33,8 +29,27 @@ void RunClientIOCP(ClientLink& link)
     ClientLink::InitWinsock();
     link.CreateLinkAndConnect(HandleServerMsg);
 
-    while (!link.IsConnect()) Sleep(1000); // 等待ConnectEx三次握手完成的回调，之后才能发数据
+    while (!link.IsClose() && !link.IsConnect()) Sleep(1000); // 等待ConnectEx三次握手完成的回调，之后才能发数据
 }
+
+static void AssistLoop(LPVOID pParam)
+{
+    while (WAIT_TIMEOUT == g_thread->WaitKillEvent(50))
+    {
+        sUdpClient.Update();
+    }
+}
+void RunClientUdp()
+{
+    sUdpClient.Start(HandleServerMsg);
+
+    g_thread = new Thread;
+    g_thread->RunThread(AssistLoop, 0);
+
+    while (!sUdpClient.IsClose() && !sUdpClient.IsConnect()) Sleep(1000);
+}
+
+/*
 int _tmain(int argc, _TCHAR* argv[])
 {
     RunClientIOCP(g_link);
@@ -65,21 +80,6 @@ int _tmain(int argc, _TCHAR* argv[])
 */
 
 
-void HandleServerMsg(void* p, DWORD size)
-{
-    NetPack& recvBuf = *new NetPack(p, size);
-    g_queue.push(new NetPack(p, size));
-}
-void RunClientIOCP(ClientLink& link)
-{
-    cout << "———————————— RunClientIOCP ————————————" << endl;
-
-    ClientLink::InitWinsock();
-    link.CreateLinkAndConnect(HandleServerMsg);
-
-    while (!link.IsConnect()) Sleep(1000); // 等待ConnectEx三次握手完成的回调，之后才能发数据
-}
-
 typedef std::function<void(NetPack&)>   WriteRpcParam;
 typedef std::function<void(NetPack&)>   ReadRpcBack;
 std::map<int, ReadRpcBack> g_RpcHandle;     //TODO:zhoumf：本模块实现的rpc，由静态声明决定，参见RpcQueue::_func
@@ -93,7 +93,8 @@ void CallRpc(uint16 opCode, const WriteRpcParam& func)
 
     NetPack msg(opCode);
     func(msg);
-    g_link.SendMsg(msg.Buffer(), msg.Size());
+    //g_link.SendMsg(msg.Buffer(), msg.Size());
+    sUdpClient.SendMsg(msg);
 }
 void CallRpc(uint16 opCode, const WriteRpcParam& fun1, const ReadRpcBack& fun2)
 {
@@ -104,22 +105,27 @@ void CallRpc(uint16 opCode, const WriteRpcParam& fun1, const ReadRpcBack& fun2)
 void HandleRecvQueue()
 {
     NetPack* pData;
-    if (g_queue.pop(pData))
-    {
+    if (g_queue.pop(pData)) {
         g_RecvHandle[pData->GetOpcode()](*pData);
+        delete pData;
     }
 }
 
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+    RunClientUdp();
+    ON_SCOPE_EXIT([]{ sUdpClient.Stop(); });
+
+/*
     RunClientIOCP(g_link);
+    ON_SCOPE_EXIT([]{ g_link.CloseClient(0); });
     {
         NetPack msg(rpc_login, 0);
         g_link.SendMsg(msg.Buffer(), msg.Size());
-    }
+    }*/
 
     cout << "请输入发送内容..." << endl;
-
     char tmpStr[32] = { 0 };
     while (true)
     {
@@ -136,7 +142,6 @@ int _tmain(int argc, _TCHAR* argv[])
         HandleRecvQueue();
     }
 
-    g_link.CloseClient(0);
     system("pause");
     return 0;
 }

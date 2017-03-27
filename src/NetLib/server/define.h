@@ -10,7 +10,7 @@ struct ServerConfig
 	WORD  wPort = 4567;
 	DWORD nRecvPacketCheckTime = 10;
 	DWORD nRecvPacketLimit = 20;
-	DWORD dwAssistLoopMs = 10;
+	DWORD dwAssistLoopMs = 20;
 	DWORD nMaxPackage = 1024;
 	int   nDeadTime = 300;      //多少秒没收到client消息，断开
 	DWORD nTimeLoop = 10;		//多线程的情况下，多少时间遍历所有的socket,必须跟Send_Group一起使用

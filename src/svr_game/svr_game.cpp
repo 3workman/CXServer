@@ -8,19 +8,21 @@
 #include "Timer\TimerWheel.h"
 #include "tool\GameApi.h"
 #include "..\msg\LoginMsg.h"
+#include "Buffer\NetPack.h"
 
 
-void BindPlayerLink(void*& refPlayer, ServLink* p, void* pMsg)
+void BindPlayerLink(void*& refPlayer, ServLink* p, void* pMsg, DWORD size)
 {
-    switch (((stMsg*)pMsg)->msgId){
+    NetPack msg(pMsg, size);
+    switch (msg.GetOpcode()){
     case C2S_Login: {
         refPlayer = new Player(p);
     } break;
     case C2S_ReConnect: {
-        ReConnectMsg* msg = (ReConnectMsg*)pMsg;
-        if (Player* player = Player::FindByIdx(msg->playerIdx))
-        {
+        uint playerIdx = msg.ReadInt32();
+        if (Player* player = Player::FindByIdx(playerIdx)) {
             player->SetServLink(p);
+            refPlayer = player;
         }
     } break;
     default: assert(0); break;

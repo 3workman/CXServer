@@ -10,32 +10,10 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\include\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\msg\MsgPool.cpp" />
-    <ClCompile Include="..\rpc\RpcQueue.cpp" />
-    <ClCompile Include="svr_game.cpp" />
-    <ClCompile Include="Player\Player.cpp" />
-    <ClCompile Include="Reward\reward.cpp" />
-    <ClCompile Include="Trigger\trigger.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\msg\LoginMsg.h" />
-    <ClInclude Include="..\msg\MsgEnum.h" />
-    <ClInclude Include="..\msg\MsgPool.h" />
-    <ClInclude Include="..\msg\TestMsg.h" />
-    <ClInclude Include="..\rpc\RpcEnum.h" />
-    <ClInclude Include="..\rpc\RpcQueue.h" />
-    <ClInclude Include="Player\Player.h" />
-    <ClInclude Include="Reward\reward.h" />
-    <ClInclude Include="Trigger\trigger.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{84F42B32-FECA-4622-A114-9465CC07490D}</ProjectGuid>
+    <ProjectGuid>{93934780-EC03-4E49-B061-5C097B8B2F43}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>svr_game</RootNamespace>
+    <RootNamespace>svr_battle</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,13 +54,15 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\src\common;$(SolutionDir)\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\src\common;$(SolutionDir)\src\include;$(SolutionDir)\ThirdParty\raknet\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>common.lib;NetLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)build</AdditionalLibraryDirectories>
+      <AdditionalDependencies>common.lib;RakNet.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -102,6 +82,18 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\include\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="svr_battle.cpp" />
+    <ClCompile Include="UdpServer\UdpClientAgent.cpp" />
+    <ClCompile Include="UdpServer\UdpServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UdpServer\UdpClientAgent.h" />
+    <ClInclude Include="UdpServer\UdpServer.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

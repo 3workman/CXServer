@@ -242,7 +242,7 @@ void ClientLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 	{
         const DWORD kMsgSize = *((uint16*)pPack);	// 【网络包：头2字节为消息体大小】
 		const DWORD kPackSize = kMsgSize + c_off;	// 【网络包长 = 消息体大小 + 头长度】
-		char* pMsg = pPack + c_off;                 // 【后移4字节得：消息体指针】
+		char* pMsg = pPack + c_off;                 // 【后移2字节得：消息体指针】
 
 		if (kPackSize > _recvBuf.readableBytes()) break; // 【包未收完：接收字节 < 包大小】
 

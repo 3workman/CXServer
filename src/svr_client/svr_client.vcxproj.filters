@@ -1,30 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="源文件">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="头文件">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="UserConfig">
       <UniqueIdentifier>{5aefc082-9d32-4c23-89af-61069978fe9e}</UniqueIdentifier>
     </Filter>
     <Filter Include="msg">
       <UniqueIdentifier>{d8c35747-e7cd-4df5-b7cb-bd2aed5a249c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UdpClient">
+      <UniqueIdentifier>{0520d151-d01c-4b6b-9889-8d7a6ea56d24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\stdafx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="UserConfig\UserConfig.cpp">
       <Filter>UserConfig</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\stdafx.cpp" />
+    <ClCompile Include="svr_client.cpp" />
+    <ClCompile Include="UdpClient\UdpClient.cpp">
+      <Filter>UdpClient</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +33,9 @@
     </ClInclude>
     <ClInclude Include="..\msg\LoginMsg.h">
       <Filter>msg</Filter>
+    </ClInclude>
+    <ClInclude Include="UdpClient\UdpClient.h">
+      <Filter>UdpClient</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

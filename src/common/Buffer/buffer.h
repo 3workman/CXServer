@@ -28,7 +28,7 @@ namespace net
 		static const size_t kInitialSize = 1024;
 	public:
 		explicit Buffer(size_t initialSize = kInitialSize)
-			: _buffer(kCheapPrepend + initialSize)
+			: _buffer(kCheapPrepend + initialSize) // resize
 			, _rpos(kCheapPrepend)
 			, _wpos(kCheapPrepend)
 		{
