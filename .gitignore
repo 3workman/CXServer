@@ -33,3 +33,6 @@
 *.app
 *.log
 *.tlog
+*.user
+
+/ThirdParty/
