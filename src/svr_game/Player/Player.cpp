@@ -23,6 +23,20 @@ void Player::SendPack(const NetPack& pack)
 {
     _clientNetLink->SendMsg(pack.Buffer(), pack.Size());
 }
+void Player::CallRpc(uint16 opCode, const WriteRpcParam& func)
+{
+    static NetPack msg(0);
+    msg.ClearBody();
+    msg.SetOpCode(opCode);
+    func(msg);
+    SendPack(msg);
+}
+void Player::CallRpc(uint16 opCode, const WriteRpcParam& fun1, const ReadRpcBack& fun2)
+{
+    CallRpc(opCode, fun1);
+
+    sRpcQueue.RegistResponse(opCode, fun2);
+}
 //////////////////////////////////////////////////////////////////////////
 // msg 响应函数实现
 Msg_Realize(C2S_Login)
@@ -44,7 +58,12 @@ Msg_Realize(C2S_Echo)
 
 //////////////////////////////////////////////////////////////////////////
 // rpc
-Rpc_Realize(rpc_login) { printf("rpc_login\n"); }
+Rpc_Realize(rpc_login)
+{
+    printf("rpc_login\n");
+    NetPack& backBuffer = BackBuffer();
+    backBuffer << m_index;
+}
 Rpc_Realize(rpc_reconnect) { printf("rpc_reconnect\n"); }
 Rpc_Realize(rpc_echo)
 {

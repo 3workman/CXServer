@@ -8,6 +8,7 @@
     Rpc_Declare(rpc_reconnect, 1)       \
     Rpc_Declare(rpc_echo, 2)            \
 
+
 enum RpcEnum 
 {
     Rpc_Enum

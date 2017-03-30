@@ -55,10 +55,8 @@ public:
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
     }
-    void Clear() { 
-        m_buf.clear();
-        m_buf.resize(HEADER_SIZE);
-        SetPacketType(135); //udp临时标记
+    void ClearBody() {
+        m_buf.resize(HEADER_SIZE);//resize【如果比原容器更小，清除尾部多出的元素】
     }
 public:
     void SetOpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }

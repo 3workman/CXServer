@@ -2,6 +2,7 @@
 #include "tool\Mempool.h"
 #include "..\msg\MsgEnum.h"
 #include "..\rpc\RpcEnum.h"
+#include "..\rpc\RpcQueue.h"
 
 struct stMsg;
 #undef Msg_Declare
@@ -25,11 +26,14 @@ private:
 
 public:
     Player(ServLink* p);
-
     void SetServLink(ServLink* p);
     void SendMsg(const stMsg& msg, uint16 size);
     void SendPack(const NetPack& pack);
     NetPack& BackBuffer() { return _backBuffer; }
+
+    void CallRpc(uint16 opCode, const WriteRpcParam& func);
+    void CallRpc(uint16 opCode, const WriteRpcParam& fun1, const ReadRpcBack& fun2);
+
 public:
     Msg_Enum;
     Rpc_Enum;
