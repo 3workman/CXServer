@@ -33,6 +33,7 @@ struct TimerNode {
 
     TimerNode(const std::function<void()>& f, uint32 cd = 0, int total = 0)
         : interval(cd)
+        , timeDead(0)
         , loop(total)
         , func(f){};
     void _Callback();
@@ -55,27 +56,27 @@ struct stWheel {
             delete[]slots;
         }
     }
+    NodeLink* GetCurSlot() { return slots + slotIdx; }
 };
 class CTimerMgr {
     static uint32 WHEEL_SIZE[WHEEL_NUM];
     static uint32 WHEEL_CAP[WHEEL_NUM];
 
     stWheel* _wheels[WHEEL_NUM];
-    uint32 _checkTime;
     NodeLink _readyNode;
 
     CTimerMgr();
     ~CTimerMgr();
 public:
     static CTimerMgr& Instance(){ static CTimerMgr T; return T; }
-    void Refresh(const uint32 timenow);
+    void Refresh(uint32 time_elasped, uint32 timenow);
 
     TimerNode* AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec = 0, int totalSec = 0);
     void _AddTimerNode(uint32 milseconds, TimerNode* node);
 
     void RemoveTimer(TimerNode* node);
 private:
-    uint32 Cascade(uint32 wheelIdx, const uint32 timenow);
+    void Cascade(uint32 wheelIdx, const uint32 timenow);
     void AddToReadyNode(TimerNode* node);
     void DoTimeOutCallBack();
     void Printf();

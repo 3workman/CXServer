@@ -16,23 +16,24 @@
 class Player;
 class NetPack;
 
-typedef std::function<void(NetPack&)> WriteRpcParam;
-typedef std::function<void(NetPack&)> ReadRpcBack;
+typedef std::function<void(NetPack&)> SendRpcParam;
+typedef std::function<void(NetPack&)> RecvRpcParam;
 
 class RpcQueue {
     typedef void(Player::*RpcFunc)(NetPack&);
     typedef std::pair<Player*, NetPack*> RpcPair;
 
     std::map<int, RpcFunc>      _rpc;       //自己实现的rpc
-    std::map<int, ReadRpcBack>  _response;  //rpc远端的回复
+    std::map<int, RecvRpcParam>  _response;  //rpc远端的回复
     SafeQueue<RpcPair>          _queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
 public:
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
     RpcQueue();
 
-    void Insert(Player* player, void* pData, DWORD size); //Notice：须考虑线程安全
-    void Handle(); //主循环，每帧调一次
-    void RegistResponse(int opCode, const ReadRpcBack& func);
-
+    void Insert(Player* player, const void* pData, DWORD size); //Notice：须考虑线程安全
+    void Update(); //主循环，每帧调一次
+    void _Handle(Player* player, NetPack& buf);
+    void RegistResponse(int opCode, const RecvRpcParam& func);
+    static int RpcNameToId(const char* name);
 };
 #define sRpcQueue RpcQueue::Instance()

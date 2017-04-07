@@ -219,7 +219,8 @@ public:
 		if (m_queue.empty() && !Double()) return NULL;
         uint id = m_queue.front();
 		m_queue.pop();
-		m_arrPtr[id]->m_index = id; // 分配时设置内存id
+        T::_StaticIndex() = id; // 分配时设置内存id
+        //m_arrPtr[id]->m_index = id; //编译器可能operator new后autoclassinit2，置0数据
 		return m_arrPtr[id];
 	}
 	void Dealloc(T* p){
@@ -234,13 +235,46 @@ public:
 #define Pool_Index_Define(T, size) \
         static CPoolIndex<T>& _Pool(){ static CPoolIndex<T> pool(size); return pool; } \
         public: \
-	    int m_index; \
-	    void* operator new(size_t /*size*/){ return _Pool().Alloc(); }\
-	    void* operator new(size_t /*size*/, const char* file, int line){ return _Pool().Alloc(); }\
-	    void operator delete(void* p, const char* file, int line){ return _Pool().Dealloc((T*)p); }\
-	    void operator delete(void* p, size_t) { return _Pool().Dealloc((T*)p); }\
+        static uint& _StaticIndex(){ static uint idx; return idx; } \
+        uint m_index = _StaticIndex(); \
+        void* operator new(size_t /*size*/){ return _Pool().Alloc(); }\
+        void* operator new(size_t /*size*/, const char* file, int line){ return _Pool().Alloc(); }\
+        void operator delete(void* p, const char* file, int line){ return _Pool().Dealloc((T*)p); }\
+        void operator delete(void* p, size_t) { return _Pool().Dealloc((T*)p); }\
         static T* FindByIdx(uint idx){ return _Pool().GetByIdx(idx); }
 
+// 防止索引内存池，定位错乱：如外界持有Npc索引，但该npc已被回收，再定位到的可能是新npc了
+#define Pool_Index_UniqueID32(T) \
+        private: \
+        uint32 m_unique_id; \
+        void _CreateUniqueId() { \
+            assert(m_index <= 0xFFFF); \
+            static uint16 s_auto_id = 0; \
+            m_unique_id = ((++s_auto_id) << 16) | m_index; \
+        } \
+        public: \
+        uint32 GetUniqueId(){ return m_unique_id; } \
+        static T* FindByUniqueId(uint32 uniqueId) { \
+            if (T* ret = T::FindByIdx(uniqueId & 0xFFFF)) \
+                if (ret->m_unique_id == uniqueId) \
+                    return ret; \
+            return NULL; \
+        }
+#define Pool_Index_UniqueID64(T) \
+        private: \
+        uint64 m_unique_id; \
+        void _CreateUniqueId() { \
+            static uint32 s_auto_id = 0; \
+            m_unique_id = ((uint64)(++s_auto_id) << 32) | m_index; \
+        } \
+        public: \
+        uint64 GetUniqueId(){ return m_unique_id; } \
+        static T* FindByUniqueId(uint64 uniqueId) { \
+            if (T* ret = T::FindByIdx(uniqueId & 0xFFFFFFFF)) \
+                if (ret->m_unique_id == uniqueId) \
+                    return ret; \
+            return NULL; \
+        }
 
 template <class T>
 class CPoolObj{

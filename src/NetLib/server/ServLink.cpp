@@ -4,7 +4,7 @@
 
 #pragma comment(lib,"Mswsock.lib")
 
-#define MAX_Connect_Seconds	5  // 几秒连接不上，踢掉
+#define MAX_Connect_Seconds	60 // 几秒连接不上，踢掉
 #define MAX_Silent_Seconds	5  // 几秒没收到数据，检查是否发生socket close
 #define MAX_Invalid_Seconds 5  // 链接无效持续几秒，closesocket【本程序中需断开链接时，先shutdown成无效链接，再才真正回收socket】
 
@@ -76,7 +76,7 @@ void ServLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 		WSANETWORKEVENTS events;
 		if (WSAEnumNetworkEvents(_sClient, _hEventClose, &events) == 0) {
 			if (events.lNetworkEvents & FD_CLOSE) {
-				printf("Maintenance FD_CLOSE shutdown socket ID:%d \n", _nLinkID);
+				printf("FD_CLOSE shutdown socket ID:%d \n", _nLinkID);
 				OnInvalidMessage(Net_Dead, 0, false);
 			}
 		} else {
@@ -415,7 +415,7 @@ bool ServLink::PostSend(char* buffer, DWORD nLen)
 		int nLastError = WSAGetLastError();
 		if (nLastError != ERROR_IO_PENDING)
 		{
-			Err("WSASendError", nLastError);
+			Err("WSASend Err", nLastError);
 			OnInvalidMessage(Message_Write, nLastError, false);
 			return false;
 		}
@@ -441,7 +441,7 @@ bool ServLink::PostRecv()
 			int nLastError = WSAGetLastError();
 			if (nLastError != ERROR_IO_PENDING)
 			{
-				Err("WSARecv", nLastError);
+				Err("WSARecv Err", nLastError);
 				OnInvalidMessage(Message_Read, nLastError, false);
 			}
 		}
@@ -507,7 +507,7 @@ int ServLink::RecvMsg(char* pMsg, DWORD size)
 			_recvPacketTime = _pMgr->_timeNow;
 			_recvPacket = 0;
 		}else{
-			printf("Recieve %d Packet in Time %d", _recvPacket, _pMgr->_timeNow - _recvPacketTime);
+			printf("Recieve %d Packet in Time %d \n", _recvPacket, _pMgr->_timeNow - _recvPacketTime);
 			OnInvalidMessage(Message_TooMuchPacket, 0, true);
 			_recvPacketTime = _pMgr->_timeNow;
 			_recvPacket = 0;
@@ -536,9 +536,10 @@ void ServLink::OnInvalidMessage(InvalidMessageEnum e, int nErrorCode, bool bToCl
 		//stMsg msg;
 		//msg.eReason = e;
         _pMgr->_ReportErrorMsg(_player, e, nErrorCode, nParam);
+        _player = NULL;
 	}
 }
-void ServLink::HandleClientMessage(void* pMsg, DWORD size)
+void ServLink::HandleClientMessage(void* pMsg, int size)
 {
     //Notice：这里的stMsg*还是网络buffer里的，得拷贝一份到主循环的消息内存池中，在那边才真正HandleMsg，ServLink只负责收网络包，转给业务层
 
@@ -549,7 +550,10 @@ void ServLink::HandleClientMessage(void* pMsg, DWORD size)
     */
     if (_player == NULL)
     {
-        _pMgr->_BindLinkAndPlayer(_player, this, pMsg, size);
+        if (!_pMgr->_BindLinkAndPlayer(_player, this, pMsg, size))
+        {
+            OnInvalidMessage(BindLinkAndPlayer_Err, 0, true);
+        }
     }
     _pMgr->_HandleClientMsg(_player, pMsg, size);
 }

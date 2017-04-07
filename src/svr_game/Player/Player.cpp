@@ -1,70 +1,65 @@
 #include "stdafx.h"
 #include "..\NetLib\server\ServLink.h"
+#include "..\NetLib\UdpServer\UdpClientAgent.h"
 #include "Player.h"
-#include "..\msg\TestMsg.h"
 #include "Buffer\NetPack.h"
+#include "..\Room\PlayerRoomData.h"
 
 NetPack& Player::_backBuffer = NetPack(0);
 
-Player::Player(ServLink* p)
-    : _clientNetLink(p)
+Player::Player()
 {
-
+    m_RoomData = new PlayerRoomData();
 }
-void Player::SetServLink(ServLink* p)
+void Player::SetNetLink(_NET_LINK_CLASS* p)
 {
     _clientNetLink = p;
 }
-void Player::SendMsg(const stMsg& msg, uint16 size)
+void Player::SendMsg(const NetPack& pack)
 {
-    _clientNetLink->SendMsg(&msg, size);
+    if (_clientNetLink) {
+        _clientNetLink->SendMsg(pack.Buffer(), pack.Size());
+    }
 }
-void Player::SendPack(const NetPack& pack)
+int Player::CallRpc(const char* name, const SendRpcParam& func)
 {
-    _clientNetLink->SendMsg(pack.Buffer(), pack.Size());
-}
-void Player::CallRpc(uint16 opCode, const WriteRpcParam& func)
-{
+    int opCodeId = RpcQueue::RpcNameToId(name);
+    assert(opCodeId > 0);
     static NetPack msg(0);
     msg.ClearBody();
-    msg.SetOpCode(opCode);
+    msg.SetOpCode(opCodeId);
     func(msg);
-    SendPack(msg);
+    SendMsg(msg);
+    return opCodeId;
 }
-void Player::CallRpc(uint16 opCode, const WriteRpcParam& fun1, const ReadRpcBack& fun2)
+void Player::CallRpc(const char* name, const SendRpcParam& func, const RecvRpcParam& callback)
 {
-    CallRpc(opCode, fun1);
+    int opCodeId = CallRpc(name, func);
 
-    sRpcQueue.RegistResponse(opCode, fun2);
+    sRpcQueue.RegistResponse(opCodeId, callback);
 }
-//////////////////////////////////////////////////////////////////////////
-// msg 响应函数实现
-Msg_Realize(C2S_Login)
-{
-    printf("C2S_Login\n");
-}
-Msg_Realize(C2S_ReConnect)
-{
-    printf("C2S_ReConnect\n");
-}
-Msg_Realize(C2S_Echo)
-{
-    TestMsg& msg = (TestMsg&)req;
-    char* str = msg.data;
-    SendMsg(msg, msg.size());
-    printf("Echo: %s\n", str);
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 // rpc
 Rpc_Realize(rpc_login)
 {
     printf("rpc_login\n");
+    recvBuf >> m_RoomData->m_netId;
+
     NetPack& backBuffer = BackBuffer();
     backBuffer << m_index;
 }
-Rpc_Realize(rpc_reconnect) { printf("rpc_reconnect\n"); }
+Rpc_Realize(rpc_logout)
+{
+    printf("rpc_logout\n");
+    m_isLogin = false;
+}
+Rpc_Realize(rpc_reconnect)
+{
+    printf("rpc_reconnect\n");
+
+    //TODO:到这里已经重连成功了，通知client
+}
 Rpc_Realize(rpc_echo)
 {
     string str = recvBuf.ReadString();

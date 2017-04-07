@@ -14,22 +14,22 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\msg\MsgPool.cpp" />
     <ClCompile Include="..\rpc\RpcQueue.cpp" />
+    <ClCompile Include="Room\PlayerRoomData.cpp" />
+    <ClCompile Include="Room\PlayerRoomRpc.cpp" />
+    <ClCompile Include="Room\Room.cpp" />
     <ClCompile Include="svr_game.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Reward\reward.cpp" />
     <ClCompile Include="Trigger\trigger.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\msg\LoginMsg.h" />
-    <ClInclude Include="..\msg\MsgEnum.h" />
-    <ClInclude Include="..\msg\MsgPool.h" />
-    <ClInclude Include="..\msg\TestMsg.h" />
     <ClInclude Include="..\rpc\RpcEnum.h" />
     <ClInclude Include="..\rpc\RpcQueue.h" />
     <ClInclude Include="Player\Player.h" />
     <ClInclude Include="Reward\reward.h" />
+    <ClInclude Include="Room\PlayerRoomData.h" />
+    <ClInclude Include="Room\Room.h" />
     <ClInclude Include="Trigger\trigger.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -76,7 +76,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\src\common;$(SolutionDir)\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\src\common;$(SolutionDir)\src\include;$(SolutionDir)\ThirdParty\raknet\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

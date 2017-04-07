@@ -4,7 +4,9 @@
 #include "..\svr_game\Player\Player.h"
 #include "MsgEnum.h"
 
-MsgPool::MsgPool() : _pool(512, 4096)
+static const int kMaxMsgSize = 512;
+
+MsgPool::MsgPool() : _pool(kMaxMsgSize, 4096)
 {
 #undef Msg_Declare
 #define Msg_Declare(typ, n) _func[typ] = &Player::HandleMsg_##typ;
@@ -12,6 +14,7 @@ MsgPool::MsgPool() : _pool(512, 4096)
 }
 void MsgPool::Insert(Player* player, void* pData, DWORD size)
 {
+    assert(size <= kMaxMsgSize);
     stMsg* pMsg = (stMsg*)_pool.Alloc();
     memcpy(pMsg, pData, size);
     _queue.push(std::make_pair(player, pMsg));

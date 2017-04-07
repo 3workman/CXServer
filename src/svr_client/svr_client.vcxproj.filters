@@ -4,12 +4,6 @@
     <Filter Include="UserConfig">
       <UniqueIdentifier>{5aefc082-9d32-4c23-89af-61069978fe9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="msg">
-      <UniqueIdentifier>{d8c35747-e7cd-4df5-b7cb-bd2aed5a249c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UdpClient">
-      <UniqueIdentifier>{0520d151-d01c-4b6b-9889-8d7a6ea56d24}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UserConfig\UserConfig.cpp">
@@ -17,25 +11,10 @@
     </ClCompile>
     <ClCompile Include="..\include\stdafx.cpp" />
     <ClCompile Include="svr_client.cpp" />
-    <ClCompile Include="UdpClient\UdpClient.cpp">
-      <Filter>UdpClient</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UserConfig\UserConfig.h">
       <Filter>UserConfig</Filter>
-    </ClInclude>
-    <ClInclude Include="..\msg\MsgEnum.h">
-      <Filter>msg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\msg\TestMsg.h">
-      <Filter>msg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\msg\LoginMsg.h">
-      <Filter>msg</Filter>
-    </ClInclude>
-    <ClInclude Include="UdpClient\UdpClient.h">
-      <Filter>UdpClient</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

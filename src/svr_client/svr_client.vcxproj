@@ -15,14 +15,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="svr_client.cpp" />
-    <ClCompile Include="UdpClient\UdpClient.cpp" />
     <ClCompile Include="UserConfig\UserConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\msg\LoginMsg.h" />
-    <ClInclude Include="..\msg\MsgEnum.h" />
-    <ClInclude Include="..\msg\TestMsg.h" />
-    <ClInclude Include="UdpClient\UdpClient.h" />
     <ClInclude Include="UserConfig\UserConfig.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -76,8 +71,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)build</AdditionalLibraryDirectories>
-      <AdditionalDependencies>common.lib;NetLib.lib;RakNet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>LIBCD.lib LIBCMTD.lib MSVCRT.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>common.lib;NetLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

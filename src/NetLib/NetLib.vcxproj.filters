@@ -7,6 +7,12 @@
     <Filter Include="client">
       <UniqueIdentifier>{17d9d422-ceda-4ea0-8611-674b620412d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UdpServer">
+      <UniqueIdentifier>{a6b4c143-1863-4094-9553-f5b01bfafe98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UdpClient">
+      <UniqueIdentifier>{68ff6144-86b6-4acf-9f94-f6c212415555}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="client\ClientLink.cpp">
@@ -19,6 +25,15 @@
       <Filter>server</Filter>
     </ClCompile>
     <ClCompile Include="..\include\stdafx.cpp" />
+    <ClCompile Include="UdpClient\UdpClient.cpp">
+      <Filter>UdpClient</Filter>
+    </ClCompile>
+    <ClCompile Include="UdpServer\UdpClientAgent.cpp">
+      <Filter>UdpServer</Filter>
+    </ClCompile>
+    <ClCompile Include="UdpServer\UdpServer.cpp">
+      <Filter>UdpServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client\ClientLink.h">
@@ -35,6 +50,15 @@
     </ClInclude>
     <ClInclude Include="server\ServLinkMgr.h">
       <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="UdpClient\UdpClient.h">
+      <Filter>UdpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="UdpServer\UdpClientAgent.h">
+      <Filter>UdpServer</Filter>
+    </ClInclude>
+    <ClInclude Include="UdpServer\UdpServer.h">
+      <Filter>UdpServer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

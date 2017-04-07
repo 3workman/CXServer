@@ -3,24 +3,48 @@
   <ItemGroup>
     <ClCompile Include="svr_battle.cpp" />
     <ClCompile Include="..\include\stdafx.cpp" />
-    <ClCompile Include="UdpServer\UdpClientAgent.cpp">
-      <Filter>UdpServer</Filter>
+    <ClCompile Include="..\svr_game\Player\Player.cpp">
+      <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="UdpServer\UdpServer.cpp">
-      <Filter>UdpServer</Filter>
+    <ClCompile Include="..\svr_game\Room\PlayerRoomData.cpp">
+      <Filter>Room</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svr_game\Room\PlayerRoomRpc.cpp">
+      <Filter>Room</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svr_game\Room\Room.cpp">
+      <Filter>Room</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rpc\RpcQueue.cpp">
+      <Filter>rpc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="UdpServer">
-      <UniqueIdentifier>{e57de665-e33b-4244-be5a-2af4fbde6469}</UniqueIdentifier>
+    <Filter Include="Player">
+      <UniqueIdentifier>{4350e408-6e9b-4b30-bc3b-50264b9d6197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Room">
+      <UniqueIdentifier>{83525305-241c-4964-bd8c-eb303c9c5eb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc">
+      <UniqueIdentifier>{69751443-a86a-44ed-b7fe-8a3a44558111}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UdpServer\UdpClientAgent.h">
-      <Filter>UdpServer</Filter>
+    <ClInclude Include="..\svr_game\Player\Player.h">
+      <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="UdpServer\UdpServer.h">
-      <Filter>UdpServer</Filter>
+    <ClInclude Include="..\svr_game\Room\PlayerRoomData.h">
+      <Filter>Room</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svr_game\Room\Room.h">
+      <Filter>Room</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\RpcEnum.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\RpcQueue.h">
+      <Filter>rpc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

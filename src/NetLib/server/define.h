@@ -9,7 +9,7 @@ struct ServerConfig
 	std::string strIP = "127.0.0.1";
 	WORD  wPort = 4567;
 	DWORD nRecvPacketCheckTime = 10;
-	DWORD nRecvPacketLimit = 20;
+	DWORD nRecvPacketLimit = 1200;
 	DWORD dwAssistLoopMs = 20;
 	DWORD nMaxPackage = 1024;
 	int   nDeadTime = 300;      //多少秒没收到client消息，断开
@@ -17,7 +17,7 @@ struct ServerConfig
 	DWORD nInBuffer = 2048;
 	DWORD nPackSize = 512;
 	DWORD DecodeWaitTime = 1000;	//connect完成到decode的最大时间(超过这个时间还没有decode 则会踢掉)  ms级
-	DWORD dwMaxLink = 1/*20000*/;
+	DWORD dwMaxLink = 10/*20000*/;
 	int   nPreLink = 1;			//预先创建的Link
 	int	  nPreAccept = 1;		//预先投递的AcceptEx
 };
@@ -42,6 +42,7 @@ enum InvalidMessageEnum{
 	DoneIO_Error			= 17,
 	Message_TooMuchPacket   = 18,
 	Setsockopt_Error		= 19,
+    BindLinkAndPlayer_Err   = 20,
 
-	MessagInvalide_Num
+	_InvalidMsg_Num
 };

@@ -1,71 +1,59 @@
 #include "stdafx.h"
 #include "..\NetLib\server\ServLinkMgr.h"
 #include "..\NetLib\server\define.h"
-#include "..\msg\MsgPool.h"
 #include "..\rpc\RpcQueue.h"
 #include "Player\Player.h"
 #include "Service\ServiceMgr.h"
 #include "Timer\TimerWheel.h"
 #include "tool\GameApi.h"
-#include "..\msg\LoginMsg.h"
 #include "Buffer\NetPack.h"
+#include "Log\LogFile.h"
 
-std::map<int, Player*> g_playerLst;
-void BroadCast(NetPack& msg, Player* except = NULL)
-{
-    for (auto& it : g_playerLst)
-    {
-        if (it.second != except)
-        {
-            it.second->SendPack(msg);
-        }
-    }
-}
-
-void BindPlayerLink(void*& refPlayer, ServLink* p, void* pMsg, DWORD size)
+bool BindPlayerLink(void*& refPlayer, ServLink* p, const void* pMsg, int size)
 {
     NetPack msg(pMsg, size);
-    switch (msg.GetOpcode()){
-    case C2S_Login: {
-        Player* ptr = new Player(p);
-        refPlayer = ptr;
-        {
-            // 广播，有人加入游戏
-            NetPack msgSend(1);
-            msgSend.WriteInt32(ptr->m_index);
-            BroadCast(msgSend);
-
-            // 通知新人，既有玩家位置信息
-            NetPack msgSend2(1);
-            msgSend2.WriteUInt8(g_playerLst.size());
-            for (auto& it : g_playerLst)
-            {
-                msgSend2 << it.second->m_positionX << it.second->m_positionY;
+    switch (msg.GetOpcode()) {
+    case 1: {
+        //TODO:登录，可先查询<account, player>，可省略读数据库
+        Player* player = new Player();
+        player->SetNetLink(p);
+        player->m_isLogin = true;
+        refPlayer = player;
+    } return true;
+    case 2: {
+        uint idx; uint64 pid; //重连，client发来已有的“内存索引、pid”
+        msg >> idx >> pid;
+        if (Player* player = Player::FindByIdx(idx)) {
+            if (player->m_pid == pid) {
+                player->SetNetLink(p);
+                player->m_isLogin = true;
+                refPlayer = player;
             }
-            ptr->SendPack(msgSend2);
         }
-        g_playerLst[ptr->m_index] = ptr;
-    } break;
-    case C2S_ReConnect: {
-        uint playerIdx = msg.ReadInt32();
-        if (Player* player = Player::FindByIdx(playerIdx)) {
-            player->SetServLink(p);
-            refPlayer = player;
-            g_playerLst[player->m_index] = player;
-        }
-    } break;
-    default: assert(0); break;
+    } return true;
+    default: assert(0); return false;
     }
 }
-void HandleClientMsg(void* player, void* pMsg, DWORD size)
+void HandleClientMsg(void* player, const void* pMsg, int size)
 {
-    //sMsgPool.Insert((Player*)player, pMsg, size);
-    sRpcQueue.Insert((Player*)player, pMsg, size);
+#ifdef _DEBUG
+    NetPack msg(pMsg, size);
+    printf("Recv Msg ID(%d) \n", msg.GetOpcode());
+#endif
+    sRpcQueue.Insert((Player*)player, pMsg, size); 
 }
-void ReportErrorMsg(void* player, int InvalidEnum, int nErrorCode, int nParam)
+void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
 {
-    if (player)
+    if (Player* player = (Player*)pUser)
     {
+        player->SetNetLink(NULL);
+
+        //TODO:这里可以根据错误类型区分处理，比如：改包的直接踢掉
+        if (player->m_isLogin) {
+            player->m_isLogin = false;
+            sTimerMgr.AddTimer([=]{ if (!player->m_isLogin) delete player; }, 30); //期间允许断线重连
+        } else
+            delete player;
     }
 }
 void RunServerIOCP(ServLinkMgr& mgr)
@@ -76,6 +64,9 @@ void RunServerIOCP(ServLinkMgr& mgr)
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
+    LogFile log("log\\game", LogFile::ALL, true);
+    _LOG_MAIN_(log);
+
     ServerConfig config;
     ServLinkMgr mgr(config);
     RunServerIOCP(mgr);
@@ -86,20 +77,13 @@ int _tmain(int argc, _TCHAR* argv[])
         timeNow = GetTickCount();
 
         ServiceMgr::RunAllService(timeNow - timeOld, timeNow);
-        sTimerMgr.Refresh(timeNow);
+        sTimerMgr.Refresh(timeNow - timeOld, timeNow);
         GameApi::RefreshTimeNow();
 
         //sMsgPool.Handle();
-        sRpcQueue.Handle();
+        sRpcQueue.Update();
 
-        NetPack msg(101);
-        for (auto& it : g_playerLst) {
-            msg.ClearBody();
-            msg << it.second->m_positionX << it.second->m_positionY;
-            BroadCast(msg, it.second);
-        }
-
-        Sleep(34);
+        Sleep(33);
     }
 
 	system("pause");

@@ -1,9 +1,8 @@
 #pragma once
 #include "RakNetTypes.h"
 
-typedef void(*HandleMsgFunc)(void* pMsg, DWORD size);
+typedef void(*HandleMsgFunc)(void* pMsg, int size);
 
-class NetPack;
 class UdpClient {
     enum EStatus { State_Close, State_Connecting, State_Connected };
 private:
@@ -13,11 +12,12 @@ private:
     RakNet::SystemAddress       m_serverAddr;
 
 public:
-    static UdpClient& Instance(){ static UdpClient T; return T; }
     bool Start(HandleMsgFunc func);
     void Stop();
     void Update();
-    bool SendMsg(const NetPack& msg);
+    void CloseLink();
+    bool SendMsg(const void* pMsg, int size);
+
     bool IsConnect(){ return m_eState == State_Connected; }
     bool IsClose(){ return m_eState == State_Close; }
 
@@ -25,4 +25,3 @@ public:
 private:
     void _HandlePacket(RakNet::Packet* packet);
 };
-#define sUdpClient UdpClient::Instance()

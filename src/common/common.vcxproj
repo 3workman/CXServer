@@ -17,6 +17,7 @@
     <ClInclude Include="Buffer\bytebuffer.h" />
     <ClInclude Include="Buffer\DataSend.h" />
     <ClInclude Include="Buffer\NetPack.h" />
+    <ClInclude Include="def\ConstDef.h" />
     <ClInclude Include="Log\AsyncLog.h" />
     <ClInclude Include="Log\LogFile.h" />
     <ClInclude Include="Rand\rand.h" />

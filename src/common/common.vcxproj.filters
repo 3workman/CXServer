@@ -25,6 +25,9 @@
     <Filter Include="Buffer">
       <UniqueIdentifier>{8c68f065-a506-4b7d-b000-a37422bddc25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="def">
+      <UniqueIdentifier>{513edd0d-90de-42d7-a555-819373544b60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tool\cLock.h">
@@ -110,6 +113,9 @@
     </ClInclude>
     <ClInclude Include="Buffer\DataSend.h">
       <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="def\ConstDef.h">
+      <Filter>def</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

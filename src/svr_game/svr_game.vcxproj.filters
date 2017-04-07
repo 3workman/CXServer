@@ -10,11 +10,14 @@
     <Filter Include="Trigger">
       <UniqueIdentifier>{0119609b-f740-4e7d-825d-552c12a24afe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="msg">
-      <UniqueIdentifier>{283c6b73-606a-48d0-a55d-ac52100744f1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="rpc">
       <UniqueIdentifier>{8850c8ca-fcd3-45c7-a5b6-f7474bc893de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Room">
+      <UniqueIdentifier>{0a16545e-992b-459c-801d-53bcce12933e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Room\Table">
+      <UniqueIdentifier>{5d2e0ed6-39c2-4f88-91bd-c0873af688df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,14 +30,20 @@
     <ClCompile Include="Reward\reward.cpp">
       <Filter>Reward</Filter>
     </ClCompile>
-    <ClCompile Include="..\msg\MsgPool.cpp">
-      <Filter>msg</Filter>
-    </ClCompile>
     <ClCompile Include="..\rpc\RpcQueue.cpp">
       <Filter>rpc</Filter>
     </ClCompile>
     <ClCompile Include="..\include\stdafx.cpp" />
     <ClCompile Include="svr_game.cpp" />
+    <ClCompile Include="Room\Room.cpp">
+      <Filter>Room</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\PlayerRoomRpc.cpp">
+      <Filter>Room</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\PlayerRoomData.cpp">
+      <Filter>Room</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player\Player.h">
@@ -46,23 +55,17 @@
     <ClInclude Include="Reward\reward.h">
       <Filter>Reward</Filter>
     </ClInclude>
-    <ClInclude Include="..\msg\MsgEnum.h">
-      <Filter>msg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\msg\TestMsg.h">
-      <Filter>msg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\msg\LoginMsg.h">
-      <Filter>msg</Filter>
-    </ClInclude>
     <ClInclude Include="..\rpc\RpcEnum.h">
       <Filter>rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\rpc\RpcQueue.h">
       <Filter>rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\msg\MsgPool.h">
-      <Filter>msg</Filter>
+    <ClInclude Include="Room\Room.h">
+      <Filter>Room</Filter>
+    </ClInclude>
+    <ClInclude Include="Room\PlayerRoomData.h">
+      <Filter>Room</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

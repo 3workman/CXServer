@@ -22,7 +22,7 @@
 
 class ClientLink;
 
-typedef void(*HandleMsgFunc)(void* pMsg, DWORD size);
+typedef void(*HandleMsgFunc)(void* pMsg, int size);
 
 enum EnumIO{ IO_Write, IO_Read };
 

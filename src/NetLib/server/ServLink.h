@@ -120,7 +120,7 @@ public:
 
 	InvalidMessageEnum _eLastError = Message_NoError;
 	void OnInvalidMessage(InvalidMessageEnum e, int nErrorCode, bool bToClient, int nParam = 0);
-    void HandleClientMessage(void* pMsg, DWORD size);
+    void HandleClientMessage(void* pMsg, int size);
 
 	void Err(LPCSTR sz){
 		printf("%s:%d - ID:%d\n", sz, WSAGetLastError(), _nLinkID);

@@ -3,13 +3,16 @@
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "UdpClientAgent.h"
-#include "Buffer\NetPack.h"
 
-bool UdpServer::Start() {
-    char* password = "fuck";
+bool UdpServer::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg) {
+    _BindLinkAndPlayer = bindPlayer;
+    _HandleClientMsg = handleClientMsg;
+    _ReportErrorMsg = reportErrorMsg;
+
+    char* password = "ChillyRoom";
     int passwordLength = strlen(password);
     unsigned short port = 8989;
-    unsigned short maxClients = 10;
+    unsigned short maxClients = 3;
 
     m_rakPeer = RakNet::RakPeerInterface::GetInstance();
     m_rakPeer->SetTimeoutTime(10000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
@@ -50,10 +53,8 @@ UdpClientAgent* UdpServer::FindClientAgent(const RakNet::RakNetGUID& guid) {
     return nullptr;
 }
 UdpClientAgent* UdpServer::AddClientAgent(const RakNet::RakNetGUID& guid) {
-    UdpClientAgent* clientAgent = new UdpClientAgent;
-    if (clientAgent) {
-        m_clientList.insert(std::make_pair(guid, clientAgent));
-    }
+    UdpClientAgent* clientAgent = new UdpClientAgent(this);
+    m_clientList[guid] = clientAgent;
     return clientAgent;
 }
 void UdpServer::RemoveClientAgent(const RakNet::RakNetGUID& guid) {
@@ -63,17 +64,22 @@ void UdpServer::RemoveClientAgent(const RakNet::RakNetGUID& guid) {
         delete clientAgent;
     }
 }
-void UdpServer::CloseLink(const RakNet::RakNetGUID& guid)
+void UdpServer::CloseLink(const RakNet::SystemAddress& addr)
 {
-    m_rakPeer->CloseConnection(guid, true);
+    m_rakPeer->CloseConnection(addr, true);
 }
 void UdpServer::OnLinkClosed(const RakNet::RakNetGUID& guid)
 {
-    RemoveClientAgent(guid);
+    if (UdpClientAgent* clientAgent = FindClientAgent(guid)) {
+        _ReportErrorMsg(clientAgent->m_player, 0, 0, 0);
+        clientAgent->m_player = NULL;
+        m_clientList.erase(guid);
+        delete clientAgent;
+    }
 }
-bool UdpServer::SendMsg(const RakNet::SystemAddress& clientAddr, const NetPack& msg) 
+bool UdpServer::SendMsg(const RakNet::SystemAddress& clientAddr, const void* pMsg, int size)
 {
-    return m_rakPeer->Send((const char*)msg.Buffer(), msg.Size(), LOW_PRIORITY, RELIABLE_ORDERED, 0, clientAddr, false) > 0;
+    return m_rakPeer->Send((const char*)pMsg, size, LOW_PRIORITY, RELIABLE_ORDERED, 0, clientAddr, false) > 0;
 }
 void UdpServer::Update() {
     for (RakNet::Packet* packet = m_rakPeer->Receive(); packet; m_rakPeer->DeallocatePacket(packet), packet = m_rakPeer->Receive()) {
@@ -86,12 +92,9 @@ void UdpServer::_HandlePacket(RakNet::Packet* packet) {
     case ID_NEW_INCOMING_CONNECTION: {
         // 新连接建立
         RakNet::RakNetGUID guid = packet->guid;
-        UdpClientAgent* clientAgent = FindClientAgent(guid);
-        if (clientAgent == nullptr) {
-            if (clientAgent = AddClientAgent(guid)) {
-                clientAgent->m_guid = guid;
-                clientAgent->m_addr = packet->systemAddress;
-            }
+        if (UdpClientAgent* clientAgent = AddClientAgent(guid)) {
+            clientAgent->m_guid = guid;
+            clientAgent->m_addr = packet->systemAddress;
         }
         printf("New Client Connnect(%d) ...\n", m_clientList.size());
     } break;
@@ -107,18 +110,13 @@ void UdpServer::_HandlePacket(RakNet::Packet* packet) {
     } break;
     default: {
         if (raknetMsgId > ID_USER_PACKET_ENUM) {
-            RakNet::RakNetGUID guid = packet->guid;
-            printf("guid %s\n", guid.ToString());
-
-            if (UdpClientAgent* clientAgent = FindClientAgent(guid)) {
-                NetPack* ptr = new NetPack(packet->data, packet->length);
-                clientAgent->HandlePacket(*ptr);
-                delete ptr;
-            }
+            if (UdpClientAgent* clientAgent = FindClientAgent(packet->guid))
+                clientAgent->RecvMsg(packet->data, packet->length);
             else
                 printf("No such client agnet \n");
+        } else {
+            printf("...RaknetMsgId(%d)\n", raknetMsgId);
         }
-        printf("...RaknetMsgId(%d)\n", raknetMsgId);
     } break;
     }
 }

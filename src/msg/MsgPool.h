@@ -30,3 +30,22 @@ public:
     void Handle(); //主循环，每帧调一次
 };
 #define sMsgPool MsgPool::Instance()
+
+
+/*
+// Player.h
+struct stMsg;
+#undef Msg_Declare
+#undef Msg_Realize
+#define Msg_Declare(typ, n) void HandleMsg_##typ(stMsg&);
+#define Msg_Realize(typ) void Player::HandleMsg_##typ(stMsg& req)
+
+//.cpp
+Msg_Realize(C2S_Echo)
+{
+    TestMsg& msg = (TestMsg&)req;
+    char* str = msg.data;
+    SendMsg(msg, msg.size());
+    printf("Echo: %s\n", str);
+}
+*/

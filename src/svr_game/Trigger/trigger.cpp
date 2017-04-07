@@ -25,7 +25,7 @@ bool Trigger::Check(Player* player, const int triggerId)
 }
 bool Trigger::Check(Player* player, const std::vector<int>& triggerIds)
 {
-    for (auto it : triggerIds)
+    for (auto& it : triggerIds)
     {
         if (!Check(player, it)) return false;
     }

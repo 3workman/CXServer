@@ -52,7 +52,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_USE_UDP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\src\common;$(SolutionDir)\src\include;$(SolutionDir)\ThirdParty\raknet\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -60,7 +60,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)build</AdditionalLibraryDirectories>
-      <AdditionalDependencies>common.lib;RakNet.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>common.lib;NetLib.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
@@ -86,13 +86,19 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\rpc\RpcQueue.cpp" />
+    <ClCompile Include="..\svr_game\Player\Player.cpp" />
+    <ClCompile Include="..\svr_game\Room\PlayerRoomData.cpp" />
+    <ClCompile Include="..\svr_game\Room\PlayerRoomRpc.cpp" />
+    <ClCompile Include="..\svr_game\Room\Room.cpp" />
     <ClCompile Include="svr_battle.cpp" />
-    <ClCompile Include="UdpServer\UdpClientAgent.cpp" />
-    <ClCompile Include="UdpServer\UdpServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UdpServer\UdpClientAgent.h" />
-    <ClInclude Include="UdpServer\UdpServer.h" />
+    <ClInclude Include="..\rpc\RpcEnum.h" />
+    <ClInclude Include="..\rpc\RpcQueue.h" />
+    <ClInclude Include="..\svr_game\Player\Player.h" />
+    <ClInclude Include="..\svr_game\Room\PlayerRoomData.h" />
+    <ClInclude Include="..\svr_game\Room\Room.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
