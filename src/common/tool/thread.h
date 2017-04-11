@@ -1,47 +1,82 @@
 #pragma once
 #include <thread>
-#include <synchapi.h>
+#include <condition_variable>
 
-class Thread{
+using namespace std;
+
+class Thread {
+    std::thread*        _thread;
+    cMutex              _mutex;
+    condition_variable  _cond;
 public:
-	Thread(){
-		_bEnd = false; 
-		_hKillEvent = NULL;
-	}
-    ~Thread(){
-        EndThread();
-    };
+    Thread() { _thread = NULL; }
+    ~Thread(){ EndThread(); }
 
 	typedef void(*Callback)(LPVOID);
 	bool RunThread(Callback func, LPVOID lParam = NULL)
 	{
-		_bEnd = false;
-
-		if (_hKillEvent) return false;
-
-		_hKillEvent = CreateEvent(NULL, 0, 0, 0);
 		_thread = new std::thread(func, lParam);
 		_thread->detach();
 		return true;
 	}
 	void EndThread()
 	{
-		_bEnd = true;
-
-		SetEvent(_hKillEvent);
-
+        _cond.notify_one();
 		delete _thread;
-
-		CloseHandle(_hKillEvent);
 		_thread = NULL;
-		_hKillEvent = NULL;
 	}
-	uint WaitKillEvent(uint dwMilliseconds = 0)
+    cv_status WaitKillEvent(uint dwMilliseconds = 0)
 	{
-		return _hKillEvent == NULL ? 0 : WaitForSingleObject(_hKillEvent, dwMilliseconds);
+        std::unique_lock<std::mutex> lock(_mutex);
+        return _cond.wait_for(lock, std::chrono::milliseconds(dwMilliseconds));
 	}
-private:
-	bool		 _bEnd;
-	HANDLE		 _hKillEvent;
-	std::thread* _thread;
 };
+
+/*
+#include <synchapi.h>
+
+class Thread{
+public:
+    Thread(){
+        _bEnd = false;
+        _hKillEvent = NULL;
+    }
+    ~Thread(){
+        EndThread();
+    };
+
+    typedef void(*Callback)(LPVOID);
+    bool RunThread(Callback func, LPVOID lParam = NULL)
+    {
+        _bEnd = false;
+
+        if (_hKillEvent) return false;
+
+        _hKillEvent = CreateEvent(NULL, 0, 0, 0);
+        _thread = new std::thread(func, lParam);
+        _thread->detach();
+        return true;
+    }
+    void EndThread()
+    {
+        _bEnd = true;
+
+        SetEvent(_hKillEvent);
+
+        delete _thread;
+
+        CloseHandle(_hKillEvent);
+        _thread = NULL;
+        _hKillEvent = NULL;
+    }
+    uint WaitKillEvent(uint dwMilliseconds = 0)
+    {
+        // WAIT_TIMEOUT
+        return _hKillEvent == NULL ? 0 : WaitForSingleObject(_hKillEvent, dwMilliseconds);
+    }
+private:
+    bool		 _bEnd;
+    HANDLE		 _hKillEvent;
+    std::thread* _thread;
+};
+*/

@@ -154,7 +154,7 @@ bool ServLinkMgr::_AssistLoop()
 	time(&_timeNow);
 	DWORD dwInitTime = GetTickCount();
 	DWORD dwElaspedTime = 0;
-	while (WAIT_TIMEOUT == _pThread->WaitKillEvent(_config.dwAssistLoopMs))
+    while (cv_status::timeout == _pThread->WaitKillEvent(_config.dwAssistLoopMs))
 	{
 		DWORD tempNow = GetTickCount();
 		DWORD tempElasped = tempNow - dwInitTime;

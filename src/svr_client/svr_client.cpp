@@ -31,7 +31,7 @@ void RunClientIOCP(ClientLink& link)
 
 static void AssistLoop(LPVOID pParam)
 {
-    while (WAIT_TIMEOUT == g_thread->WaitKillEvent(50))
+    while (cv_status::timeout == g_thread->WaitKillEvent(50))
     {
         g_link.Update();
     }

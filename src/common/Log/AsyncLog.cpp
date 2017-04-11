@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "AsyncLog.h"
 
-static const uint Flush_Interval_MS = 180 * 1000; //INFINITE
+static const uint Flush_Interval_Sec = 180; //INFINITE
 
 AsyncLog::AsyncLog(size_t maxSize, const WriteLogFunc& func)
     : _curBuf(new Buffer(maxSize))
@@ -50,7 +50,7 @@ void AsyncLog::_WriteLoop()
         printf("loop\n");
         {
             std::unique_lock<std::mutex> lock(_mutex);
-            _cond.wait_for(lock, std::chrono::seconds(Flush_Interval_MS));
+            _cond.wait_for(lock, std::chrono::seconds(Flush_Interval_Sec));
             //::SleepConditionVariableCS(&_cond, &_mutex, Flush_Interval_MS);
 
             bufToWriteVec.swap(_bufVec);
