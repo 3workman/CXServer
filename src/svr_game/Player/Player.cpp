@@ -1,22 +1,23 @@
 #include "stdafx.h"
-#include "..\NetLib\server\ServLink.h"
-#include "..\NetLib\UdpServer\UdpClientAgent.h"
+#include "../NetLib/server/ServLink.h"
+#include "../NetLib/UdpServer/UdpClientAgent.h"
 #include "Player.h"
-#include "Buffer\NetPack.h"
-#include "..\Room\PlayerRoomData.h"
+#include "Buffer/NetPack.h"
+#include "../Room/PlayerRoomData.h"
 
-NetPack& Player::_backBuffer = NetPack(0);
+NetPack Player::_backBuffer(0);
 
 Player::Player()
 {
     m_RoomData = new PlayerRoomData();
 }
-void Player::SetNetLink(_NET_LINK_CLASS* p)
+void Player::SetNetLink(NetLink* p)
 {
     _clientNetLink = p;
 }
 void Player::SendMsg(const NetPack& pack)
 {
+    //Notice：断线重连期间，连接无效
     if (_clientNetLink) {
         _clientNetLink->SendMsg(pack.Buffer(), pack.Size());
     }

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "AsyncLog.h"
 
-static const DWORD Flush_Interval_MS = 180 * 1000; //INFINITE
+static const uint Flush_Interval_MS = 180 * 1000; //INFINITE
 
 AsyncLog::AsyncLog(size_t maxSize, const WriteLogFunc& func)
     : _curBuf(new Buffer(maxSize))
@@ -10,10 +10,7 @@ AsyncLog::AsyncLog(size_t maxSize, const WriteLogFunc& func)
     , _maxSize(maxSize)
     //, _thread([&]{ this->_WriteLoop(bufSize); }) // 可能构造中途调度至子线程，访问到无效资源(_mutex)/未初始化变量
 {
-    ::InitializeConditionVariable(&_cond);
-
 	_bufVec.reserve(8);
-
     //Notice：不能用[&]，maxSize是局部变量
     _thread = new std::thread([=]{ this->_WriteLoop(); });
     //_thread->detach(); // "析构/Stop"中的_thread->join()必不可少，这里就不要了
@@ -39,7 +36,8 @@ void AsyncLog::Append(const void* data, size_t len)
         //FIXME：new可能返回null，不过那会系统已经要跪了吧~
         _nextBuf ? (_curBuf = std::move(_nextBuf)) : 
                    (_curBuf.reset(new Buffer(_maxSize)));
-        ::WakeConditionVariable(&_cond);
+        _cond.notify_one();
+        //::WakeConditionVariable(&_cond);
     }
 }
 void AsyncLog::_WriteLoop()
@@ -51,8 +49,9 @@ void AsyncLog::_WriteLoop()
     while (_running){
         printf("loop\n");
         {
-            cLock lock(_mutex);
-            ::SleepConditionVariableCS(&_cond, &_mutex, Flush_Interval_MS);
+            std::unique_lock<std::mutex> lock(_mutex);
+            _cond.wait_for(lock, std::chrono::seconds(Flush_Interval_MS));
+            //::SleepConditionVariableCS(&_cond, &_mutex, Flush_Interval_MS);
 
             bufToWriteVec.swap(_bufVec);
             bufToWriteVec.push_back(_curBuf);
@@ -76,7 +75,8 @@ void AsyncLog::_WriteLoop()
 void AsyncLog::Stop()
 {
     _running = false;
-    ::WakeConditionVariable(&_cond);
+    _cond.notify_one();
+    //::WakeConditionVariable(&_cond);
     _thread->join(); //Notice：阻塞，等待子线程执行结束
     /*
         析构时，这里必须调join（不能detach），必须等子线程结束

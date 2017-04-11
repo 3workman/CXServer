@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "UserConfig.h"
 #include <atlstr.h>
-#include "tool\mkdir.h"
+#include "tool/mkdir.h"
 
 #define DEFAULT_CONFIG { 1, 1, 0,\
                          1, 0,	/*DoneFactionTask...*/\

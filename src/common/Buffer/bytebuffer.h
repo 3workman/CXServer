@@ -13,15 +13,6 @@
 		3、话说，位域变量进如何进行函数匹配的呢？ int64  a:2; b62;  ByteBuffer::read(a) 匹配进哪个？ read<int8>、read<int64>？
 */
 
-typedef signed __int64 int64;
-typedef signed __int32 int32;
-typedef signed __int16 int16;
-typedef signed __int8  int8;
-typedef unsigned __int64 uint64;
-typedef unsigned __int32 uint32;
-typedef unsigned __int16 uint16;
-typedef unsigned __int8  uint8;
-
 class ByteBuffer final {//tolua_export
     // read and write positions
     size_t _rpos, _wpos;

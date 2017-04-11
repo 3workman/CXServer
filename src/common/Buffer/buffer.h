@@ -38,6 +38,7 @@ namespace net
 		}
         ~Buffer()
         {
+            //Notice：某些编译器上，这里已经实例化了 template <typename T> T read()，后面就不能再偏特化了
 			printf("---Buffer析构---%s (%d)\n", read<std::string>().c_str(), size());// 测试 AsyncLog
         }
 
@@ -102,7 +103,7 @@ namespace net
 			readerMove(sizeof(T));
 			return result;
 		}
-		template <> std::string read() { // 偏特化，保持接口风格统一
+		template <> std::string read() { // 偏特化，保持接口风格统一，Notice：析构函数中已提前使用，某些编译器会报错
 			size_t len = 0;
 			const char* begin = beginRead();
 			const char* p = begin;

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "trigger.h"
-#include "tool\GameApi.h"
+#include "tool/GameApi.h"
 
 #undef Declare
 #define Declare(typ) &Trigger::_Is_##typ,

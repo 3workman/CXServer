@@ -1,14 +1,15 @@
 #include "stdafx.h"
-#include "..\NetLib\server\ServLinkMgr.h"
-#include "..\NetLib\server\define.h"
-#include "..\rpc\RpcQueue.h"
-#include "Player\Player.h"
-#include "Service\ServiceMgr.h"
-#include "Timer\TimerWheel.h"
-#include "tool\GameApi.h"
-#include "Buffer\NetPack.h"
-#include "Log\LogFile.h"
+#include "../NetLib/server/ServLinkMgr.h"
+#include "../NetLib/server/define.h"
+#include "../rpc/RpcQueue.h"
+#include "Player/Player.h"
+#include "Service/ServiceMgr.h"
+#include "Timer/TimerWheel.h"
+#include "tool/GameApi.h"
+#include "Buffer/NetPack.h"
+#include "Log/LogFile.h"
 
+//【TODO:BUG】IOCP的这三个回调函数，是多线程调用的，应该转成消息发到主线程，由后者处理
 bool BindPlayerLink(void*& refPlayer, ServLink* p, const void* pMsg, int size)
 {
     NetPack msg(pMsg, size);
@@ -71,7 +72,7 @@ int _tmain(int argc, _TCHAR* argv[])
     ServLinkMgr mgr(config);
     RunServerIOCP(mgr);
 
-    DWORD timeOld(0), timeNow = GetTickCount();
+    uint timeOld(0), timeNow = GetTickCount();
     while (true) {
         timeOld = timeNow;
         timeNow = GetTickCount();

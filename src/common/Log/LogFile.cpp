@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include "LogFile.h"
-#include "..\tool\mkdir.h"
+#include "../tool/mkdir.h"
 #include "AsyncLog.h"
 
 LogFile* LogFile::g_log = NULL;

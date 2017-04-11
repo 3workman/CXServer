@@ -51,8 +51,8 @@
 #include <winsock2.h>
 //////////////////////////////////////////////////////////////////////////
 #include <Mswsock.h> // AcceptEx
-#include "Buffer\buffer.h"
-#include "tool\cLock.h"
+#include "Buffer/buffer.h"
+#include "tool/cLock.h"
 #include "define.h"
 #include <time.h>
 
@@ -82,7 +82,7 @@ public:
     ServLink(ServLinkMgr* p);
     //~ServLink(){};
 
-	static WORD s_nID;
+	static uint16 s_nID;
 
 	EStatus _eState = STATE_DEAD;
 	void OnConnect();

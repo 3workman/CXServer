@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "..\Player\Player.h"
+#include "../Player/Player.h"
 #include "Room.h"
 #include "PlayerRoomData.h"
-#include "Buffer\NetPack.h"
+#include "Buffer/NetPack.h"
 
 static CRoom* g_test_room = NULL;
 

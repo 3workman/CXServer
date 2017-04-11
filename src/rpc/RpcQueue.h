@@ -12,7 +12,7 @@
 * @ date 2016-12-12
 ************************************************************************/
 #pragma once
-#include "tool\SafeQueue.h"
+#include "tool/SafeQueue.h"
 class Player;
 class NetPack;
 
@@ -30,7 +30,7 @@ public:
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
     RpcQueue();
 
-    void Insert(Player* player, const void* pData, DWORD size); //Notice：须考虑线程安全
+    void Insert(Player* player, const void* pData, uint size); //Notice：须考虑线程安全
     void Update(); //主循环，每帧调一次
     void _Handle(Player* player, NetPack& buf);
     void RegistResponse(int opCode, const RecvRpcParam& func);

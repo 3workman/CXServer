@@ -2,10 +2,10 @@
 #include "ServiceMgr.h"
 #include "Service.h"
 
-DWORD Buff(void* p){ printf("Service List Buff(%d)...\n", p); return 2000; }
-DWORD NPCAI(void* p){ return printf("Service Path NPCAI(%d)...\n", p); }
-DWORD PlayerSave(void* p){ return printf("Service Path PlayerSave(%d)...\n", p); }
-extern DWORD _Service_Sync_Position(void* p);
+uint Buff(void* p){ printf("Service List Buff(%d)...\n", p); return 2000; }
+uint NPCAI(void* p){ return printf("Service Path NPCAI(%d)...\n", p); }
+uint PlayerSave(void* p){ return printf("Service Path PlayerSave(%d)...\n", p); }
+extern uint _Service_Sync_Position(void* p);
 
 iService* ServiceMgr::m_aService[_Service_Max] = {
     /* Service_Buff */new cServiceList(Buff),
@@ -13,7 +13,7 @@ iService* ServiceMgr::m_aService[_Service_Max] = {
     /* Service_PlayerSave */new cServicePatch(PlayerSave, 3 * 1000),
     /* Service_Sync_Position */new cServiceList(_Service_Sync_Position),
 };
-void ServiceMgr::RunAllService(DWORD time_elasped, DWORD timenow)
+void ServiceMgr::RunAllService(uint time_elasped, uint timenow)
 {
     for (auto& it : m_aService) it->RunSevice(time_elasped, timenow);
 }

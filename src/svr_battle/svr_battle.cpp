@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "..\NetLib\UdpServer\UdpServer.h"
+#include "../NetLib/UdpServer/UdpServer.h"
 #include "RakSleep.h"
-#include "Service\ServiceMgr.h"
-#include "Timer\TimerWheel.h"
-#include "tool\GameApi.h"
-#include "Buffer\NetPack.h"
-#include "..\svr_game\Player\Player.h"
-#include "Log\LogFile.h"
+#include "Service/ServiceMgr.h"
+#include "Timer/TimerWheel.h"
+#include "tool/GameApi.h"
+#include "Buffer/NetPack.h"
+#include "../svr_game/Player/Player.h"
+#include "Log/LogFile.h"
 
 bool BindPlayerLink(void*& refPlayer, UdpClientAgent* p, const void* pMsg, int size)
 {
@@ -67,7 +67,7 @@ int _tmain(int argc, _TCHAR* argv[])
     UdpServer upd;
     upd.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 
-    DWORD timeOld(0), timeNow = GetTickCount();
+    uint timeOld(0), timeNow = GetTickCount();
     while (true) {
         timeOld = timeNow;
         timeNow = GetTickCount();

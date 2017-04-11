@@ -2,7 +2,7 @@
 #include "ServLinkMgr.h"
 #include "define.h"
 #include "ServLink.h"
-#include "..\..\common\tool\thread.h"
+#include "tool/thread.h"
 
 #pragma comment(lib,"Ws2_32.lib")
 

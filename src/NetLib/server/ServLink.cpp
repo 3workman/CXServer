@@ -27,7 +27,7 @@
 
 const DWORD IN_BUFFER_SIZE = 1024 * 4;
 
-WORD ServLink::s_nID = 0;
+uint16 ServLink::s_nID = 0;
 
 ServLink::ServLink(ServLinkMgr* pMgr)
 	: _sendBuf(IN_BUFFER_SIZE)

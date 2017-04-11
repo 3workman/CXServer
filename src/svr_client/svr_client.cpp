@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "..\NetLib\client\ClientLink.h"
-#include "..\NetLib\UdpClient\UdpClient.h"
-#include "Buffer\NetPack.h"
-#include "..\rpc\RpcEnum.h"
+#include "../NetLib/client/ClientLink.h"
+#include "../NetLib/UdpClient/UdpClient.h"
+#include "Buffer/NetPack.h"
+#include "../rpc/RpcEnum.h"
 #include <functional>
-#include "tool\thread.h"
+#include "tool/thread.h"
 
 
 ClientLinkConfig config;

@@ -23,17 +23,17 @@
 #include <vector>
 
 typedef void ServiceObj;
-typedef DWORD(*RefreshFun)(ServiceObj*);
+typedef uint(*RefreshFun)(ServiceObj*);
 
 class iService{
 public:
     virtual bool UnRegister(ServiceObj* pObj) = 0;
-    virtual bool Register(ServiceObj* pObj, DWORD exeTime = 0) = 0; //哪个时刻执行
-    virtual void RunSevice(DWORD time_elasped, DWORD timenow) = 0; //循环内的回调函数(m_func)可能调到Register、UnRegister
+    virtual bool Register(ServiceObj* pObj, uint exeTime = 0) = 0; //哪个时刻执行
+    virtual void RunSevice(uint time_elasped, uint timenow) = 0; //循环内的回调函数(m_func)可能调到Register、UnRegister
 protected:
-    typedef std::multimap<DWORD, ServiceObj*> mapTimer;
+    typedef std::multimap<uint, ServiceObj*> mapTimer;
     typedef mapTimer::iterator itMapTimer;
-    typedef std::pair<DWORD, ServiceObj*> TimerPair;
+    typedef std::pair<uint, ServiceObj*> TimerPair;
     typedef std::list<TimerPair> listTimer;
     typedef listTimer::iterator itListTimer;
     typedef std::set<ServiceObj*>::iterator ItSet;
@@ -208,14 +208,14 @@ private:
 		ServiceObj** m_aObj;	// 数据
 	};
 
-	DWORD m_timeWait;
-	const DWORD c_timeAll;//多少ms全部运行一次
+	uint m_timeWait;
+	const uint c_timeAll;//多少ms全部运行一次
 	cServiceArray m_aObj;
 	cServiceArray m_aObjAdd;
 	cServiceArray m_aObjDel;
 	std::set<ServiceObj*> m_setLockDel;
 public:
-	cServicePatch(RefreshFun func, DWORD timeAll) : iService(func), c_timeAll(timeAll), m_timeWait(0){}
+	cServicePatch(RefreshFun func, uint timeAll) : iService(func), c_timeAll(timeAll), m_timeWait(0){}
 
 	bool UnRegister(ServiceObj* pObj)
 	{
@@ -223,11 +223,11 @@ public:
 
 		return m_aObjDel.AddObj(pObj);
 	}
-	bool Register(ServiceObj* pObj, DWORD /*exeTime*/)
+	bool Register(ServiceObj* pObj, uint /*exeTime*/)
 	{
 		return m_bRun ? m_aObjAdd.AddObj(pObj) : m_aObj.AddObj(pObj);
 	}
-	void RunSevice(DWORD time_elasped, DWORD /*timenow*/)
+	void RunSevice(uint time_elasped, uint /*timenow*/)
 	{
 		if (m_aObj.AddObjs(m_aObjAdd)) m_aObjAdd.Clear();
 		if (m_aObj.DelObjs(m_aObjDel)) m_aObjDel.Clear();
@@ -259,14 +259,14 @@ public:
 };
 #else
 class cServicePatch: public iService{
-	DWORD m_timeWait;
+	uint m_timeWait;
 	int   m_iRunPos;  //当前Run到的位置(游标)
-	const DWORD c_timeAll;  //多少ms全部运行一次
+	const uint c_timeAll;  //多少ms全部运行一次
 	std::vector<ServiceObj*> m_aObj;
 	std::vector<ServiceObj*> m_vecAdd;
     std::set<ServiceObj*> m_setDel;
 public:
-	cServicePatch(RefreshFun func, DWORD timeAll) : iService(func), c_timeAll(timeAll), m_iRunPos(0), m_timeWait(0){}
+	cServicePatch(RefreshFun func, uint timeAll) : iService(func), c_timeAll(timeAll), m_iRunPos(0), m_timeWait(0){}
 
 	bool UnRegister(ServiceObj* pObj){
         for (ItVec it = m_aObj.begin(); it != m_aObj.end(); ++it){
@@ -277,11 +277,11 @@ public:
 		}
 		return false;
 	}
-	bool Register(ServiceObj* pObj, DWORD /*exeTime*/){
+	bool Register(ServiceObj* pObj, uint /*exeTime*/){
 		m_bRun ? m_vecAdd.push_back(pObj) : m_aObj.push_back(pObj);
 		return true;
 	}
-	void RunSevice(DWORD time_elasped, DWORD /*timenow*/)
+	void RunSevice(uint time_elasped, uint /*timenow*/)
 	{
         m_aObj.insert(m_aObj.end(), m_vecAdd.begin(), m_vecAdd.end());
 		m_vecAdd.clear();
@@ -331,7 +331,7 @@ public:
 	listTimer m_list;
 	std::set<ServiceObj*> m_setDel;
 
-	bool Register(ServiceObj* pObj, DWORD exeTime){
+	bool Register(ServiceObj* pObj, uint exeTime){
 		m_list.push_back(TimerPair(exeTime,pObj)); //list结构，放到最后面，在Run时调了Reg也没关系
 		return true;
 	}
@@ -344,7 +344,7 @@ public:
 		}		
 		return false;
 	}
-	void RunSevice(DWORD /*time_elasped*/, DWORD timenow){
+	void RunSevice(uint /*time_elasped*/, uint timenow){
         ItSet itSet;
         for (itListTimer it = m_list.begin(); it != m_list.end() && !m_setDel.empty(); ){
             itSet = m_setDel.find(it->second);
@@ -365,7 +365,7 @@ public:
                     m_list.pop_front();
                     continue;
                 }
-				DWORD nextTime = m_func(pair.second);
+				uint nextTime = m_func(pair.second);
 				if (nextTime > 0) Register(pair.second, timenow + nextTime);
 				m_list.pop_front();
 			}
@@ -382,7 +382,7 @@ public:
     mapTimer m_mapAdd;
     std::set<ServiceObj*> m_setDel;
 
-	bool Register(ServiceObj* pObj, DWORD exeTime){
+	bool Register(ServiceObj* pObj, uint exeTime){
         //if (m_nLock) printf("cServiceMap:Register:LockError ,%d\n", m_eService);
         m_map.insert(TimerPair(exeTime, pObj));
 		return true;
@@ -396,7 +396,7 @@ public:
 		}
 		return false;
 	}
-	void RunSevice(DWORD /*time_elasped*/, DWORD timenow){
+	void RunSevice(uint /*time_elasped*/, uint timenow){
         ItSet itSet;
         for (itMapTimer it = m_map.begin(); it != m_map.end() && !m_setDel.empty(); ){
             itSet = m_setDel.find(it->second);
@@ -416,7 +416,7 @@ public:
                     it = m_map.erase(it);
                     continue;
                 }
-				DWORD nextTime = m_func(it->second);
+				uint nextTime = m_func(it->second);
                 if (nextTime > 0) m_mapAdd.insert(TimerPair(timenow + nextTime, it->second));
 				it = m_map.erase(it);
 			}else{

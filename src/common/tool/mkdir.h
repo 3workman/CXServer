@@ -5,6 +5,7 @@
 #define MKDIR(a) _mkdir((a))
 #elif _LINUX
 #include <stdarg.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #define ACCESS access
 #define MKDIR(a) mkdir((a),0755)

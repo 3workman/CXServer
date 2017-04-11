@@ -8,7 +8,7 @@
 ************************************************************************/
 #pragma once
 #include "bytebuffer.h"
-#include "..\tool\Mempool.h"
+#include "../tool/Mempool.h"
 
 
 enum PacketTypeEnum

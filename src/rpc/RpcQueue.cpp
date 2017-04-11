@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "RpcQueue.h"
-#include "..\NetLib\server\define.h"
-#include "..\svr_game\Player\Player.h"
-#include "Buffer\NetPack.h"
+#include "../svr_game/Player/Player.h"
+#include "Buffer/NetPack.h"
 #include "RpcEnum.h"
 
 //TODO:ªª≥…≈‰±Ì
@@ -30,7 +29,7 @@ RpcQueue::RpcQueue()
 #define Rpc_Declare(typ) _rpc[RpcNameToId(#typ)] = &Player::HandleRpc_##typ;
     Rpc_Enum;
 }
-void RpcQueue::Insert(Player* player, const void* pData, DWORD size)
+void RpcQueue::Insert(Player* player, const void* pData, uint size)
 {
     _queue.push(std::make_pair(player, new NetPack(pData, size)));
 }

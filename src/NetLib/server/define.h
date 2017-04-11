@@ -7,7 +7,7 @@
 struct ServerConfig
 {
 	std::string strIP = "127.0.0.1";
-	WORD  wPort = 4567;
+	uint16  wPort = 4567;
 	DWORD nRecvPacketCheckTime = 10;
 	DWORD nRecvPacketLimit = 1200;
 	DWORD dwAssistLoopMs = 20;

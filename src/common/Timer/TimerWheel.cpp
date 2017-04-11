@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "TimerWheel.h"
 #include <windows.h>
-#include "..\Log\LogFile.h"
+#include "../Log/LogFile.h"
 
 uint32 CTimerMgr::WHEEL_SIZE[] = {};
 uint32 CTimerMgr::WHEEL_CAP[] = {};

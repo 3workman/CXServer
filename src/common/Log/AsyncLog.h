@@ -46,8 +46,9 @@
 #pragma once
 #include <thread>
 #include <memory> // std::shared_ptr
-#include "..\tool\cLock.h"
-#include "..\Buffer\buffer.h"
+#include <condition_variable>
+#include "../tool/cLock.h"
+#include "../Buffer/buffer.h"
 
 class AsyncLog{
 public:
@@ -66,8 +67,8 @@ public:
 private:
     void _WriteLoop();
 private:
-    cMutex              _mutex;
-    CONDITION_VARIABLE  _cond;
+    cMutex                  _mutex;
+    std::condition_variable _cond;
 
     //Notice：因子线程函数依赖_running，所以它要声明在_thread之前，确保正确的初始化顺序
     bool _running = true;

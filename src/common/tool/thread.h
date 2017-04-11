@@ -36,7 +36,7 @@ public:
 		_thread = NULL;
 		_hKillEvent = NULL;
 	}
-	DWORD WaitKillEvent(DWORD dwMilliseconds = 0)
+	uint WaitKillEvent(uint dwMilliseconds = 0)
 	{
 		return _hKillEvent == NULL ? 0 : WaitForSingleObject(_hKillEvent, dwMilliseconds);
 	}

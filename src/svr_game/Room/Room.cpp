@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "Room.h"
-#include "..\Player\Player.h"
+#include "../Player/Player.h"
 #include "PlayerRoomData.h"
-#include "Service\ServiceMgr.h"
-#include "Buffer\NetPack.h"
+#include "Service/ServiceMgr.h"
+#include "Buffer/NetPack.h"
 
-DWORD _Service_Sync_Position(void* p){
+uint _Service_Sync_Position(void* p){
     CRoom* pRoom = (CRoom*)p;
     pRoom->SyncPlayerPosition();
     return 67;
