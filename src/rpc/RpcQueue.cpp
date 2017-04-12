@@ -3,28 +3,23 @@
 #include "../svr_game/Player/Player.h"
 #include "Buffer/NetPack.h"
 #include "RpcEnum.h"
+#include "Csv/CSVparser.hpp"
 
-//TODO:换成配表
-const std::map<std::string, int> g_rpc_table = {
-    // 服务器实现的rpc
-    { "rpc_echo",           0 },
-    { "rpc_login",          1 },
-    { "rpc_logout",         2 },
-    { "rpc_reconnect",      3 },
-    { "rpc_create_room",    10 },
-    { "rpc_join_room",      11 },
-    { "rpc_exit_room",      12 },
-    { "rpc_move_delta",     13 },
-
-    // 客户端实现的rpc
-    { "rpc_notify_player_join_room",    10001 },
-    { "rpc_notify_player_exit_room",    10002 },
-    { "rpc_sync_position",              10003 },
-};
+std::map<std::string, int> g_rpc_table;
+static void LoadRpcCsv()
+{
+    csv::Parser file = csv::Parser("../data/csv/rpc.csv");
+    uint cnt = file.rowCount();
+    for (uint i = 0; i < cnt; ++i) {
+        csv::Row& row = file[i];
+        g_rpc_table[row["name"]] = atoi(row["id"].c_str());
+    }
+}
 
 
 RpcQueue::RpcQueue()
 {
+    LoadRpcCsv();
 #undef Rpc_Declare
 #define Rpc_Declare(typ) _rpc[RpcNameToId(#typ)] = &Player::HandleRpc_##typ;
     Rpc_Enum;

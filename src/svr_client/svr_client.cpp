@@ -5,6 +5,8 @@
 #include "../rpc/RpcEnum.h"
 #include <functional>
 #include "tool/thread.h"
+#include "../rpc/RpcQueue.h"
+#include "Csv/CSVparser.hpp"
 
 
 ClientLinkConfig config;
@@ -46,34 +48,29 @@ void RunClientUdp()
     while (!g_link.IsClose() && !g_link.IsConnect()) Sleep(1000);
 }
 
-
-
-typedef std::function<void(NetPack&)>   SendRpcParam;
-typedef std::function<void(NetPack&)>   RecvRpcParam;
-std::map<int, RecvRpcParam> g_RpcHandle;     //TODO:zhoumf：本模块实现的rpc，由静态声明决定，参见RpcQueue::_func
-std::map<int, RecvRpcParam> g_RecvHandle;    //挂接Socket Link的回包处理函数集，由g_RpcHandle、CallRpc()动态加入的lambda两大块构成
-void CallRpc(uint16 opCode, const SendRpcParam& func)
+std::map<std::string, int> g_rpc_table;
+std::map<int, RecvRpcParam> g_RecvHandle;
+int CallRpc(const char* name, const SendRpcParam& func)
 {
-    //“同名rpc混乱”：client rpc server且有回包；若server那边也有个同名rpc client，那client就不好区分底层收到的包，是自己rpc的回复，还是对方主动rpc
-    //远程调用其它模块的rpc，应是本模块未声明实现的。避免同名rpc的混乱
-    //讲rpc底层的回包，设计成带类型的（主动发、被动回），能解决“同名rpc混乱”问题，但觉用处不大，就先免掉
-    assert(g_RpcHandle.find(opCode) == g_RpcHandle.end());
-
-    NetPack msg(opCode);
+    int opCodeId = g_rpc_table[name];
+    assert(opCodeId > 0);
+    static NetPack msg(0);
+    msg.ClearBody();
+    msg.SetOpCode(opCodeId);;
     func(msg);
     g_link.SendMsg(msg.Buffer(), msg.Size());
+    return opCodeId;
 }
-void CallRpc(uint16 opCode, const SendRpcParam& fun1, const RecvRpcParam& fun2)
+void CallRpc(const char* name, const SendRpcParam& fun1, const RecvRpcParam& fun2)
 {
-    CallRpc(opCode, fun1);
+    int opCodeId = CallRpc(name, fun1);
 
-    g_RecvHandle.insert(make_pair(opCode, fun2));
+    g_RecvHandle.insert(make_pair(opCodeId, fun2));
 }
 void UpdateRecvQueue()
 {
     NetPack* pData;
-    if (g_queue.pop(pData))
-    {
+    if (g_queue.pop(pData)) {
         auto it = g_RecvHandle.find(pData->GetOpcode());
         if (it != g_RecvHandle.end()) it->second(*pData);
         delete pData;
@@ -83,19 +80,27 @@ void UpdateRecvQueue()
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    csv::Parser file = csv::Parser("../data/csv/rpc.csv");
+    uint cnt = file.rowCount();
+    for (uint i = 0; i < cnt; ++i) {
+        csv::Row& row = file[i];
+        g_rpc_table[row["name"]] = atoi(row["id"].c_str());
+    }
+
+
     RunClientUdp();
     ON_SCOPE_EXIT([]{ g_link.Stop(); });
-    CallRpc(1, [&](NetPack& buf){
+    CallRpc("rpc_login", [&](NetPack& buf){
         buf.WriteUInt32(1);
     });
-    CallRpc(10, [&](NetPack& buf){
+    CallRpc("rpc_create_room", [&](NetPack& buf){
         buf.WriteFloat(1);
         buf.WriteFloat(1);
     });
 
-    CallRpc(2, [&](NetPack& buf){
-    });
-    g_link.CloseLink();
+    //CallRpc("rpc_logout", [&](NetPack& buf){
+    //});
+    //g_link.CloseLink();
 
 /*
     RunClientIOCP(g_link);
@@ -115,7 +120,7 @@ int _tmain(int argc, _TCHAR* argv[])
     {
         cin >> tmpStr;
 
-        CallRpc(0, [&](NetPack& buf){
+        CallRpc("rpc_echo", [&](NetPack& buf){
             buf.WriteString(tmpStr); // buf << tmpStr;
         }, 
             [](NetPack& recvBuf){

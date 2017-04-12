@@ -28,6 +28,9 @@
     <Filter Include="def">
       <UniqueIdentifier>{513edd0d-90de-42d7-a555-819373544b60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Csv">
+      <UniqueIdentifier>{44527399-bd59-4789-9878-c159169aa80f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tool\cLock.h">
@@ -117,6 +120,9 @@
     <ClInclude Include="def\ConstDef.h">
       <Filter>def</Filter>
     </ClInclude>
+    <ClInclude Include="Csv\CSVparser.hpp">
+      <Filter>Csv</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">
@@ -148,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="Buffer\DataSend.cpp">
       <Filter>Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Csv\CSVparser.cpp">
+      <Filter>Csv</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

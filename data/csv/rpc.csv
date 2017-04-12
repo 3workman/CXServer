@@ -1,0 +1,12 @@
+id,name,is_client,comment
+0,rpc_echo,0,
+1,rpc_login,0,
+2,rpc_logout,0,
+3,rpc_reconnect,0,
+10,rpc_create_room,0,
+11,rpc_join_room,0,
+12,rpc_exit_room,0,
+13,rpc_move_delta,0,
+10001,rpc_notify_player_join_room,1,
+10002,rpc_notify_player_exit_room,1,
+10003,rpc_sync_position,1,
