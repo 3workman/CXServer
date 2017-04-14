@@ -17,27 +17,96 @@
 ************************************************************************/
 #pragma once
 #include "tool/SafeQueue.h"
-class Player;
-class NetPack;
+#include "Buffer/NetPack.h"
+#include "Csv/CSVparser.hpp"
 
-typedef std::function<void(NetPack&)> SendRpcParam;
-typedef std::function<void(NetPack&)> RecvRpcParam;
+typedef std::function<void(NetPack&)> ParseRpcParam;
+typedef std::function<void(const NetPack&)> SendMsgFunc;
 
+template <typename Typ> // 类型Typ须含有：_rpc列表，SendMsg()
 class RpcQueue {
-    typedef void(Player::*RpcFunc)(NetPack&);
-    typedef std::pair<Player*, NetPack*> RpcPair;
+    typedef std::pair<Typ*, NetPack*> RpcPair;
 
-    std::map<int, RpcFunc>      _rpc;       //自己实现的rpc
-    std::map<int, RecvRpcParam>  _response;  //rpc远端的回复
+    std::map<int, ParseRpcParam> _response;  //rpc远端的回复
     SafeQueue<RpcPair>          _queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
 public:
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
-    RpcQueue();
+    RpcQueue() { LoadRpcCsv(); }
 
-    void Insert(Player* player, const void* pData, uint size); //Notice：须考虑线程安全
-    void Update(); //主循环，每帧调一次
-    void _Handle(Player* player, NetPack& buf);
-    void RegistResponse(int opCode, const RecvRpcParam& func);
-    static int RpcNameToId(const char* name);
+    void Insert(Typ* pObj, const void* pData, uint size)
+    {
+        _queue.push(std::make_pair(pObj, new NetPack(pData, size)));
+    }
+    void Update() //主循环，每帧调一次
+    {
+        RpcPair data;
+        if (_queue.pop(data))
+        {
+            _Handle(data.first, *data.second);
+
+            delete data.second;
+        }
+    }
+    void _Handle(Typ* pObj, NetPack& buf)
+    {
+        uint16 opCode = buf.GetOpcode();
+
+        auto it = Typ::_rpc.find(opCode);
+        if (it != Typ::_rpc.end()) {
+            NetPack& backBuffer = pObj->BackBuffer();
+            backBuffer.ClearBody();
+            backBuffer.SetOpCode(buf.GetOpcode());
+            backBuffer.SetFromType(buf.GetFromType());
+
+            (pObj->*(it->second))(buf);
+
+            if (backBuffer.BodyBytes()) pObj->SendMsg(backBuffer);
+        }
+        else
+        {
+            auto it = _response.find(opCode);
+            assert(it != _response.end());
+            if (it != _response.end()) it->second(buf);
+        }
+    }
+    void RegistResponse(int opCode, const ParseRpcParam& func)
+    {
+        assert(Typ::_rpc.find(opCode) == Typ::_rpc.end());
+
+        _response.insert(make_pair(opCode, func));
+    }
+    int RpcNameToId(const char* name)
+    {
+        auto it = _rpc_table.find(name);
+        if (it == _rpc_table.end()) {
+            assert(0);
+            return 0;
+        }
+        return it->second;
+    }
+    int _CallRpc(const char* name, const ParseRpcParam& func, const SendMsgFunc& doSend)
+    {
+        int opCodeId = RpcNameToId(name);
+        assert(opCodeId > 0);
+        static NetPack msg(0);
+        msg.ClearBody();
+        msg.SetOpCode(opCodeId);
+        func(msg);
+        doSend(msg);
+        return opCodeId;
+    }
+
+private:
+    std::map<std::string, int> _rpc_table;
+    void LoadRpcCsv()
+    {
+        csv::Parser file = csv::Parser("../data/csv/rpc.csv");
+        uint cnt = file.rowCount();
+        for (uint i = 0; i < cnt; ++i) {
+            csv::Row& row = file[i];
+            _rpc_table[row["name"]] = atoi(row["id"].c_str());
+        }
+    }
 };
-#define sRpcQueue RpcQueue::Instance()
+#define sRpcClient RpcQueue<Player>::Instance()
+#define sRpcCross RpcQueue<CrossAgent>::Instance()

@@ -11,19 +11,12 @@
 #include "../tool/Mempool.h"
 
 
-enum PacketTypeEnum
+enum PacketFromEnum
 {
-    PACKET_TYPE_CLIENT = 0,
-
-    PACKET_TYPE_SERVER_LOGIN = 19,
-    PACKET_TYPE_SERVER_GAME = 23,
-    PACKET_TYPE_SERVER_GATEWAY = 35,
-    PACKET_TYPE_SERVER_DBPROXY = 38,
-    PACKET_TYPE_SERVER_CENTER = 50,
-    PACKET_TYPE_SERVER_EVENT = 60,
-    PACKET_TYPE_SERVER_WEB = 77,
-
-    _PACKET_TYPE_END
+    Packet_From_Client  = 0,
+    Packet_From_Game    = 1,
+    Packet_From_Battle  = 2,
+    Packet_From_Cross   = 3,
 };
 
 
@@ -44,26 +37,27 @@ public:
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
         SetOpCode(opCode);
-        SetPacketType(135); //udp临时标记
+        SetFromType(135); //udp临时标记
     }
     NetPack(const void* pData, int size)
         :m_buf(size) {
         m_buf.append(pData, size);
         m_buf.rpos(HEADER_SIZE);
-        SetPacketType(135); //udp临时标记
+        SetFromType(135); //udp临时标记
     }
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
     }
     void ClearBody() {
-        m_buf.resize(HEADER_SIZE);//resize【如果比原容器更小，清除尾部多出的元素】
+        m_buf.rpos(HEADER_SIZE);
+        m_buf.wpos(HEADER_SIZE);
     }
 public:
     void SetOpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }
     uint16 GetOpcode() const { return m_buf.show<uint16>(OPCODE_INDEX); }
 
-    void SetPacketType(uint8 packType) { m_buf.put(TYPE_INDEX, packType); }
-    uint8 GetPacketType() const { return m_buf.show<uint8>(TYPE_INDEX); }
+    void SetFromType(uint8 packType) { m_buf.put(TYPE_INDEX, packType); }
+    uint8 GetFromType() const { return m_buf.show<uint8>(TYPE_INDEX); }
 
     uint16 Size() const { return m_buf.size(); }
     uint16 BodyBytes() const { return m_buf.size() - HEADER_SIZE; }

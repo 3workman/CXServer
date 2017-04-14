@@ -100,9 +100,10 @@ bool ClientLink::CreateLinkAndConnect(HandleMsgFunc handleMsg)
 
 	_ovSend.SetLink(this);
 	_ovRecv.SetLink(this);
-
-	_eState = State_Close;
-	_bCanWrite = false;
+    _sendBuf.clear();
+    _recvBuf.clear();
+    _bCanWrite = false;
+    _eState = State_Close;
 
 	_sClient = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 	if (_sClient == INVALID_SOCKET)

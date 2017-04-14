@@ -19,8 +19,6 @@ typedef ServLink  NetLink;
 
 class NetPack;
 class PlayerRoomData;
-
-
 class Player {
     Pool_Index_Define(Player, MAX_PLAYER_COUNT);
 private:
@@ -36,10 +34,12 @@ public:
     void SetNetLink(NetLink* p);
     void SendMsg(const NetPack& pack);
     NetPack& BackBuffer() { return _backBuffer; }
-    int  CallRpc(const char* name, const SendRpcParam& func);
-    void CallRpc(const char* name, const SendRpcParam& func, const RecvRpcParam& callback);
+    int  CallRpc(const char* name, const ParseRpcParam& sendFun);
+    void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
 public:
-    Rpc_Enum;
+    typedef void(Player::*_RpcFunc)(NetPack&);
+    static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc
+    Rpc_For_Player;
 public:
 
 };

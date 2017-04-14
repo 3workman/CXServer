@@ -34,13 +34,12 @@
 class ServLink;
 class Thread;
 struct ServerConfig;
-
-typedef void(*HandleMsgFunc)(void* player, const void* pMsg, int size);
-typedef bool(*BindLinkFunc)(void*& refPlayer, ServLink* p, const void* pMsg, int size);
-typedef void(*ReportErrorFunc)(void* player, int InvalidEnum, int nErrorCode, int nParam);
-
 class ServLinkMgr{
 public:
+    typedef void(*HandleMsgFunc)(void* player, const void* pMsg, int size);
+    typedef bool(*BindLinkFunc)(void*& refPlayer, ServLink* p, const void* pMsg, int size);
+    typedef void(*ReportErrorFunc)(void* player, int InvalidEnum, int nErrorCode, int nParam);
+
 	const ServerConfig& _config;
 	time_t              _timeNow = 0;
     BindLinkFunc        _BindLinkAndPlayer = NULL;

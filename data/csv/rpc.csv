@@ -10,3 +10,4 @@ id,name,is_client,comment
 10001,rpc_notify_player_join_room,1,
 10002,rpc_notify_player_exit_room,1,
 10003,rpc_sync_position,1,
+7112,rpc_regist,0,

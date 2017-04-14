@@ -2,15 +2,13 @@
 #include "RakNetTypes.h"
 
 class UdpClientAgent;
-
-typedef void(*HandleMsgFunc)(void* player, const void* pMsg, int size);
-typedef bool(*BindLinkFunc)(void*& refPlayer, UdpClientAgent* p, const void* pMsg, int size);
-typedef void(*ReportErrorFunc)(void* player, int InvalidEnum, int nErrorCode, int nParam);
-
 class UdpServer {
     RakNet::RakPeerInterface* m_rakPeer;
     std::map<RakNet::RakNetGUID, UdpClientAgent*> m_clientList;
 public:
+    typedef void(*HandleMsgFunc)(void* player, const void* pMsg, int size);
+    typedef bool(*BindLinkFunc)(void*& refPlayer, UdpClientAgent* p, const void* pMsg, int size);
+    typedef void(*ReportErrorFunc)(void* player, int InvalidEnum, int nErrorCode, int nParam);
     BindLinkFunc        _BindLinkAndPlayer = NULL;
     HandleMsgFunc       _HandleClientMsg = NULL;
     ReportErrorFunc     _ReportErrorMsg = NULL;

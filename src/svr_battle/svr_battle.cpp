@@ -7,6 +7,7 @@
 #include "Buffer/NetPack.h"
 #include "../svr_game/Player/Player.h"
 #include "Log/LogFile.h"
+#include "Cross/CrossAgent.h"
 
 bool BindPlayerLink(void*& refPlayer, UdpClientAgent* p, const void* pMsg, int size)
 {
@@ -39,7 +40,7 @@ void HandleClientMsg(void* player, const void* pMsg, int size)
 #ifdef _DEBUG
     printf("Recv Msg ID(%d) \n", msg.GetOpcode());
 #endif
-    sRpcQueue._Handle((Player*)player, msg);
+    sRpcClient._Handle((Player*)player, msg);
 }
 void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
 {
@@ -64,6 +65,12 @@ int _tmain(int argc, _TCHAR* argv[])
     LogFile log("log\\battle", LogFile::ALL, true);
     _LOG_MAIN_(log);
 
+    ClientLink::InitWinsock();
+    sCrossAgent.RunClientIOCP();
+    sCrossAgent.CallRpc("rpc_regist", [](NetPack& buf){
+        buf << "battle" << (uint32)1;
+    });
+
     UdpServer upd;
     upd.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 
@@ -76,6 +83,7 @@ int _tmain(int argc, _TCHAR* argv[])
         sTimerMgr.Refresh(timeNow - timeOld, timeNow);
         GameApi::RefreshTimeNow();
 
+        sRpcCross.Update();
         upd.Update();
         RakSleep(30);
     }

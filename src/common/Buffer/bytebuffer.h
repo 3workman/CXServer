@@ -48,7 +48,7 @@ public:
     void reserve(size_t ressize) { if (ressize > size()) _storage.reserve(ressize); }//tolua_export
 
     template <typename T> T show(size_t pos) const {
-        if (pos + sizeof(T) > size()) {
+        if (pos + sizeof(T) > _wpos) {
             return (T)(0);
         } else {
             return *((T*)&_storage[pos]);
@@ -60,8 +60,8 @@ public:
     const uint8* contentsRpos() const { return &_storage[_rpos]; }
     const uint8* contentsWpos() const { return &_storage[_wpos]; }
 
-    size_t rpos() { return _rpos; }//tolua_export
-    size_t wpos() { return _wpos; }//tolua_export
+    size_t rpos() const { return _rpos; }//tolua_export
+    size_t wpos() const { return _wpos; }//tolua_export
     size_t rpos(size_t rpos) { assert(_rpos <= size()); _rpos = rpos; return _rpos; }//tolua_export
     size_t wpos(size_t wpos) { assert(_wpos <= size()); _wpos = wpos; return _wpos; }//tolua_export
 
@@ -71,7 +71,7 @@ public:
         return r;
     }
     void read(void* dest, size_t len) {//tolua_export
-        if (_rpos + len <= size()) {
+        if (_rpos + len <= _wpos) {
             memcpy(dest, &_storage[_rpos], len);
         } else {
             //throw error();
@@ -130,7 +130,7 @@ public:
         memcpy(&_storage[_wpos], src, cnt);
         _wpos += cnt;
     }//tolua_export
-    void append(const ByteBuffer& buffer) { append(buffer.contents(), buffer.size()); }//tolua_export
+    void append(const ByteBuffer& buffer) { append(buffer.contents(), buffer.wpos()); }//tolua_export
     template <typename T> void append(const T& value) {
         append(&value, sizeof(value));
     }

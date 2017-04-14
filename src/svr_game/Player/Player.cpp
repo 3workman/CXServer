@@ -4,11 +4,20 @@
 #include "Player.h"
 #include "Buffer/NetPack.h"
 #include "../Room/PlayerRoomData.h"
+#include "Csv/CSVparser.hpp"
 
 NetPack Player::_backBuffer(0);
+std::map<int, Player::_RpcFunc> Player::_rpc;
 
 Player::Player()
 {
+    if (_rpc.empty())
+    {
+#undef Rpc_Declare
+#define Rpc_Declare(typ) _rpc[sRpcClient.RpcNameToId(#typ)] = &Player::HandleRpc_##typ;
+        Rpc_For_Player;
+    }
+
     m_RoomData = new PlayerRoomData();
 }
 void Player::SetNetLink(NetLink* p)
@@ -22,22 +31,15 @@ void Player::SendMsg(const NetPack& pack)
         _clientNetLink->SendMsg(pack.Buffer(), pack.Size());
     }
 }
-int Player::CallRpc(const char* name, const SendRpcParam& func)
+int Player::CallRpc(const char* name, const ParseRpcParam& sendFun)
 {
-    int opCodeId = RpcQueue::RpcNameToId(name);
-    assert(opCodeId > 0);
-    static NetPack msg(0);
-    msg.ClearBody();
-    msg.SetOpCode(opCodeId);
-    func(msg);
-    SendMsg(msg);
-    return opCodeId;
+    return sRpcClient._CallRpc(name, sendFun, std::bind(&Player::SendMsg, this, std::placeholders::_1));
 }
-void Player::CallRpc(const char* name, const SendRpcParam& func, const RecvRpcParam& callback)
+void Player::CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {
-    int opCodeId = CallRpc(name, func);
+    int opCodeId = CallRpc(name, sendFun);
 
-    sRpcQueue.RegistResponse(opCodeId, callback);
+    sRpcClient.RegistResponse(opCodeId, recvFun);
 }
 
 //////////////////////////////////////////////////////////////////////////

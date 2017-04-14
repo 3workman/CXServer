@@ -30,9 +30,6 @@
     <ClCompile Include="Reward\reward.cpp">
       <Filter>Reward</Filter>
     </ClCompile>
-    <ClCompile Include="..\rpc\RpcQueue.cpp">
-      <Filter>rpc</Filter>
-    </ClCompile>
     <ClCompile Include="..\include\stdafx.cpp" />
     <ClCompile Include="svr_game.cpp" />
     <ClCompile Include="Room\Room.cpp">

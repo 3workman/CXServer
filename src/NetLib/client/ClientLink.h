@@ -20,12 +20,9 @@
 #include "Buffer/buffer.h"
 #include "config_client.h"
 
-class ClientLink;
-
-typedef void(*HandleMsgFunc)(void* pMsg, int size);
-
 enum EnumIO{ IO_Write, IO_Read };
 
+class ClientLink;
 struct My_OVERLAPPED : public OVERLAPPED
 {
 	ClientLink*	client;
@@ -47,6 +44,7 @@ public:
 	static bool InitWinsock();
 	static bool CleanWinsock();
 
+    typedef void(*HandleMsgFunc)(void* pMsg, int size);
     bool CreateLinkAndConnect(HandleMsgFunc handleMsg);
     void CloseLink(int nErrorCode);
     void SendMsg(const void* pMsg, uint16 size);

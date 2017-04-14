@@ -15,8 +15,8 @@
     <ClCompile Include="..\svr_game\Room\Room.cpp">
       <Filter>Room</Filter>
     </ClCompile>
-    <ClCompile Include="..\rpc\RpcQueue.cpp">
-      <Filter>rpc</Filter>
+    <ClCompile Include="Cross\CrossAgent.cpp">
+      <Filter>Cross</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -28,6 +28,9 @@
     </Filter>
     <Filter Include="rpc">
       <UniqueIdentifier>{69751443-a86a-44ed-b7fe-8a3a44558111}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cross">
+      <UniqueIdentifier>{2a28db04-a257-4a2b-b7b1-c47478d4f1ee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +48,9 @@
     </ClInclude>
     <ClInclude Include="..\rpc\RpcQueue.h">
       <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="Cross\CrossAgent.h">
+      <Filter>Cross</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

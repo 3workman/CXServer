@@ -41,7 +41,7 @@ void HandleClientMsg(void* player, const void* pMsg, int size)
     NetPack msg(pMsg, size);
     printf("Recv Msg ID(%d) \n", msg.GetOpcode());
 #endif
-    sRpcQueue.Insert((Player*)player, pMsg, size); 
+    sRpcClient.Insert((Player*)player, pMsg, size);
 }
 void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
 {
@@ -82,7 +82,7 @@ int _tmain(int argc, _TCHAR* argv[])
         GameApi::RefreshTimeNow();
 
         //sMsgPool.Handle();
-        sRpcQueue.Update();
+        sRpcClient.Update();
 
         Sleep(33);
     }

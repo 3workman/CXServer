@@ -86,11 +86,11 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\rpc\RpcQueue.cpp" />
     <ClCompile Include="..\svr_game\Player\Player.cpp" />
     <ClCompile Include="..\svr_game\Room\PlayerRoomData.cpp" />
     <ClCompile Include="..\svr_game\Room\PlayerRoomRpc.cpp" />
     <ClCompile Include="..\svr_game\Room\Room.cpp" />
+    <ClCompile Include="Cross\CrossAgent.cpp" />
     <ClCompile Include="svr_battle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +99,7 @@
     <ClInclude Include="..\svr_game\Player\Player.h" />
     <ClInclude Include="..\svr_game\Room\PlayerRoomData.h" />
     <ClInclude Include="..\svr_game\Room\Room.h" />
+    <ClInclude Include="Cross\CrossAgent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
