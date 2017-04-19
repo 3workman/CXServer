@@ -37,7 +37,7 @@ public:
 	}
 	ByteBuffer(const ByteBuffer &buf) : _rpos(buf._rpos), _wpos(buf._wpos), _storage(buf._storage) { }
 
-	void clear() { _storage.clear(); _rpos = _wpos = 0; }
+    void clear(size_t pos = 0) { /*_storage.clear(); */_rpos = _wpos = pos; }
 
     size_t size() const { return _storage.size(); }//tolua_export
     // one should never use resize probably
@@ -56,7 +56,7 @@ public:
     }
     uint8 operator[](size_t pos) { return show<uint8>(pos); }
 
-    const uint8* contents() const { assert(_storage.size()); return &_storage[0]; }//tolua_export
+    const uint8* contents(size_t pos = 0) const { assert(pos < _storage.size()); return &_storage[pos]; }
     const uint8* contentsRpos() const { return &_storage[_rpos]; }
     const uint8* contentsWpos() const { return &_storage[_wpos]; }
 

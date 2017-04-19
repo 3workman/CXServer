@@ -12,14 +12,13 @@ class NetPack;
 class CrossAgent {
     ClientLinkConfig    _config;
     ClientLink          _netLink;
-    static NetPack      _backBuffer;
 public:
     typedef void(CrossAgent::*_RpcFunc)(NetPack&);
     static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc
     Rpc_For_Cross;
 public:
     void SendMsg(const NetPack& pack);
-    NetPack& BackBuffer() { return _backBuffer; }
+    NetPack& BackBuffer() { return sRpcCross.BackBuffer; }
     int CallRpc(const char* name, const ParseRpcParam& sendFun);
     void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
 public:

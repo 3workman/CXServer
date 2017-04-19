@@ -23,7 +23,6 @@ class Player {
     Pool_Index_Define(Player, MAX_PLAYER_COUNT);
 private:
     NetLink*        _clientNetLink = NULL;
-    static NetPack  _backBuffer;
 public:
     uint64          m_pid = 0;
     bool            m_isLogin = false;
@@ -33,7 +32,7 @@ public:
     Player();
     void SetNetLink(NetLink* p);
     void SendMsg(const NetPack& pack);
-    NetPack& BackBuffer() { return _backBuffer; }
+    NetPack& BackBuffer() { return sRpcClient.BackBuffer; }
     int  CallRpc(const char* name, const ParseRpcParam& sendFun);
     void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
 public:

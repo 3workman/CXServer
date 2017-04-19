@@ -4,9 +4,7 @@
 #include "Player.h"
 #include "Buffer/NetPack.h"
 #include "../Room/PlayerRoomData.h"
-#include "Csv/CSVparser.hpp"
 
-NetPack Player::_backBuffer(0);
 std::map<int, Player::_RpcFunc> Player::_rpc;
 
 Player::Player()

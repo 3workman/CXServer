@@ -27,20 +27,21 @@ template <typename Typ> // 类型Typ须含有：_rpc列表，SendMsg()
 class RpcQueue {
     typedef std::pair<Typ*, NetPack*> RpcPair;
 
-    std::map<int, ParseRpcParam> _response;  //rpc远端的回复
-    SafeQueue<RpcPair>          _queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
+    std::map<int, ParseRpcParam> m_response;  //rpc远端的回复
+    SafeQueue<RpcPair>          m_queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
 public:
+    NetPack BackBuffer;
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
-    RpcQueue() { LoadRpcCsv(); }
+    RpcQueue() : BackBuffer(0) { LoadRpcCsv(); }
 
     void Insert(Typ* pObj, const void* pData, uint size)
     {
-        _queue.push(std::make_pair(pObj, new NetPack(pData, size)));
+        m_queue.push(std::make_pair(pObj, new NetPack(pData, size)));
     }
     void Update() //主循环，每帧调一次
     {
         RpcPair data;
-        if (_queue.pop(data))
+        if (m_queue.pop(data))
         {
             _Handle(data.first, *data.second);
 
@@ -50,30 +51,22 @@ public:
     void _Handle(Typ* pObj, NetPack& buf)
     {
         uint16 opCode = buf.GetOpcode();
-
         auto it = Typ::_rpc.find(opCode);
         if (it != Typ::_rpc.end()) {
-            NetPack& backBuffer = pObj->BackBuffer();
-            backBuffer.ClearBody();
-            backBuffer.SetOpCode(buf.GetOpcode());
-            backBuffer.SetFromType(buf.GetFromType());
-
+            BackBuffer.ResetHead(buf);
             (pObj->*(it->second))(buf);
-
-            if (backBuffer.BodyBytes()) pObj->SendMsg(backBuffer);
-        }
-        else
-        {
-            auto it = _response.find(opCode);
-            assert(it != _response.end());
-            if (it != _response.end()) it->second(buf);
+            if (BackBuffer.BodySize()) pObj->SendMsg(BackBuffer);
+        } else {
+            auto it = m_response.find(opCode);
+            assert(it != m_response.end());
+            if (it != m_response.end()) it->second(buf);
         }
     }
     void RegistResponse(int opCode, const ParseRpcParam& func)
     {
         assert(Typ::_rpc.find(opCode) == Typ::_rpc.end());
 
-        _response.insert(make_pair(opCode, func));
+        m_response.insert(make_pair(opCode, func));
     }
     int RpcNameToId(const char* name)
     {

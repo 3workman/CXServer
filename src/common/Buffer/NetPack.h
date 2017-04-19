@@ -10,7 +10,6 @@
 #include "bytebuffer.h"
 #include "../tool/Mempool.h"
 
-
 enum PacketFromEnum
 {
     Packet_From_Client  = 0,
@@ -19,20 +18,14 @@ enum PacketFromEnum
     Packet_From_Cross   = 3,
 };
 
-
-class NetPack
-{
+class NetPack {
     Pool_Obj_Define(NetPack, 4096)
 private:
     static const size_t HEADER_SIZE     = sizeof(uint8)+sizeof(uint16); // packetType & Opcode
     static const size_t TYPE_INDEX      = 0;
     static const size_t OPCODE_INDEX    = 1;
-
     ByteBuffer  m_buf;
-
 public:
-    static size_t GetHeaderSize() { return HEADER_SIZE; }
-
     NetPack(uint16 opCode, int size = 64)
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
@@ -48,9 +41,11 @@ public:
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
     }
-    void ClearBody() {
+    void ClearBody() { m_buf.clear(HEADER_SIZE); }
+    void ResetHead(const NetPack& other) {
+        m_buf.clear();
+        m_buf.append(other.m_buf.contents(), HEADER_SIZE);
         m_buf.rpos(HEADER_SIZE);
-        m_buf.wpos(HEADER_SIZE);
     }
 public:
     void SetOpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }
@@ -60,7 +55,7 @@ public:
     uint8 GetFromType() const { return m_buf.show<uint8>(TYPE_INDEX); }
 
     uint16 Size() const { return m_buf.size(); }
-    uint16 BodyBytes() const { return m_buf.size() - HEADER_SIZE; }
+    uint16 BodySize() const { return m_buf.size() - HEADER_SIZE; }
     const uint8* Buffer() const { return m_buf.contents(); }
 
 	template<class T> NetPack& operator << (const T& data) {
@@ -71,16 +66,12 @@ public:
 		m_buf >> data;
 		return *this;
 	}
-	template<class T> NetPack& AppendStruct(const T& data) {
+	template<class T> NetPack& WriteStruct(const T& data) {
         m_buf.append(reinterpret_cast<const void*>(&data), sizeof(data));
         return *this;
 	}
 	template<class T> NetPack& ReadStruct(T& data) {
         m_buf.read(reinterpret_cast<void*>(&data), sizeof(data));
-        return *this;
-	}
-	NetPack& Append(const void* data, size_t len) {
-        m_buf.append(data, len);
         return *this;
 	}
 
@@ -99,6 +90,7 @@ public:
     void    WriteDouble(double val) { m_buf.append(val); }
     void    WriteString(const std::string& val) { m_buf.append(val); }
     void    WriteString(const char* val) { m_buf.append(val); }
+    void    WriteBuf(const void* buf, size_t len) { m_buf.append(buf, len); }
 
     bool    ReadBool() { return m_buf.read<bool>(); }
     int8    ReadInt8() { return m_buf.read<int8>(); }

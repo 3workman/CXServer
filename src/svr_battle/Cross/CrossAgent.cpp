@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CrossAgent.h"
 
-NetPack CrossAgent::_backBuffer(0);
 std::map<int, CrossAgent::_RpcFunc> CrossAgent::_rpc;
 
 static CrossAgent* g_tmp_cross = NULL;
@@ -50,6 +49,6 @@ Rpc_Realize(rpc_echo)
     string str = recvBuf.ReadString();
     printf("Echo: %s\n", str.c_str());
 
-    NetPack& backBuffer = BackBuffer();
-    backBuffer << str;
+    //NetPack& backBuffer = BackBuffer();
+    //backBuffer << str;
 }
