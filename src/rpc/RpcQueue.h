@@ -29,10 +29,15 @@ class RpcQueue {
 
     std::map<int, ParseRpcParam> m_response;  //rpc远端的回复
     SafeQueue<RpcPair>          m_queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
+    NetPack m_SendBuffer;
 public:
     NetPack BackBuffer;
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
-    RpcQueue() : BackBuffer(0) { LoadRpcCsv(); }
+    RpcQueue()
+        : BackBuffer(0)
+        , m_SendBuffer(0) {
+        LoadRpcCsv();
+    }
 
     void Insert(Typ* pObj, const void* pData, uint size)
     {
@@ -80,12 +85,10 @@ public:
     int _CallRpc(const char* name, const ParseRpcParam& func, const SendMsgFunc& doSend)
     {
         int opCodeId = RpcNameToId(name);
-        assert(opCodeId > 0);
-        static NetPack msg(0);
-        msg.ClearBody();
-        msg.SetOpCode(opCodeId);
-        func(msg);
-        doSend(msg);
+        m_SendBuffer.ClearBody();
+        m_SendBuffer.SetOpCode(opCodeId);
+        func(m_SendBuffer);
+        doSend(m_SendBuffer);
         return opCodeId;
     }
 

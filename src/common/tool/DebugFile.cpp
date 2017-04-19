@@ -156,7 +156,7 @@ void cDebugFile::WriteToFile(string sFileName, ostringstream& osFile)
     char sfile[64];
     sprintf(sfile, "DebugFile\\%s.txt", sFileName.c_str());
     Dir::CreatDir(sfile);
-    FILE* fp = fopen(sfile, "a");;
+    FILE* fp = fopen(sfile, "a");
 	if (fp == NULL) return;
 	fprintf(fp, "%s", osFile.str().c_str()); // Éµ±Æ×Ö·û´®´¦Àí/(¨Òo¨Ò)/~~
 	fclose(fp);

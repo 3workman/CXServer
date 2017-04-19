@@ -26,7 +26,7 @@ private:
     static const size_t OPCODE_INDEX    = 1;
     ByteBuffer  m_buf;
 public:
-    NetPack(uint16 opCode, int size = 64)
+    NetPack(uint16 opCode, int size = 128 - HEADER_SIZE)
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
         SetOpCode(opCode);

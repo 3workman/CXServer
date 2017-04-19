@@ -18,7 +18,6 @@ using namespace std;
 #define STATIC_ASSERT_ARRAY_LENGTH(arr, len) static_assert(sizeof(arr)/sizeof(arr[0])==(len), #arr)
 #define STATIC_ASSERT_ARRAY_ARRAY(arrA, arrB) static_assert(sizeof(arrA)/sizeof(arrA[0])==sizeof(arrB)/sizeof(arrB[0]), #arrA)
 
-#define TimeElasped_Msec        GetTickCount()
 #define ZeroMemoryThis          memset(this, 0, sizeof(*this))
 #define ZeroMemoryArray(arr)    memset(arr, 0, sizeof(arr))
 

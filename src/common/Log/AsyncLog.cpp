@@ -34,8 +34,10 @@ void AsyncLog::Append(const void* data, size_t len)
         _bufVec.push_back(_curBuf);
 
         //FIXME：new可能返回null，不过那会系统已经要跪了吧~
-        _nextBuf ? (_curBuf = std::move(_nextBuf)) : 
-                   (_curBuf.reset(new Buffer(_maxSize)));
+        if (_nextBuf)
+            _curBuf = std::move(_nextBuf);
+        else
+            _curBuf.reset(new Buffer(_maxSize));
         _cond.notify_one();
         //::WakeConditionVariable(&_cond);
     }

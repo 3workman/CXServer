@@ -36,11 +36,10 @@ namespace net
 			assert(writableBytes() == initialSize);
 			assert(prependBytes() == kCheapPrepend);
 		}
-        ~Buffer()
-        {
+        /*~Buffer() {
             //Notice：某些编译器上，这里已经实例化了 template <typename T> T read()，后面就不能再偏特化了
 			printf("---Buffer析构---%s (%d)\n", read<std::string>().c_str(), size());// 测试 AsyncLog
-        }
+        }*/
 
         char* beginRead(){ return begin() + _rpos; }
         char* beginWrite(){ return begin() + _wpos; }

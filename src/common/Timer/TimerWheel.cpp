@@ -24,7 +24,7 @@ void TimerNode::_Callback(){
     LOG_TRACK("node[%p]", this);
     loop -= interval;
     if (loop > 0) {
-        //timeDead = TimeElasped_Msec + interval;
+        //timeDead = GetTickCount() + interval;
         timeDead += interval; //Notice：周期执行的函数，服务器卡顿应该追帧，再取系统当前时间是错的
         CTimerMgr::Instance()._AddTimerNode(interval, this);
         func(); //must at the last line; timer may be deleted in _func();
@@ -35,7 +35,7 @@ void TimerNode::_Callback(){
 }
 TimerNode* CTimerMgr::AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec /* = 0 */, int totalSec /* = 0 */) {
     TimerNode* node = new TimerNode(f, cdSec * 1000, totalSec * 1000);
-    node->timeDead = TimeElasped_Msec + delaySec * 1000;
+    node->timeDead = GetTickCount() + delaySec * 1000;
     _AddTimerNode(delaySec * 1000, node);
     return node;
 }
