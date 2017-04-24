@@ -21,22 +21,24 @@ enum PacketFromEnum
 class NetPack {
     Pool_Obj_Define(NetPack, 4096)
 private:
-    static const size_t HEADER_SIZE     = sizeof(uint8)+sizeof(uint16); // packetType & Opcode
-    static const size_t TYPE_INDEX      = 0;
-    static const size_t OPCODE_INDEX    = 1;
     ByteBuffer  m_buf;
 public:
+    static const size_t HEADER_SIZE     = sizeof(uint8)+sizeof(uint16)+sizeof(uint32); // packetType & Opcode & reqIdx
+    static const size_t TYPE_INDEX      = 0;
+    static const size_t OPCODE_INDEX    = 1;
+    static const size_t REQ_IDX_INDEX   = 3;
+
     NetPack(uint16 opCode, int size = 128 - HEADER_SIZE)
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
-        SetOpCode(opCode);
-        SetFromType(135); //udp临时标记
+        OpCode(opCode);
+        FromType(135); //udp临时标记
     }
     NetPack(const void* pData, int size)
         :m_buf(size) {
         m_buf.append(pData, size);
         m_buf.rpos(HEADER_SIZE);
-        SetFromType(135); //udp临时标记
+        FromType(135); //udp临时标记
     }
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
@@ -47,16 +49,18 @@ public:
         m_buf.append(other.m_buf.contents(), HEADER_SIZE);
         m_buf.rpos(HEADER_SIZE);
     }
+public: // header
+    void    OpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }
+    uint16  OpCode() const { return m_buf.show<uint16>(OPCODE_INDEX); }
+    void    FromType(uint8 packType) { m_buf.put(TYPE_INDEX, packType); }
+    uint8   FromType() const { return m_buf.show<uint8>(TYPE_INDEX); }
+    void    ReqIdx(uint32 idx) { m_buf.put(REQ_IDX_INDEX, idx); }
+    uint32  ReqIdx() const { return m_buf.show<uint32>(REQ_IDX_INDEX); }
 public:
-    void SetOpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }
-    uint16 GetOpcode() const { return m_buf.show<uint16>(OPCODE_INDEX); }
-
-    void SetFromType(uint8 packType) { m_buf.put(TYPE_INDEX, packType); }
-    uint8 GetFromType() const { return m_buf.show<uint8>(TYPE_INDEX); }
-
     uint16 Size() const { return m_buf.size(); }
     uint16 BodySize() const { return m_buf.size() - HEADER_SIZE; }
     const uint8* Buffer() const { return m_buf.contents(); }
+    uint64 GetReqKey() { return (uint64(OpCode()) << 32) | ReqIdx(); }
 
 	template<class T> NetPack& operator << (const T& data) {
 		m_buf << data;

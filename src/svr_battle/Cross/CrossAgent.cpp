@@ -27,15 +27,15 @@ CrossAgent::CrossAgent()
 
     _config.wServerPort = 7003; //go cross
 }
-int CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun)
+uint64 CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun)
 {
     return sRpcCross._CallRpc(name, sendFun, std::bind(&CrossAgent::SendMsg, this, std::placeholders::_1));
 }
 void CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {
-    int opCodeId = CallRpc(name, sendFun);
+    uint64 reqKey = CallRpc(name, sendFun);
 
-    sRpcCross.RegistResponse(opCodeId, recvFun);
+    sRpcCross.RegistResponse(reqKey, recvFun);
 }
 void CrossAgent::SendMsg(const NetPack& pack)
 {

@@ -29,15 +29,14 @@ void Player::SendMsg(const NetPack& pack)
         _clientNetLink->SendMsg(pack.Buffer(), pack.Size());
     }
 }
-int Player::CallRpc(const char* name, const ParseRpcParam& sendFun)
+uint64 Player::CallRpc(const char* name, const ParseRpcParam& sendFun)
 {
     return sRpcClient._CallRpc(name, sendFun, std::bind(&Player::SendMsg, this, std::placeholders::_1));
 }
 void Player::CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {
-    int opCodeId = CallRpc(name, sendFun);
-
-    sRpcClient.RegistResponse(opCodeId, recvFun);
+    uint64 reqKey = CallRpc(name, sendFun);
+    sRpcClient.RegistResponse(reqKey, recvFun);
 }
 
 //////////////////////////////////////////////////////////////////////////

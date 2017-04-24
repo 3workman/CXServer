@@ -53,7 +53,7 @@ int CallRpc(const char* name, const ParseRpcParam& sendFun)
     assert(opCodeId > 0);
     static NetPack msg(0);
     msg.ClearBody();
-    msg.SetOpCode(opCodeId);;
+    msg.OpCode(opCodeId);;
     sendFun(msg);
     g_link.SendMsg(msg.Buffer(), msg.Size());
     return opCodeId;
@@ -68,7 +68,7 @@ void UpdateRecvQueue()
 {
     NetPack* pData;
     if (g_queue.pop(pData)) {
-        auto it = g_RecvHandle.find(pData->GetOpcode());
+        auto it = g_RecvHandle.find(pData->OpCode());
         if (it != g_RecvHandle.end()) it->second(*pData);
         delete pData;
     }

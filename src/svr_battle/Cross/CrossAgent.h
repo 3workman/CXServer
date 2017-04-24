@@ -19,7 +19,7 @@ public:
 public:
     void SendMsg(const NetPack& pack);
     NetPack& BackBuffer() { return sRpcCross.BackBuffer; }
-    int CallRpc(const char* name, const ParseRpcParam& sendFun);
+    uint64 CallRpc(const char* name, const ParseRpcParam& sendFun);
     void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
 public:
     CrossAgent();

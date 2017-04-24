@@ -27,7 +27,7 @@ template <typename Typ> // 类型Typ须含有：_rpc列表，SendMsg()
 class RpcQueue {
     typedef std::pair<Typ*, NetPack*> RpcPair;
 
-    std::map<int, ParseRpcParam> m_response;  //rpc远端的回复
+    std::map<uint64, ParseRpcParam> m_response;  //rpc远端的回复
     SafeQueue<RpcPair>          m_queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
     NetPack m_SendBuffer;
 public:
@@ -55,23 +55,21 @@ public:
     }
     void _Handle(Typ* pObj, NetPack& buf)
     {
-        uint16 opCode = buf.GetOpcode();
+        uint16 opCode = buf.OpCode();
         auto it = Typ::_rpc.find(opCode);
         if (it != Typ::_rpc.end()) {
             BackBuffer.ResetHead(buf);
             (pObj->*(it->second))(buf);
             if (BackBuffer.BodySize()) pObj->SendMsg(BackBuffer);
         } else {
-            auto it = m_response.find(opCode);
+            auto it = m_response.find(buf.GetReqKey());
             assert(it != m_response.end());
             if (it != m_response.end()) it->second(buf);
         }
     }
-    void RegistResponse(int opCode, const ParseRpcParam& func)
+    void RegistResponse(uint64 reqKey, const ParseRpcParam& func)
     {
-        assert(Typ::_rpc.find(opCode) == Typ::_rpc.end());
-
-        m_response.insert(make_pair(opCode, func));
+        m_response.insert(make_pair(reqKey, func));
     }
     int RpcNameToId(const char* name)
     {
@@ -82,14 +80,17 @@ public:
         }
         return it->second;
     }
-    int _CallRpc(const char* name, const ParseRpcParam& func, const SendMsgFunc& doSend)
+    uint64 _CallRpc(const char* name, const ParseRpcParam& func, const SendMsgFunc& doSend)
     {
+        static uint32 _auto_req_idx = 0;
         int opCodeId = RpcNameToId(name);
+        assert(Typ::_rpc.find(opCodeId) == Typ::_rpc.end());
         m_SendBuffer.ClearBody();
-        m_SendBuffer.SetOpCode(opCodeId);
+        m_SendBuffer.OpCode(opCodeId);
+        m_SendBuffer.ReqIdx(++_auto_req_idx);
         func(m_SendBuffer);
         doSend(m_SendBuffer);
-        return opCodeId;
+        return m_SendBuffer.GetReqKey();
     }
 
 private:

@@ -12,7 +12,7 @@
 bool BindPlayerLink(void*& refPlayer, UdpClientAgent* p, const void* pMsg, int size)
 {
     NetPack msg(pMsg, size);
-    switch (msg.GetOpcode()){
+    switch (msg.OpCode()){
     case 1: {
         //TODO:登录，可先查询<account, player>，可省略读数据库
         Player* player = new Player();
@@ -38,7 +38,7 @@ void HandleClientMsg(void* player, const void* pMsg, int size)
 {
     NetPack msg(pMsg, size);
 #ifdef _DEBUG
-    printf("Recv Msg ID(%d) \n", msg.GetOpcode());
+    printf("Recv Msg ID(%d) \n", msg.OpCode());
 #endif
     sRpcClient._Handle((Player*)player, msg);
 }

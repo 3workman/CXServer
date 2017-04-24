@@ -33,7 +33,7 @@ public:
     void SetNetLink(NetLink* p);
     void SendMsg(const NetPack& pack);
     NetPack& BackBuffer() { return sRpcClient.BackBuffer; }
-    int  CallRpc(const char* name, const ParseRpcParam& sendFun);
+    uint64 CallRpc(const char* name, const ParseRpcParam& sendFun);
     void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
 public:
     typedef void(Player::*_RpcFunc)(NetPack&);
