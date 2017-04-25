@@ -46,10 +46,8 @@ public:
     void Update() //主循环，每帧调一次
     {
         RpcPair data;
-        if (m_queue.pop(data))
-        {
+        if (m_queue.pop(data)) {
             _Handle(data.first, *data.second);
-
             delete data.second;
         }
     }

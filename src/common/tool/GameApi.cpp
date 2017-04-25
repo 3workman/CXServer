@@ -63,29 +63,40 @@ static time_t g_time_now = 0;
 time_t TimeNowSec() { return g_time_now; }
 void RefreshTimeNow() { g_time_now = ::time(NULL); }
 
-int TimeHour()
-{
+int TimeHour() {
     time_t timep;
     struct tm *p;
     time(&timep);
     p = localtime(&timep);
     return p->tm_hour;
 }
-int TimeMonth()
-{
+int TimeMonth() {
     time_t timep;
     struct tm *p;
     time(&timep);
     p = localtime(&timep);
     return p->tm_mon;
 }
-int TimeDayOfWeek()
-{
+int TimeYear() {
+    time_t timep;
+    struct tm *p;
+    time(&timep);
+    p = localtime(&timep);
+    return p->tm_year;
+}
+int TimeDayOfWeek() {
     time_t timep;
     struct tm *p;
     time(&timep);
     p = localtime(&timep);
     return p->tm_wday;
+}
+int TimeYearOfWeek() {
+    time_t timep;
+    struct tm *p;
+    time(&timep);
+    p = localtime(&timep);
+    return p->tm_yday;
 }
 
 static time_t _GetCurDay(time_t sec){
@@ -105,8 +116,7 @@ bool IsSameDay(time_t sec1, time_t sec2)
 {
     return _GetCurDay(sec1) == _GetCurDay(sec2);
 }
-time_t ParseTime(time_t num) //20160223145632：2016年2月23号14:56:32
-{
+time_t ParseTime(time_t num) { //20160223145632：2016年2月23号14:56:32
 #define _Parse_(n) num%(n); num /= (n)
     struct tm t;
     t.tm_sec = _Parse_(100);
@@ -115,6 +125,7 @@ time_t ParseTime(time_t num) //20160223145632：2016年2月23号14:56:32
     t.tm_mday = _Parse_(100);
     t.tm_mon = _Parse_(100);
     t.tm_year = _Parse_(10000);
+    if (t.tm_year < 1900) { t.tm_year = TimeYear(); }
     t.tm_year -= 1900;
     t.tm_isdst = 0;
 #undef _Parse_
