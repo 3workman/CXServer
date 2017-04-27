@@ -60,7 +60,7 @@ void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
     }
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
     LogFile log("log\\battle", LogFile::ALL, true);
     _LOG_MAIN_(log);

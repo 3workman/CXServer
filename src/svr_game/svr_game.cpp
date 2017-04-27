@@ -63,7 +63,7 @@ void RunServerIOCP(ServLinkMgr& mgr)
     ServLinkMgr::InitWinsock();
     mgr.CreateServer(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 }
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
     LogFile log("log\\game", LogFile::ALL, true);
     _LOG_MAIN_(log);

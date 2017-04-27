@@ -10,8 +10,6 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #include <stdio.h>
-#include <tchar.h>
-
 
 // 在此处引用程序需要的其他头文件
 //

@@ -75,7 +75,7 @@ void UpdateRecvQueue()
 }
 
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
     csv::Parser file = csv::Parser("../data/csv/rpc.csv");
     uint cnt = file.rowCount();
