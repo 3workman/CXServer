@@ -62,7 +62,7 @@ void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
 
 int main(int argc, char* argv[])
 {
-    LogFile log("log\\battle", LogFile::ALL, true);
+    LogFile log("log\\battle", LogFile::TRACK, true);
     _LOG_MAIN_(log);
 
     ClientLink::InitWinsock();

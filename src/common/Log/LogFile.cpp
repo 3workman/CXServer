@@ -11,12 +11,20 @@ LogFile* LogFile::g_log = NULL;
 
 static const int MAX_MSFBUFF_SIZE = 1024;
 static char g_logBuff[MAX_MSFBUFF_SIZE] = { '\0' };
+static const char* LevelToString[] = {
+    "TRACK",
+    "DEBUG",
+    "INFO",
+    "WARN",
+    "ERROR",
+};
+STATIC_ASSERT_ARRAY_LENGTH(LevelToString, LogFile::ERR + 1);
 
 void LogFile::Log(const char* curFile, const int curLine, LogLv kLevel, const char* fmt, ...)
 {
     if (kLevel < _level) return;
 
-    int idx = sprintf(g_logBuff, "[%s]", LevelToString(kLevel));
+    int idx = sprintf(g_logBuff, "[%s]", LevelToString[kLevel]);
     time_t t; time(&t);
     idx += strftime(g_logBuff+idx, 32, "[%Y-%m-%d %H:%M:%S]", localtime(&t));
     idx += sprintf(g_logBuff+idx, "[%s(%d)]  ", Dir::FindName(curFile), curLine);
@@ -72,15 +80,4 @@ LogFile::~LogFile()
     delete _async; // 必须在_fp之前，AsyncLog析构时还有写一次文件
     if (_fp) fclose(_fp);
     g_log = NULL;
-}
-
-const char* LogFile::LevelToString(LogLv kLevel) {
-    switch (kLevel) {
-    case ERRO:return "ERROR";
-    case WARING:return "WARIN";
-    case INFO:return "INFO";
-    case Debug:return "DEBUG";
-    case TRACK:return "TRACK";
-    default: return "NULL";
-    }
 }
