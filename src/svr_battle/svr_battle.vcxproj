@@ -86,6 +86,7 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\svr_game\Player\PlayerDataSend.cpp" />
     <ClCompile Include="..\svr_game\Player\Player.cpp" />
     <ClCompile Include="..\svr_game\Room\PlayerRoomData.cpp" />
     <ClCompile Include="..\svr_game\Room\PlayerRoomRpc.cpp" />
@@ -96,6 +97,7 @@
   <ItemGroup>
     <ClInclude Include="..\rpc\RpcEnum.h" />
     <ClInclude Include="..\rpc\RpcQueue.h" />
+    <ClInclude Include="..\svr_game\Player\PlayerDataSend.h" />
     <ClInclude Include="..\svr_game\Player\Player.h" />
     <ClInclude Include="..\svr_game\Room\PlayerRoomData.h" />
     <ClInclude Include="..\svr_game\Room\Room.h" />

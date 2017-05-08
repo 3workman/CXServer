@@ -18,6 +18,9 @@
     <ClCompile Include="Cross\CrossAgent.cpp">
       <Filter>Cross</Filter>
     </ClCompile>
+    <ClCompile Include="..\svr_game\Player\PlayerDataSend.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Player">
@@ -51,6 +54,9 @@
     </ClInclude>
     <ClInclude Include="Cross\CrossAgent.h">
       <Filter>Cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svr_game\Player\PlayerDataSend.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

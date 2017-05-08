@@ -54,6 +54,9 @@ public:
     void _Handle(Typ* pObj, NetPack& buf)
     {
         uint16 opCode = buf.OpCode();
+#ifdef _DEBUG
+        printf("Recv Msg ID(%d) \n", opCode);
+#endif
         auto it = Typ::_rpc.find(opCode);
         if (it != Typ::_rpc.end()) {
             BackBuffer.ResetHead(buf);

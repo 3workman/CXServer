@@ -37,9 +37,6 @@ bool BindPlayerLink(void*& refPlayer, UdpClientAgent* p, const void* pMsg, int s
 void HandleClientMsg(void* player, const void* pMsg, int size)
 {
     NetPack msg(pMsg, size);
-#ifdef _DEBUG
-    printf("Recv Msg ID(%d) \n", msg.OpCode());
-#endif
     sRpcClient._Handle((Player*)player, msg);
 }
 void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)

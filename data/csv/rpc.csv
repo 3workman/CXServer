@@ -1,6 +1,6 @@
-name,id,is_client,comment
+name,id,is_client,_common
 rpc_regist,60000,0,
-rpc_echo,0,0,
+rpc_echo,0,0,测试
 rpc_login,1,0,
 rpc_logout,2,0,
 rpc_reconnect,3,0,
@@ -8,6 +8,12 @@ rpc_create_room,10,0,
 rpc_join_room,11,0,
 rpc_exit_room,12,0,
 rpc_move_delta,13,0,
+rpc_login_success,14,0,游戏服通知登账号服，登录成功
+rpc_reg_account,15,0,
+rpc_get_gamesvr_lst,16,0,
+battle_echo,17,0,
+rpc_test_mongodb,18,0,
+rpc_player_create,19,0,
 rpc_notify_player_join_room,10001,1,
 rpc_notify_player_exit_room,10002,1,
 rpc_sync_position,10003,1,

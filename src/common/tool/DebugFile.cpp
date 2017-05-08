@@ -14,7 +14,6 @@ void cDebugFile::Append(const char *src, size_t cnt)
     memcpy(&m_Data[m_wpos], src, cnt);
 
     stKeyInfo& info = m_vecKey[m_keyPos];
-    info.size = cnt;
     info.pObj = src;
     info.pOld = &m_Data[m_wpos];
 

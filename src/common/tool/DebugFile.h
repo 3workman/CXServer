@@ -22,7 +22,34 @@
 
 using namespace std;
 
-class cDebugFile{
+class cDebugFile {
+    enum ValueEnum {
+        v_uint8,
+        v_uint16,
+        v_uint32,
+        v_uint64,
+        v_int8,
+        v_int16,
+        v_int32,
+        v_int64,
+        v_float,
+        v_double,
+        v_string,
+    };
+    struct stKeyInfo {
+        ValueEnum type;
+        const char*  pObj;
+        char*  pOld;
+        string key;
+
+        stKeyInfo() : type(v_int32), pObj(NULL), pOld(NULL) {}
+
+        stKeyInfo(const char* str) : type(v_int32), pObj(NULL), pOld(NULL), key(str) {}
+    };
+    size_t  m_keyPos, m_wpos, m_size;  //数据写到的位置,总大小
+    char*   m_Data = NULL;
+    string  m_sFileName;
+    std::vector<stKeyInfo> m_vecKey;
 public:
     enum eOutPut{
         All,        //记录所有数据
@@ -37,15 +64,14 @@ public:
 	{
 		m_Data = new char[m_size];
 	}
-
     ~cDebugFile(){ Output(); delete[] m_Data; }
 
 	void Output(string sKeyList = "", eOutPut eType = All);
 
-    template<typename T> cDebugFile& operator<<(const T& value){
-        Append<T>(value);
-        return *this;
-    }
+    //template<typename T> cDebugFile& operator<<(const T& value){
+    //    Append<T>(value);
+    //    return *this;
+    //}
 
     #define Operator_CheckCode(v) \
         if (m_vecKey.size() <= m_keyPos) {assert(0); return *this;}\
@@ -111,74 +137,27 @@ public:
         Append(str, strlen(str)+1);
         return *this;
     }
-    cDebugFile& operator<<(const string& value) {
-        Operator_CheckCode(v_string)
-        Append((char*)value.c_str(), value.length()+1);
-        return *this;
-    }
-    cDebugFile& operator<<(string& value) {
-        Operator_CheckCode(v_string)
-        Append((char*)value.c_str(), value.length()+1);
-        return *this;
-    }
 	cDebugFile& operator<<(const char *str) { //输入Key
 		stKeyInfo info(str);
 		m_vecKey.push_back(info);
         return *this;
     }
-
 private:
 	bool OnResult(eOutPut eType, const int64& result, const string& key, ostringstream& file);
-
 	void ParseName(std::vector<string>& refVec, string str);
 	void WriteToFile(string sFileName, ostringstream& osFile);
 
-    enum eValueType
-    {
-        v_uint8,
-        v_uint16,
-        v_uint32,
-        v_uint64,
-        v_int8,
-        v_int16,
-        v_int32,
-        v_int64,
-        v_float,
-        v_double,
-        v_string,
-    };
-
-    void Double(){
-        char* temp = new char[m_size *= 2];
-        memcpy(temp, m_Data, m_size/2 * sizeof(char));
-        delete[] m_Data;
-        m_Data = temp;
-    }
-
-    void Append(const char *src, size_t cnt);
-
-    template <typename T> 
-	void Append(const T& value)
+    template <typename T> void Append(const T& value)
 	{
         Append((char*)&value, sizeof(value));
     }
-
-    struct stKeyInfo
-    {
-        eValueType type;
-        size_t size;
-        const char*  pObj;
-        char*  pOld;
-        string key;
-
-        stKeyInfo() : type(v_int32), size(4), pObj(NULL), pOld(NULL) {}
-
-		stKeyInfo(const char* str) : type(v_int32), size(4), pObj(NULL), pOld(NULL), key(str) {}
-    };
-    size_t  m_keyPos, m_wpos, m_size;  //数据写到的位置,总大小
-    char*   m_Data = NULL;
-    string  m_sFileName;
-    std::vector<stKeyInfo> m_vecKey;
+    void Append(const char *src, size_t cnt);
+    void Double(){
+        char* temp = new char[m_size *= 2];
+        memcpy(temp, m_Data, m_size / 2 * sizeof(char));
+        delete[] m_Data;
+        m_Data = temp;
+    }
 };
 
 #ifdef _DEBUG

@@ -67,9 +67,7 @@ void CRoom::SyncPlayerPosition()
             for (auto& itr : m_players) {
                 Player* ptr = itr.second;
                 buf.WriteUInt32(ptr->m_index);
-                buf.WriteUInt32(ptr->m_RoomData->m_netId);
-                buf.WriteFloat(ptr->m_RoomData->m_posX);
-                buf.WriteFloat(ptr->m_RoomData->m_posY);
+                ptr->m_RoomData->m_SendData.DataToBuf(buf);
             }
         });
     }

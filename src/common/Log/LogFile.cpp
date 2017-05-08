@@ -65,7 +65,7 @@ LogFile::LogFile(std::string fileName, LogLv lv, bool isPrint)
 
     _async = new AsyncLog(1024, [&](const AsyncLog::BufferVec& vec){
         for (auto& it : vec){
-            if (_fp && it->readableBytes() > 0) {
+            if (it->readableBytes() > 0) {
                 fwrite(it->beginRead(), sizeof(char), it->readableBytes(), _fp);
                 //printf("Async---%s", it->beginRead());
             }

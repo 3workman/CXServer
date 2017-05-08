@@ -27,7 +27,7 @@ public:
 
 	//vector的reserve增加了vector的capacity，但是它的size没有改变！而resize改变了vector的capacity同时也增加了它的size
 	//reserve是容器预留空间，但在空间内不真正创建元素对象，所以在没有添加新的对象之前，不能引用容器内的元素
-	//resize是改变容器的大小，且在创建对象，因此调用这个函数之后，就可以引用容器内的对象了【】
+	//resize是改变容器的大小，且在创建对象，因此调用这个函数之后，就可以引用容器内的对象了
 	//resize【如果比原容器更小，清除尾部多出的元素】
 	ByteBuffer() : _rpos(0), _wpos(0) {
 		_storage.reserve(DEFAULT_SIZE);
@@ -37,7 +37,7 @@ public:
 	}
 	ByteBuffer(const ByteBuffer &buf) : _rpos(buf._rpos), _wpos(buf._wpos), _storage(buf._storage) { }
 
-    void clear(size_t pos = 0) { /*_storage.clear(); */_rpos = _wpos = pos; }
+    void clear(size_t pos = 0) { _storage.resize(pos); _rpos = _wpos = pos; }
 
     size_t size() const { return _storage.size(); }//tolua_export
     // one should never use resize probably
