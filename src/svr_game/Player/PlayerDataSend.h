@@ -36,7 +36,7 @@ class PlayerDataSend {
     vector<stKeyInfo> m_vecKey;
 
 public:
-    void DataToBuf(NetPack& buf);
+    void ToBuf(NetPack& buf);
 
     PlayerDataSend& operator<<(const uint8& value) {
         stKeyInfo info(v_uint8);

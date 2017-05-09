@@ -12,8 +12,7 @@ public:
     float  m_posX;
     float  m_posY;
 public:
-    PlayerRoomData()
-    {
+    PlayerRoomData() {
         // 要同步给client的变量，按序放入SendData，方便发送时，一键打包
         m_SendData << m_netId;
         m_SendData << m_posX;

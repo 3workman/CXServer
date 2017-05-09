@@ -2,7 +2,7 @@
 #include "PlayerDataSend.h"
 #include "Buffer/NetPack.h"
 
-void PlayerDataSend::DataToBuf(NetPack& buf)
+void PlayerDataSend::ToBuf(NetPack& buf)
 {
     for (auto& info : m_vecKey) {
         switch (info.type) {
