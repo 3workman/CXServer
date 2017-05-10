@@ -3,6 +3,7 @@
 #include "tool/Mempool.h"
 #include "../Player/PlayerDataSend.h"
 
+class Player;
 class PlayerRoomData {
     Pool_Obj_Define(PlayerRoomData, MAX_PLAYER_COUNT);
 public:
@@ -18,4 +19,5 @@ public:
         m_SendData << m_posX;
         m_SendData << m_posY;
     }
+    void ExitRoom(Player& player);
 };

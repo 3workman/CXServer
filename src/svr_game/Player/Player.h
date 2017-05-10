@@ -30,6 +30,7 @@ public:
     PlayerRoomData* m_RoomData;
 public:
     Player();
+    ~Player();
     void SetNetLink(NetLink* p);
     void SendMsg(const NetPack& pack);
     NetPack& BackBuffer() { return sRpcClient.BackBuffer; }

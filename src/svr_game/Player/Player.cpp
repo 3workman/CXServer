@@ -15,8 +15,13 @@ Player::Player()
 #define Rpc_Declare(typ) _rpc[sRpcClient.RpcNameToId(#typ)] = &Player::HandleRpc_##typ;
         Rpc_For_Player;
     }
-
     m_RoomData = new PlayerRoomData();
+}
+Player::~Player()
+{
+    m_RoomData->ExitRoom(*this);
+
+    delete m_RoomData;
 }
 void Player::SetNetLink(NetLink* p)
 {

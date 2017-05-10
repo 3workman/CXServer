@@ -65,7 +65,10 @@ public:
         } else {
             auto it = m_response.find(buf.GetReqKey());
             assert(it != m_response.end());
-            if (it != m_response.end()) it->second(buf);
+            if (it != m_response.end()) {
+                it->second(buf);
+                m_response.erase(it);
+            }
         }
     }
     void RegistResponse(uint64 reqKey, const ParseRpcParam& func)
