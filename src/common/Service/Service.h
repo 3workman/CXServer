@@ -29,7 +29,7 @@ class iService{
 public:
     virtual bool UnRegister(ServiceObj* pObj) = 0;
     virtual bool Register(ServiceObj* pObj, uint exeTime = 0) = 0; //哪个时刻执行
-    virtual void RunSevice(uint time_elasped, uint timenow) = 0; //循环内的回调函数(m_func)可能调到Register、UnRegister
+    virtual void RunSevice(uint time_elapse, uint timenow) = 0; //循环内的回调函数(m_func)可能调到Register、UnRegister
 protected:
     typedef std::multimap<uint, ServiceObj*> mapTimer;
     typedef mapTimer::iterator itMapTimer;
@@ -227,7 +227,7 @@ public:
 	{
 		return m_bRun ? m_aObjAdd.AddObj(pObj) : m_aObj.AddObj(pObj);
 	}
-	void RunSevice(uint time_elasped, uint /*timenow*/)
+    void RunSevice(uint time_elapse, uint /*timenow*/)
 	{
 		if (m_aObj.AddObjs(m_aObjAdd)) m_aObjAdd.Clear();
 		if (m_aObj.DelObjs(m_aObjDel)) m_aObjDel.Clear();
@@ -236,7 +236,7 @@ public:
         if (kItemCount <= 0) return;
 
 		/******************************负载均衡算法********************************/
-		m_timeWait += time_elasped;
+        m_timeWait += time_elapse;
 		const int runNum = m_timeWait * kItemCount / c_timeAll; //单位时长里要处理的个数，可能大于列表中obj总数，比如服务器卡顿很久，得追帧
         if (runNum == 0) return;
 
@@ -281,7 +281,7 @@ public:
 		m_bRun ? m_vecAdd.push_back(pObj) : m_aObj.push_back(pObj);
 		return true;
 	}
-	void RunSevice(uint time_elasped, uint /*timenow*/)
+    void RunSevice(uint time_elapse, uint /*timenow*/)
 	{
         m_aObj.insert(m_aObj.end(), m_vecAdd.begin(), m_vecAdd.end());
 		m_vecAdd.clear();
@@ -301,7 +301,7 @@ public:
         if (kItemCount <= 0) return;
 
 		/******************************负载均衡算法********************************/
-		m_timeWait += time_elasped;
+        m_timeWait += time_elapse;
         const int runNum = m_timeWait * kItemCount / c_timeAll; //单位时长里要处理的个数，可能大于列表中obj总数，比如服务器卡顿很久，得追帧
         if (runNum == 0) return;
 		
@@ -344,7 +344,7 @@ public:
 		}		
 		return false;
 	}
-	void RunSevice(uint /*time_elasped*/, uint timenow){
+	void RunSevice(uint /*time_elapse*/, uint timenow){
         ItSet itSet;
         for (itListTimer it = m_list.begin(); it != m_list.end() && !m_setDel.empty(); ){
             itSet = m_setDel.find(it->second);
@@ -396,7 +396,7 @@ public:
 		}
 		return false;
 	}
-	void RunSevice(uint /*time_elasped*/, uint timenow){
+	void RunSevice(uint /*time_elapse*/, uint timenow){
         ItSet itSet;
         for (itMapTimer it = m_map.begin(); it != m_map.end() && !m_setDel.empty(); ){
             itSet = m_setDel.find(it->second);

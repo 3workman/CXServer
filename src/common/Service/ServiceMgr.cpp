@@ -13,9 +13,9 @@ iService* ServiceMgr::m_aService[_Service_Max] = {
     new cServicePatch(_Service_PlayerSave, 3 * 1000),
     new cServiceList(_Service_Sync_Position),
 };
-void ServiceMgr::RunAllService(uint time_elasped, uint timenow)
+void ServiceMgr::RunAllService(uint time_elapse, uint timenow)
 {
-    for (auto& it : m_aService) it->RunSevice(time_elasped, timenow);
+    for (auto& it : m_aService) it->RunSevice(time_elapse, timenow);
 }
 bool ServiceMgr::UnRegister(ServiceEnum typ, ServiceObj* pObj)
 {

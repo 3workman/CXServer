@@ -71,13 +71,14 @@ int main(int argc, char* argv[])
     UdpServer upd;
     upd.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 
-    uint timeOld(0), timeNow = GetTickCount();
+    uint time_elapse(0), timeOld(0), timeNow = GetTickCount();
     while (true) {
         timeOld = timeNow;
         timeNow = GetTickCount();
+        time_elapse = timeNow - timeOld;
 
-        ServiceMgr::RunAllService(timeNow - timeOld, timeNow);
-        sTimerMgr.Refresh(timeNow - timeOld, timeNow);
+        ServiceMgr::RunAllService(time_elapse, timeNow);
+        sTimerMgr.Refresh(time_elapse, timeNow);
         GameApi::RefreshTimeNow();
 
         sRpcCross.Update();

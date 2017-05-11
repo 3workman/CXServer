@@ -151,11 +151,11 @@ bool ServLinkMgr::_AssistLoop()
 
 	time(&_timeNow);
 	DWORD dwInitTime = GetTickCount();
-	DWORD dwElaspedTime = 0;
+	DWORD dwElapsedTime = 0;
     while (cv_status::timeout == _pThread->WaitKillEvent(_config.dwAssistLoopMs))
 	{
 		DWORD tempNow = GetTickCount();
-		DWORD tempElasped = tempNow - dwInitTime;
+		DWORD tempElapse = tempNow - dwInitTime;
 		dwInitTime = tempNow;
 
 		time(&_timeNow);
@@ -165,10 +165,10 @@ bool ServLinkMgr::_AssistLoop()
 			if (it->IsConnected()) it->ServerRun_SendIO(); //【brief.7】另辟线程定期发送所有buffer
 		}
 
-		dwElaspedTime += tempElasped;
+		dwElapsedTime += tempElapse;
 
-		if (dwElaspedTime > CHECK_INTERVAL) { // 多少毫秒检查一次
-			dwElaspedTime = 0;
+		if (dwElapsedTime > CHECK_INTERVAL) { // 多少毫秒检查一次
+			dwElapsedTime = 0;
 			Maintain(_timeNow); //检查维护serverLink
 		}
 	}

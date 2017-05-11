@@ -69,7 +69,7 @@ class CTimerMgr {
     ~CTimerMgr();
 public:
     static CTimerMgr& Instance(){ static CTimerMgr T; return T; }
-    void Refresh(uint32 time_elasped, uint32 timenow);
+    void Refresh(uint32 time_elapse, uint32 timenow);
 
     TimerNode* AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec = 0, int totalSec = 0);
     void _AddTimerNode(uint32 milseconds, TimerNode* node);

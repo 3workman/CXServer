@@ -75,8 +75,8 @@ void CTimerMgr::RemoveTimer(TimerNode* node) {
 
     delete node;
 }
-void CTimerMgr::Refresh(uint32 time_elasped, uint32 timenow) {
-    uint32 tickCnt = time_elasped / TIME_TICK_LEN;
+void CTimerMgr::Refresh(uint32 time_elapse, uint32 timenow) {
+    uint32 tickCnt = time_elapse / TIME_TICK_LEN;
     for (uint32 i = 0; i < tickCnt; ++i) { //扫过的slot均超时
         bool isCascade = false;
         stWheel* wheel = _wheels[0];

@@ -13,7 +13,7 @@ typedef void ServiceObj;
 class ServiceMgr {
     static iService* m_aService[_Service_Max];
 public:
-    static void RunAllService(uint time_elasped, uint timenow);
+    static void RunAllService(uint time_elapse, uint timenow);
     static bool UnRegister(ServiceEnum typ, ServiceObj* pObj);
     static bool Register(ServiceEnum typ, ServiceObj* pObj);
 };
