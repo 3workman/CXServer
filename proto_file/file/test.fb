@@ -1,0 +1,16 @@
+namespace TestApp;
+
+struct KV {
+ key: ulong;
+ value: double;
+}
+
+table TestObj {
+ id:ulong;
+ name:string;
+ flag:ubyte = 0;
+ list:[ulong];
+ kv:KV;
+}
+
+root_type TestObj;
