@@ -1,10 +1,10 @@
 @echo off
 set FilePath="./file"
-set GenerateOutPath="./output_go"
+set OutPath="./output_go"
 
 for  %%i in (%FilePath%/*.fb) do (
    @echo Generate: %%i
-   flatc -g -o %GenerateOutPath% %FilePath%/%%i
+   flatc -g -o %OutPath% %FilePath%/%%i
 )
 
 for /d %%i in (%FilePath%/*) do (
@@ -17,5 +17,5 @@ pause
 set CurSubDirPath=%1
 for  %%i in (%FilePath%/%CurSubDirPath%/*.fb) do (
    @echo Generate: %%i
-   flatc -g -o %GenerateOutPath%/%CurSubDirPath% %FilePath%/%CurSubDirPath%/%%i
+   flatc -g -o %OutPath%/%CurSubDirPath% %FilePath%/%CurSubDirPath%/%%i
 )

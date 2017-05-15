@@ -19,8 +19,8 @@ void CALLBACK ClientLink::DoneIO(DWORD dwErrorCode,
 
 	if (0 != dwErrorCode && dwErrorCode != ERROR_HANDLE_EOF)
 	{
-		printf("DoneIO Err code:%x - bytes:%d \n", dwErrorCode, dwNumberOfBytesTransferred);
-		client->CloseLink(dwErrorCode);
+        printf("DoneIO Err code:%x(%d) - bytes:%d \n", dwErrorCode, dwErrorCode, dwNumberOfBytesTransferred);
+        client->CloseLink(dwErrorCode);
 		return;
 	}
 	client->DoneIOCallback(dwNumberOfBytesTransferred, ov->eType);
@@ -79,24 +79,17 @@ void ClientLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 	{
 		if (_eState == State_Connected)
 		{
-			if (dwNumberOfBytesTransferred)
-			{
-				OnRead_DoneIO(dwNumberOfBytesTransferred);
-			}
-			else
-				CloseLink(0); //收到0包，对端关闭了
+            if (dwNumberOfBytesTransferred) {
+                OnRead_DoneIO(dwNumberOfBytesTransferred);
+            } else {
+                CloseLink(0); //收到0包，对端关闭了
+            }
 		}
 	}
 }
 bool ClientLink::CreateLinkAndConnect(HandleMsgFunc handleMsg)
 {
     _HandleServerMsg = handleMsg;
-
-	if (_sClient != INVALID_SOCKET)
-	{
-		printf("Error_CreateLink：socket being used. \n");
-		return false;
-	}
 
 	_ovSend.SetLink(this);
 	_ovRecv.SetLink(this);
@@ -105,46 +98,55 @@ bool ClientLink::CreateLinkAndConnect(HandleMsgFunc handleMsg)
     _bCanWrite = false;
     _eState = State_Close;
 
-	_sClient = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
-	if (_sClient == INVALID_SOCKET)
-	{
-		return false;
-	}
+    return Connect();
+}
+bool ClientLink::Connect()
+{
+    if (_sClient != INVALID_SOCKET)
+    {
+        printf("Error_CreateLink：socket being used. \n");
+        return false;
+    }
+    _sClient = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
+    if (_sClient == INVALID_SOCKET)
+    {
+        return false;
+    }
 
-	//关闭Nagle算法，无论多小的包都直接发
-	//如果不关闭，client的网络延时会不会出现震荡？一次只准发一个小包，其它的会堆积等待
-	bool noDelay = true;
-	if (setsockopt(_sClient, IPPROTO_TCP, TCP_NODELAY, (char*)&noDelay, sizeof(noDelay)) == SOCKET_ERROR)
-	{
-		printf("setsockopt() failed with TCP_NODELAY");
-		return false;
-	}
+    //关闭Nagle算法，无论多小的包都直接发
+    //如果不关闭，client的网络延时会不会出现震荡？一次只准发一个小包，其它的会堆积等待
+    bool noDelay = true;
+    if (setsockopt(_sClient, IPPROTO_TCP, TCP_NODELAY, (char*)&noDelay, sizeof(noDelay)) == SOCKET_ERROR)
+    {
+        printf("setsockopt() failed with TCP_NODELAY");
+        return false;
+    }
 
-	SOCKADDR_IN addr;
-	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_port = htons(0);
-	::bind(_sClient, (const sockaddr*)&addr, sizeof(addr));
+    SOCKADDR_IN addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(0);
+    ::bind(_sClient, (const sockaddr*)&addr, sizeof(addr));
 
-	if (BindIoCompletionCallback((HANDLE)_sClient, DoneIO, 0)){
-		_eState = State_Connecting;
-		if (!ConnectEx())
-		{
-			DWORD dwError = GetLastError();
-			if (WSAEWOULDBLOCK != dwError && ERROR_IO_PENDING != dwError)
-			{
-				printf("NetError_Connect:%x \n", dwError);
-				closesocket(_sClient);
-				_eState = State_Close;
-				return false;
-			}
-		}
-	}
-	return true;
+    if (BindIoCompletionCallback((HANDLE)_sClient, DoneIO, 0)){
+        if (!ConnectEx()){
+            DWORD dwError = GetLastError();
+            if (WSAEWOULDBLOCK != dwError && ERROR_IO_PENDING != dwError)
+            {
+                printf("NetError_Connect:%x(%d) \n", dwError, dwError);
+                closesocket(_sClient);
+                _eState = State_Close;
+                return false;
+            }
+        }
+    }
+    return true;
 }
 BOOL ClientLink::ConnectEx()
 {
-	SOCKADDR_IN addr;
+    _eState = State_Connecting;
+
+    SOCKADDR_IN addr;
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = inet_addr(_config.strIP.c_str());
 	addr.sin_port = htons(_config.wServerPort);
@@ -169,10 +171,21 @@ void ClientLink::OnConnect()
 }
 void ClientLink::CloseLink(int nErrorCode)
 {
-	printf("CloseClient ErrCode:%d \n", nErrorCode);
+    printf("CloseClient ErrCode:%x(%d) \n", nErrorCode, nErrorCode);
 	_eState = State_Close;
 	shutdown(_sClient, SD_BOTH);
 	closesocket(_sClient); // 客户端的关闭好暴力~
+    _sClient = INVALID_SOCKET;
+
+    //测试：关闭换成重连
+    while (!Connect()){
+        DWORD dwError = GetLastError();
+        if (WSAEWOULDBLOCK != dwError && ERROR_IO_PENDING != dwError)
+        {
+            printf("NetError_Connect:%x(%d) \n", dwError, dwError);
+        }
+        //Sleep(3000);
+    }
 }
 
 void ClientLink::OnSend_DoneIO(DWORD dwBytesTransferred)

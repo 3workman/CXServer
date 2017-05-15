@@ -55,6 +55,7 @@ private:
     static void CALLBACK DoneIO(DWORD, DWORD, LPOVERLAPPED);
     void DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO eFlag);
 
+    bool Connect();
     BOOL ConnectEx();
 	void OnConnect();
 

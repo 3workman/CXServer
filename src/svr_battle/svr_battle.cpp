@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "../NetLib/UdpServer/UdpServer.h"
+#include "../NetLib/client/ClientLink.h"
 #include "RakSleep.h"
 #include "Service/ServiceMgr.h"
 #include "Timer/TimerWheel.h"

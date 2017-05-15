@@ -55,7 +55,7 @@ void CALLBACK ServLink::DoneIO(DWORD dwErrorCode,
 {
     if (lpOverlapped == NULL)
     {
-        printf("DoneIO Null code:%x - bytes:%d \n", dwErrorCode, dwNumberOfBytesTransferred);
+        printf("DoneIO Null code:%x(%d) - bytes:%d \n", dwErrorCode, dwErrorCode, dwNumberOfBytesTransferred);
         return;
     }
     My_OVERLAPPED* ov = (My_OVERLAPPED*)lpOverlapped;
@@ -63,7 +63,7 @@ void CALLBACK ServLink::DoneIO(DWORD dwErrorCode,
 
     if (0 != dwErrorCode && dwErrorCode != ERROR_HANDLE_EOF)
     {
-        printf("DoneIO Errcode:%x - id:%d - bytes:%d \n", dwErrorCode, client->GetID(), dwNumberOfBytesTransferred);
+        printf("DoneIO Errcode:%x(%d) - id:%d - bytes:%d \n", dwErrorCode, dwErrorCode, client->GetID(), dwNumberOfBytesTransferred);
         client->Invalid(DoneIO_Error);
         return;
     }

@@ -1,7 +1,7 @@
 #pragma once
 #include "../rpc/RpcEnum.h"
 #include "../rpc/RpcQueue.h"
-#include "../NetLib/client/ClientLink.h"
+#include "../NetLib/client/config_client.h"
 
 #undef Rpc_Declare
 #undef Rpc_Realize
@@ -9,9 +9,10 @@
 #define Rpc_Realize(typ) void CrossAgent::HandleRpc_##typ(NetPack& recvBuf)
 
 class NetPack;
+class ClientLink;
 class CrossAgent {
     ClientLinkConfig    _config;
-    ClientLink          _netLink;
+    ClientLink*         _netLink;
 public:
     typedef void(CrossAgent::*_RpcFunc)(NetPack&);
     static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CrossAgent.h"
+#include "../NetLib/client/ClientLink.h"
 
 std::map<int, CrossAgent::_RpcFunc> CrossAgent::_rpc;
 
@@ -11,12 +12,11 @@ void HandleServerMsg(void* p, int size)
 void CrossAgent::RunClientIOCP()
 {
     g_tmp_cross = this;
-    _netLink.CreateLinkAndConnect(HandleServerMsg);
+    _netLink->CreateLinkAndConnect(HandleServerMsg);
 
-    while (!_netLink.IsClose() && !_netLink.IsConnect()) Sleep(200); // 等待ConnectEx三次握手完成的回调，之后才能发数据
+    while (!_netLink->IsClose() && !_netLink->IsConnect()) Sleep(200); // 等待ConnectEx三次握手完成的回调，之后才能发数据
 }
-CrossAgent::CrossAgent()
-: _netLink(_config)
+CrossAgent::CrossAgent() : _netLink(new ClientLink(_config))
 {
     if (_rpc.empty())
     {
@@ -39,7 +39,7 @@ void CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun, const P
 }
 void CrossAgent::SendMsg(const NetPack& pack)
 {
-    _netLink.SendMsg(pack.Buffer(), pack.Size());
+    _netLink->SendMsg(pack.Buffer(), pack.Size());
 }
 
 //////////////////////////////////////////////////////////////////////////
