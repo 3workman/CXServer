@@ -10,7 +10,7 @@
 #include "Log/LogFile.h"
 
 //【TODO:BUG】IOCP的这三个回调函数，是多线程调用的，应该转成消息发到主线程，由后者处理
-bool BindPlayerLink(void*& refPlayer, ServLink* p, const void* pMsg, int size)
+bool BindPlayerLink(void*& refPlayer, NetLink* p, const void* pMsg, int size)
 {
     NetPack msg(pMsg, size);
     switch (msg.OpCode()) {
@@ -61,7 +61,7 @@ void RunServerIOCP(ServLinkMgr& mgr)
 }
 int main(int argc, char* argv[])
 {
-    LogFile log("log\\game", LogFile::ALL, true);
+    LogFile log("log\\game", LogFile::TRACK, true);
     _LOG_MAIN_(log);
 
     ServerConfig config;
@@ -73,11 +73,9 @@ int main(int argc, char* argv[])
         timeOld = timeNow;
         timeNow = GetTickCount();
 
+        GameApi::RefreshTimeNow();
         ServiceMgr::RunAllService(timeNow - timeOld, timeNow);
         sTimerMgr.Refresh(timeNow - timeOld, timeNow);
-        GameApi::RefreshTimeNow();
-
-        //sMsgPool.Handle();
         sRpcClient.Update();
 
         Sleep(33);

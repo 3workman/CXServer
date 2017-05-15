@@ -41,6 +41,9 @@
     <ClCompile Include="Room\PlayerRoomData.cpp">
       <Filter>Room</Filter>
     </ClCompile>
+    <ClCompile Include="Player\PlayerDataSend.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player\Player.h">
@@ -63,6 +66,9 @@
     </ClInclude>
     <ClInclude Include="Room\PlayerRoomData.h">
       <Filter>Room</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\PlayerDataSend.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

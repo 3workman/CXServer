@@ -1,5 +1,10 @@
 #include "stdafx.h"
+#ifdef _USE_UDP
 #include "../NetLib/UdpServer/UdpServer.h"
+#else
+#include "../NetLib/server/define.h"
+#include "../NetLib/server/ServLinkMgr.h"
+#endif
 #include "../NetLib/client/ClientLink.h"
 #include "RakSleep.h"
 #include "Service/ServiceMgr.h"
@@ -10,7 +15,7 @@
 #include "Log/LogFile.h"
 #include "Cross/CrossAgent.h"
 
-bool BindPlayerLink(void*& refPlayer, UdpClientAgent* p, const void* pMsg, int size)
+bool BindPlayerLink(void*& refPlayer, NetLink* p, const void* pMsg, int size)
 {
     NetPack msg(pMsg, size);
     switch (msg.OpCode()){
@@ -37,8 +42,14 @@ bool BindPlayerLink(void*& refPlayer, UdpClientAgent* p, const void* pMsg, int s
 }
 void HandleClientMsg(void* player, const void* pMsg, int size)
 {
+    //Notice：RakNet是在Update里逐个处理收包，单线程的。所以能直接调用响应函数
+    //Notice：IOCP是多线程收，须先放进主循环队列，mainloop时再响应
+#ifdef _USE_UDP
     NetPack msg(pMsg, size);
     sRpcClient._Handle((Player*)player, msg);
+#else
+    sRpcClient.Insert((Player*)player, pMsg, size);
+#endif
 }
 void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
 {
@@ -69,8 +80,14 @@ int main(int argc, char* argv[])
         buf << "battle" << (uint32)1;
     });
 
+#ifdef _USE_UDP
     UdpServer upd;
     upd.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
+#else
+    ServerConfig config;
+    ServLinkMgr mgr(config);
+    mgr.CreateServer(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
+#endif
 
     uint time_elapse(0), timeOld(0), timeNow = GetTickCount();
     while (true) {
@@ -78,14 +95,17 @@ int main(int argc, char* argv[])
         timeNow = GetTickCount();
         time_elapse = timeNow - timeOld;
 
+        GameApi::RefreshTimeNow();
         ServiceMgr::RunAllService(time_elapse, timeNow);
         sTimerMgr.Refresh(time_elapse, timeNow);
-        GameApi::RefreshTimeNow();
-
         sRpcCross.Update();
+
+#ifdef _USE_UDP
         upd.Update();
+#else
+        sRpcClient.Update();
+#endif
         RakSleep(30);
     }
-    upd.Stop();
 	return 0;
 }

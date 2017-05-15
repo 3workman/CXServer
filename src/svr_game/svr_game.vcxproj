@@ -14,6 +14,7 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Player\PlayerDataSend.cpp" />
     <ClCompile Include="Room\PlayerRoomData.cpp" />
     <ClCompile Include="Room\PlayerRoomRpc.cpp" />
     <ClCompile Include="Room\Room.cpp" />
@@ -26,6 +27,7 @@
     <ClInclude Include="..\rpc\RpcEnum.h" />
     <ClInclude Include="..\rpc\RpcQueue.h" />
     <ClInclude Include="Player\Player.h" />
+    <ClInclude Include="Player\PlayerDataSend.h" />
     <ClInclude Include="Reward\reward.h" />
     <ClInclude Include="Room\PlayerRoomData.h" />
     <ClInclude Include="Room\Room.h" />

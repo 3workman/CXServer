@@ -246,11 +246,11 @@ public:
 // 防止索引内存池，定位错乱：如外界持有Npc索引，但该npc已被回收，再定位到的可能是新npc了
 #define Pool_Index_UniqueID32(T) \
         private: \
-        uint32 m_unique_id; \
-        void _CreateUniqueId() { \
+        uint32 m_unique_id = _CreateUniqueId(); \
+        uint32 _CreateUniqueId() { \
             assert(m_index <= 0xFFFF); \
             static uint16 s_auto_id = 0; \
-            m_unique_id = ((++s_auto_id) << 16) | m_index; \
+            return ((++s_auto_id) << 16) | m_index; \
         } \
         public: \
         uint32 GetUniqueId(){ return m_unique_id; } \
@@ -262,10 +262,10 @@ public:
         }
 #define Pool_Index_UniqueID64(T) \
         private: \
-        uint64 m_unique_id; \
-        void _CreateUniqueId() { \
+        uint64 m_unique_id = _CreateUniqueId(); \
+        uint64 _CreateUniqueId() { \
             static uint32 s_auto_id = 0; \
-            m_unique_id = ((uint64)(++s_auto_id) << 32) | m_index; \
+            return ((uint64)(++s_auto_id) << 32) | m_index; \
         } \
         public: \
         uint64 GetUniqueId(){ return m_unique_id; } \

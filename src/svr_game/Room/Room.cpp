@@ -13,7 +13,6 @@ uint _Service_Sync_Position(void* p){
 
 CRoom::CRoom()
 {
-    _CreateUniqueId();
     ServiceMgr::Register(Service_Sync_Position, this);
 }
 CRoom* CRoom::CreateRoom(Player& player)
