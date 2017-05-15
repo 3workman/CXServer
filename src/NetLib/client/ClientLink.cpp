@@ -177,14 +177,14 @@ void ClientLink::CloseLink(int nErrorCode)
 	closesocket(_sClient); // 客户端的关闭好暴力~
     _sClient = INVALID_SOCKET;
 
-    //测试：关闭换成重连
+    // 关闭后重连
     while (!Connect()){
         DWORD dwError = GetLastError();
         if (WSAEWOULDBLOCK != dwError && ERROR_IO_PENDING != dwError)
         {
             printf("NetError_Connect:%x(%d) \n", dwError, dwError);
         }
-        //Sleep(3000);
+        Sleep(3000);
     }
 }
 

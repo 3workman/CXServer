@@ -35,3 +35,6 @@
 
 /build
 /ThirdParty
+/proto_file/output_cpp
+/proto_file/output_cs
+/proto_file/output_go
