@@ -87,7 +87,7 @@ void ClientLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 		}
 	}
 }
-bool ClientLink::CreateLinkAndConnect(HandleMsgFunc handleMsg)
+bool ClientLink::CreateLinkAndConnect(const HandleMsgFunc& handleMsg)
 {
     _HandleServerMsg = handleMsg;
 
@@ -96,6 +96,7 @@ bool ClientLink::CreateLinkAndConnect(HandleMsgFunc handleMsg)
     _sendBuf.clear();
     _recvBuf.clear();
     _bCanWrite = false;
+    _bReConnect = true;
     _eState = State_Close;
 
     return Connect();
@@ -177,14 +178,16 @@ void ClientLink::CloseLink(int nErrorCode)
 	closesocket(_sClient); // 客户端的关闭好暴力~
     _sClient = INVALID_SOCKET;
 
-    // 关闭后重连
-    while (!Connect()){
-        DWORD dwError = GetLastError();
-        if (WSAEWOULDBLOCK != dwError && ERROR_IO_PENDING != dwError)
-        {
-            printf("NetError_Connect:%x(%d) \n", dwError, dwError);
+    if (_bReConnect)
+    {
+        while (!Connect()){
+            DWORD dwError = GetLastError();
+            if (WSAEWOULDBLOCK != dwError && ERROR_IO_PENDING != dwError)
+            {
+                printf("NetError_Connect:%x(%d) \n", dwError, dwError);
+            }
+            Sleep(3000);
         }
-        Sleep(3000);
     }
 }
 

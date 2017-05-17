@@ -1,27 +1,29 @@
 #pragma once
 #include "RakNetTypes.h"
 
-typedef void(*HandleMsgFunc)(void* pMsg, int size);
-
 class UdpClient {
+    typedef std::function<void(void* pMsg, int size)> HandleMsgFunc;
+
     enum EStatus { State_Close, State_Connecting, State_Connected };
 private:
     EStatus                     m_eState = State_Close;
-    HandleMsgFunc               m_HandleServerMsg = NULL;
     RakNet::RakPeerInterface*   m_rakPeer;
     RakNet::SystemAddress       m_serverAddr;
 
+    HandleMsgFunc               m_HandleServerMsg;
+    std::function<void()>       m_onConnect;
+
 public:
-    bool Start(HandleMsgFunc func);
+    bool Start(const HandleMsgFunc& func);
     void Stop();
     void Update();
     void CloseLink();
     bool SendMsg(const void* pMsg, int size);
+    void SetOnConnect(const std::function<void()>& func){ m_onConnect = func; }
 
     bool IsConnect(){ return m_eState == State_Connected; }
     bool IsClose(){ return m_eState == State_Close; }
 
-    void OnConnect();
 private:
     void _HandlePacket(RakNet::Packet* packet);
 };

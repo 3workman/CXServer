@@ -55,7 +55,7 @@ public:
     {
         uint16 opCode = buf.OpCode();
 #ifdef _DEBUG
-        printf("Recv Msg ID(%d) \n", opCode);
+        LOG_TRACK("Recv Msg ID(%d) \n", opCode);
 #endif
         auto it = Typ::_rpc.find(opCode);
         if (it != Typ::_rpc.end()) {
@@ -73,7 +73,8 @@ public:
     }
     void RegistResponse(uint64 reqKey, const ParseRpcParam& func)
     {
-        m_response.insert(make_pair(reqKey, func));
+        m_response[reqKey] = func; //后来的应该覆盖之前的
+        //m_response.insert(make_pair(reqKey, func));
     }
     int RpcNameToId(const char* name)
     {
@@ -88,6 +89,7 @@ public:
     {
         static uint32 _auto_req_idx = 0;
         int opCodeId = RpcNameToId(name);
+        // Server and Client have the same Rpc
         assert(Typ::_rpc.find(opCodeId) == Typ::_rpc.end());
         m_SendBuffer.ClearBody();
         m_SendBuffer.OpCode(opCodeId);

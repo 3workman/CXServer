@@ -12,8 +12,8 @@ public:
     Thread() { _thread = NULL; }
     ~Thread(){ EndThread(); }
 
-	typedef void(*Callback)(LPVOID);
-	bool RunThread(Callback func, LPVOID lParam = NULL)
+	typedef void(*Callback)(void*);
+    bool RunThread(Callback func, void* lParam = NULL)
 	{
 		_thread = new std::thread(func, lParam);
 		_thread->detach();

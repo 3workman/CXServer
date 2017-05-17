@@ -68,7 +68,8 @@ Rpc_Realize(rpc_reconnect)
 Rpc_Realize(rpc_echo)
 {
     string str = recvBuf.ReadString();
-    printf("Echo: %s\n", str.c_str());
+    const char* pstr = str.c_str();
+    LOG_TRACK("Echo: %s\n", pstr);
 
     NetPack& backBuffer = BackBuffer();
     backBuffer << str;

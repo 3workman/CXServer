@@ -3,7 +3,9 @@
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 
-bool UdpClient::Start(HandleMsgFunc func) {
+#pragma comment(lib,"Ws2_32.lib")
+
+bool UdpClient::Start(const HandleMsgFunc& func) {
     // Pointers to the interfaces of our server and client.
     // Note we can easily have both in the same program
     m_rakPeer = RakNet::RakPeerInterface::GetInstance();
@@ -50,7 +52,7 @@ void UdpClient::_HandlePacket(RakNet::Packet* packet) {
         // 连接成功
         m_serverAddr = packet->systemAddress;
         m_eState = State_Connected;
-        OnConnect();
+        m_onConnect();
     } break;
     case ID_CONNECTION_ATTEMPT_FAILED: {
         // 连接失败
@@ -80,10 +82,4 @@ void UdpClient::_HandlePacket(RakNet::Packet* packet) {
         }
     } break;
     }
-}
-
-void UdpClient::OnConnect()
-{
-    //NetPack msg(rpc_login, 0);
-    //SendMsg(msg);
 }

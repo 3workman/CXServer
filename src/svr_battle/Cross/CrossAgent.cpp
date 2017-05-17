@@ -4,17 +4,14 @@
 
 std::map<int, CrossAgent::_RpcFunc> CrossAgent::_rpc;
 
-static CrossAgent* g_tmp_cross = NULL;
-void HandleServerMsg(void* p, int size)
-{
-    sRpcCross.Insert(g_tmp_cross, p, size);
-}
+
 void CrossAgent::RunClientIOCP()
 {
-    g_tmp_cross = this;
-    _netLink->CreateLinkAndConnect(HandleServerMsg);
-
-    while (!_netLink->IsClose() && !_netLink->IsConnect()) Sleep(200); // 等待ConnectEx三次握手完成的回调，之后才能发数据
+    _netLink->CreateLinkAndConnect([&](void* p, int size){
+        sRpcCross.Insert(this, p, size);
+    });
+    // 等待ConnectEx三次握手完成的回调，之后才能发数据
+    while (!_netLink->IsClose() && !_netLink->IsConnect()) Sleep(200);
 }
 CrossAgent::CrossAgent() : _netLink(new ClientLink(_config))
 {
@@ -26,6 +23,12 @@ CrossAgent::CrossAgent() : _netLink(new ClientLink(_config))
     }
 
     _config.wServerPort = 7003; //go cross
+}
+CrossAgent::~CrossAgent()
+{
+    _netLink->SetReConnect(false);
+    _netLink->CloseLink(0);
+    delete _netLink;
 }
 uint64 CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun)
 {

@@ -14,10 +14,12 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="svr_client.cpp" />
     <ClCompile Include="UserConfig\UserConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Player\Player.h" />
     <ClInclude Include="UserConfig\UserConfig.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

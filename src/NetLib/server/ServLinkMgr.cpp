@@ -141,7 +141,7 @@ bool ServLinkMgr::Close()
 bool ServLinkMgr::AssistThreadLoop()
 {
 	_pThread = new Thread;
-    return _pThread->RunThread([](LPVOID pParam){
+    return _pThread->RunThread([](void* pParam){
         ((ServLinkMgr*)pParam)->_AssistLoop();
     }, this);
 }

@@ -44,12 +44,13 @@ public:
 	static bool InitWinsock();
 	static bool CleanWinsock();
 
-    typedef void(*HandleMsgFunc)(void* pMsg, int size);
-    bool CreateLinkAndConnect(HandleMsgFunc handleMsg);
+    typedef std::function<void(void* pMsg, int size)> HandleMsgFunc;
+    bool CreateLinkAndConnect(const HandleMsgFunc& handleMsg);
     void CloseLink(int nErrorCode);
     void SendMsg(const void* pMsg, uint16 size);
     bool IsConnect(){ return _eState == State_Connected; }
     bool IsClose(){ return _eState == State_Close; }
+    void SetReConnect(bool b){ _bReConnect = b; }
 
 private:
     static void CALLBACK DoneIO(DWORD, DWORD, LPOVERLAPPED);
@@ -75,11 +76,12 @@ private:
 	net::Buffer _sendBuf;
 
 	bool _bCanWrite;
+    bool _bReConnect;
 
     cMutex _csWrite;
 
 	const ClientLinkConfig& _config;
 
     void*               _player = NULL;
-    HandleMsgFunc       _HandleServerMsg = NULL;
+    HandleMsgFunc       _HandleServerMsg;
 };

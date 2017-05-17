@@ -1,5 +1,4 @@
 #pragma once
-#include "tool/Mempool.h"
 #include "../rpc/RpcEnum.h"
 #include "../rpc/RpcQueue.h"
 #include "def/ConstDef.h"

@@ -4,6 +4,9 @@
     <Filter Include="UserConfig">
       <UniqueIdentifier>{5aefc082-9d32-4c23-89af-61069978fe9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{13efd777-58b3-431e-8fde-475be1178417}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UserConfig\UserConfig.cpp">
@@ -11,10 +14,16 @@
     </ClCompile>
     <ClCompile Include="..\include\stdafx.cpp" />
     <ClCompile Include="svr_client.cpp" />
+    <ClCompile Include="Player\Player.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UserConfig\UserConfig.h">
       <Filter>UserConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\Player.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

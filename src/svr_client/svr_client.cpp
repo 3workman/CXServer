@@ -1,107 +1,32 @@
 #include "stdafx.h"
-#include "../NetLib/client/ClientLink.h"
-#include "../NetLib/UdpClient/UdpClient.h"
-#include "Buffer/NetPack.h"
-#include <functional>
+#include "Player/Player.h"
+#include "RakSleep.h"
 #include "tool/thread.h"
-#include "../rpc/RpcQueue.h"
-#include "Csv/CSVparser.hpp"
+#include "../NetLib/UdpClient/UdpClient.h"
 
-
-ClientLinkConfig config;
-//ClientLink g_link(config);
-UdpClient  g_link;
-
-SafeQueue<NetPack*>  g_queue;
-
-Thread* g_thread;
-
-void HandleServerMsg(void* p, int size)
-{
-    g_queue.push(new NetPack(p, size));
-}
-void RunClientIOCP(ClientLink& link)
-{
-    cout << "———————————— RunClientIOCP ————————————" << endl;
-
-    ClientLink::InitWinsock();
-    link.CreateLinkAndConnect(HandleServerMsg);
-
-    while (!link.IsClose() && !link.IsConnect()) Sleep(1000); // 等待ConnectEx三次握手完成的回调，之后才能发数据
-}
-
-void RunClientUdp()
-{
-    g_link.Start(HandleServerMsg);
-
-    g_thread = new Thread;
-    g_thread->RunThread([](LPVOID pParam){
-        while (cv_status::timeout == g_thread->WaitKillEvent(50))
-        {
-            g_link.Update();
-        }
-    }, 0);
-
-    while (!g_link.IsClose() && !g_link.IsConnect()) Sleep(1000);
-}
-
-std::map<std::string, int> g_rpc_table;
-std::map<int, ParseRpcParam> g_RecvHandle;
-int CallRpc(const char* name, const ParseRpcParam& sendFun)
-{
-    int opCodeId = g_rpc_table[name];
-    assert(opCodeId > 0);
-    static NetPack msg(0);
-    msg.ClearBody();
-    msg.OpCode(opCodeId);;
-    sendFun(msg);
-    g_link.SendMsg(msg.Buffer(), msg.Size());
-    return opCodeId;
-}
-void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
-{
-    int opCodeId = CallRpc(name, sendFun);
-
-    g_RecvHandle.insert(make_pair(opCodeId, recvFun));
-}
-void UpdateRecvQueue()
-{
-    NetPack* pData;
-    if (g_queue.pop(pData)) {
-        auto it = g_RecvHandle.find(pData->OpCode());
-        if (it != g_RecvHandle.end()) it->second(*pData);
-        delete pData;
-    }
-}
-
+void test_svr_battle(int playerCnt);
 
 int main(int argc, char* argv[])
 {
-    csv::Parser file = csv::Parser("../data/csv/rpc.csv");
-    uint cnt = file.rowCount();
-    for (uint i = 0; i < cnt; ++i) {
-        csv::Row& row = file[i];
-        g_rpc_table[row["name"]] = atoi(row["id"].c_str());
-    }
+    LogFile log("log\\client", LogFile::DEBUG, true);
+    _LOG_MAIN_(log);
 
+    //test_svr_battle(200);
 
-    RunClientUdp();
-    ON_SCOPE_EXIT([]{ g_link.Stop(); });
-    CallRpc("rpc_login", [&](NetPack& buf){
+    Player player;
+    player.CallRpc("rpc_login", [&](NetPack& buf){
         buf.WriteUInt32(1);
     });
-    CallRpc("rpc_create_room", [&](NetPack& buf){
+    player.CallRpc("rpc_create_room", [&](NetPack& buf){
         buf.WriteFloat(1);
         buf.WriteFloat(1);
     });
-
     //CallRpc("rpc_logout", [&](NetPack& buf){
     //});
-    //g_link.CloseLink();
 
 /*
     RunClientIOCP(g_link);
-    ON_SCOPE_EXIT([]{ g_link.CloseClient(0); });
+    ON_SCOPE_EXIT([&]{ g_link.CloseClient(0); });
     {
         // 立即发送一条数据，及时触发服务器端的AcceptExDoneIOCallback
         // 测试结果显示：客户端仅仅connect但不发送数据，不会触发服务器DoneIO回调
@@ -109,25 +34,56 @@ int main(int argc, char* argv[])
         // 客户端connect，三次握手成功后，在对端被放入“呼入连接请求队列”，尚未被用户进程接管，但client这边已经能发数据了
         NetPack msg(rpc_login, 0);
         g_link.SendMsg(msg.Buffer(), msg.Size());
-    }*/
+    }
+*/
 
-    cout << "请输入发送内容..." << endl;
     char tmpStr[32] = { 0 };
     while (true)
     {
-        cin >> tmpStr;
+        player.UpdateNet();
 
-        CallRpc("rpc_echo", [&](NetPack& buf){
+        cout << "请输入发送内容..." << endl;
+        cin >> tmpStr;
+        player.CallRpc("rpc_echo", [&](NetPack& buf){
             buf.WriteString(tmpStr); // buf << tmpStr;
         }, 
             [](NetPack& recvBuf){
             printf("Echo: %s\n", recvBuf.ReadString().c_str());
         });
 
-        Sleep(2000);
-        UpdateRecvQueue();
+        RakSleep(2000);
     }
 
     system("pause");
     return 0;
+}
+
+Thread* g_thread;
+void test_svr_battle(int playerCnt)
+{
+    std::vector<Player> vec(playerCnt);
+
+    char strbuff[1024] = { '\0' };
+    while (true)
+    {
+        sRpcClientPlayer.Update();
+
+        for (auto& it : vec)
+        {
+            it.UpdateNet();
+
+            if (!it.m_isLogin) continue;
+
+            it.CallRpc("rpc_echo", [&](NetPack& buf){
+                int idx = sprintf(strbuff, "test svr_battle : PlayerIdx(%d)", it.m_index);
+                string str(strbuff, idx);
+                buf.WriteString(str);
+            },
+                [](NetPack& recvBuf){
+                printf("Echo: %s\n", recvBuf.ReadString().c_str());
+            });
+        }
+
+        RakSleep(33);
+    }
 }

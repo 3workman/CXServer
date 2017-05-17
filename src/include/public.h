@@ -10,8 +10,10 @@
 #include <queue>
 #include <stack>
 #include <string>
+#include <memory> // std::shared_ptr
 #include "../common/tool/noncopyable.h"
 #include "../common/tool/ScopeGuard.h"
+#include "../common/Log/LogFile.h"
 
 using namespace std;
 

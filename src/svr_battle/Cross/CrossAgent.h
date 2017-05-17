@@ -12,7 +12,7 @@ class NetPack;
 class ClientLink;
 class CrossAgent {
     ClientLinkConfig    _config;
-    ClientLink*         _netLink;
+    ClientLink*         _netLink = NULL;
 public:
     typedef void(CrossAgent::*_RpcFunc)(NetPack&);
     static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc
@@ -24,6 +24,7 @@ public:
     void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
 public:
     CrossAgent();
+    ~CrossAgent();
     static CrossAgent& Instance(){ static CrossAgent T; return T; }
     void RunClientIOCP();
 };

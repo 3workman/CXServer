@@ -14,3 +14,6 @@
 #define Rpc_For_Cross\
     Rpc_Declare(rpc_echo)\
 
+
+#define Rpc_For_Client\
+
