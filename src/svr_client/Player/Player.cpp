@@ -17,16 +17,6 @@ Player::Player()
     }
 
     _netLink = new UdpClient();
-
-    RunClientNet();
-}
-Player::~Player()
-{
-    _netLink->Stop();
-    delete _netLink;
-}
-void Player::RunClientNet()
-{
     _netLink->SetOnConnect([&](){
         this->CallRpc("rpc_login", [](NetPack& buf){
             buf.WriteUInt32(1);
@@ -40,6 +30,11 @@ void Player::RunClientNet()
         NetPack msg(p, size);
         sRpcClientPlayer._Handle(this, msg);
     });
+}
+Player::~Player()
+{
+    _netLink->Stop();
+    delete _netLink;
 }
 uint64 Player::CallRpc(const char* name, const ParseRpcParam& sendFun)
 {

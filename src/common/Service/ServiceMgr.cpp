@@ -17,11 +17,11 @@ void ServiceMgr::RunAllService(uint time_elapse, uint timenow)
 {
     for (auto& it : m_aService) it->RunSevice(time_elapse, timenow);
 }
-bool ServiceMgr::UnRegister(ServiceEnum typ, ServiceObj* pObj)
+void ServiceMgr::UnRegister(ServiceEnum typ, void* pObj)
 {
-    return m_aService[typ]->UnRegister(pObj);
+    m_aService[typ]->UnRegister(pObj);
 }
-bool ServiceMgr::Register(ServiceEnum typ, ServiceObj* pObj)
+bool ServiceMgr::Register(ServiceEnum typ, void* pObj)
 {
     return m_aService[typ]->Register(pObj);
 }

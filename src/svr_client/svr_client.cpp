@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Player/Player.h"
 #include "RakSleep.h"
-#include "tool/thread.h"
 #include "../NetLib/UdpClient/UdpClient.h"
 
 void test_svr_battle(int playerCnt);
@@ -58,7 +57,6 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-Thread* g_thread;
 void test_svr_battle(int playerCnt)
 {
     std::vector<Player> vec(playerCnt);

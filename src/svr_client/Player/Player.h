@@ -29,7 +29,4 @@ public:
     Player();
     ~Player();
     void UpdateNet();
-
-private:
-    void RunClientNet();
 };
