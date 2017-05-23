@@ -7,7 +7,7 @@ uint _Service_NPCAI(void* p){ return printf("Service Path NPCAI(%d)...\n", p); }
 uint _Service_PlayerSave(void* p){ return printf("Service Path PlayerSave(%d)...\n", p); }
 extern uint _Service_Sync_Position(void* p);
 
-iService* ServiceMgr::m_aService[_Service_Max] = {
+static iService* g_aService[_Service_Max] = {
     new cServiceList(_Service_Buff),
     new cServicePatch(_Service_NPCAI, 1000),
     new cServicePatch(_Service_PlayerSave, 3 * 1000),
@@ -15,13 +15,13 @@ iService* ServiceMgr::m_aService[_Service_Max] = {
 };
 void ServiceMgr::RunAllService(uint time_elapse, uint timenow)
 {
-    for (auto& it : m_aService) it->RunSevice(time_elapse, timenow);
+    for (auto& it : g_aService) it->RunSevice(time_elapse, timenow);
 }
 void ServiceMgr::UnRegister(ServiceEnum typ, void* pObj)
 {
-    m_aService[typ]->UnRegister(pObj);
+    g_aService[typ]->UnRegister(pObj);
 }
 bool ServiceMgr::Register(ServiceEnum typ, void* pObj)
 {
-    return m_aService[typ]->Register(pObj);
+    return g_aService[typ]->Register(pObj);
 }

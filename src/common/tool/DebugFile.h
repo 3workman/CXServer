@@ -185,11 +185,10 @@ private:
 		int a = 0;
 		float f = 0.1f;
 		double d = 0.02;
-		string s("Áúµ°");
 		cDebugFile file("ÔüÔü\\test");
-		file << "a" << a << "f" << f << "d" << d << "s" << s;
+		file << "a" << a << "f" << f << "d" << d;
 		//DebugFile_Create("ÔüÔü\\test");
 		//DebugFile_Input("aa", a);
-		a++; f = 0.11f; d = 0.787; s = "Ä¢¹½";
+		a++; f = 0.11f; d = 0.787;
 	}
 #endif
