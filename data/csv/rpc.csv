@@ -1,5 +1,6 @@
 name,id,is_client,_common
 rpc_regist,60000,0,
+rpc_svr_accept,60001,0,
 rpc_echo,0,0,≤‚ ‘
 rpc_login,1,0,
 rpc_logout,2,0,

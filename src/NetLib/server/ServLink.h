@@ -69,7 +69,7 @@ struct My_OVERLAPPED : public OVERLAPPED
 
 	void SetLink(ServLink* p)
 	{
-		memset((char *)this, 0, sizeof(OVERLAPPED));
+		memset(this, 0, sizeof(OVERLAPPED));
 		client = p;
 	}
 };

@@ -76,9 +76,6 @@ int main(int argc, char* argv[])
 
     ClientLink::InitWinsock();
     sCrossAgent.RunClientIOCP();
-    sCrossAgent.CallRpc("rpc_regist", [](NetPack& buf){
-        buf << "battle" << (uint32)1;
-    });
 
 #ifdef _USE_UDP
     UdpServer upd;

@@ -30,7 +30,7 @@ struct My_OVERLAPPED : public OVERLAPPED
 
 	void SetLink(ClientLink* p)
 	{
-		memset((char *)this, 0, sizeof(OVERLAPPED));
+		memset(this, 0, sizeof(OVERLAPPED));
 		client = p;
 	}
 };
@@ -44,14 +44,17 @@ public:
 	static bool InitWinsock();
 	static bool CleanWinsock();
 
+    typedef std::function<void()> OnConnectFunc;
     typedef std::function<void(void* pMsg, int size)> HandleMsgFunc;
+
     bool CreateLinkAndConnect(const HandleMsgFunc& handleMsg);
     void CloseLink(int nErrorCode);
     void SendMsg(const void* pMsg, uint16 size);
     bool IsConnect(){ return _eState == State_Connected; }
     bool IsClose(){ return _eState == State_Close; }
     void SetReConnect(bool b){ _bReConnect = b; }
-
+    ///【Notice: 设置的callback是由DoneIO线程调用的，里头要考虑线程安全性】
+    void SetOnConnect(const OnConnectFunc& func){ _OnConnect = func; }
 private:
     static void CALLBACK DoneIO(DWORD, DWORD, LPOVERLAPPED);
     void DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO eFlag);
@@ -84,4 +87,5 @@ private:
 
     void*               _player = NULL;
     HandleMsgFunc       _HandleServerMsg;
+    OnConnectFunc       _OnConnect;
 };

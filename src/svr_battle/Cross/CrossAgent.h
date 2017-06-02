@@ -8,11 +8,11 @@
 #define Rpc_Declare(typ) void HandleRpc_##typ(NetPack&);
 #define Rpc_Realize(typ) void CrossAgent::HandleRpc_##typ(NetPack& recvBuf)
 
-class NetPack;
 class ClientLink;
 class CrossAgent {
     ClientLinkConfig    _config;
     ClientLink*         _netLink = NULL;
+    NetPack             _first_buf; // 连接建立后的第一个包，上报connId、密钥等
 public:
     typedef void(CrossAgent::*_RpcFunc)(NetPack&);
     static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc

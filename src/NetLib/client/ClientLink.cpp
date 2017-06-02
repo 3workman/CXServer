@@ -169,6 +169,8 @@ void ClientLink::OnConnect()
     _eState = State_Connected;
     _bCanWrite = true;
     PostRecv();
+
+    if (!_OnConnect._Empty()){ _OnConnect(); }
 }
 void ClientLink::CloseLink(int nErrorCode)
 {

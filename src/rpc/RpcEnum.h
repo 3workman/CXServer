@@ -13,6 +13,7 @@
 
 #define Rpc_For_Cross\
     Rpc_Declare(rpc_echo)\
+    Rpc_Declare(rpc_svr_accept)\
 
 
 #define Rpc_For_Client\

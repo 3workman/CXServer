@@ -113,4 +113,7 @@ public:
         //return std::move(str);
         return str; // c++11 右值引用，移动构造
     }
+
+    void   SetPos(int pos, uint32 v){ m_buf.put(HEADER_SIZE + pos, v); }
+    uint32 GetPos(int pos) { return m_buf.show<uint32>(HEADER_SIZE + pos); }
 };
