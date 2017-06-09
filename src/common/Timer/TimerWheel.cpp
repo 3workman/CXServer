@@ -21,7 +21,7 @@ CTimerMgr::~CTimerMgr() {
     }
 }
 void TimerNode::_Callback(){
-    LOG_TRACK("node[%p]", this);
+    //LOG_TRACK("node[%p]", this);
     loop -= interval;
     if (loop > 0) {
         //timeDead = GetTickCount() + interval;
@@ -45,14 +45,14 @@ void CTimerMgr::_AddTimerNode(uint32 milseconds, TimerNode* node) {
     if (tickCnt < WHEEL_CAP[0]) {
         uint32 index = (_wheels[0]->slotIdx + tickCnt) & (WHEEL_SIZE[0] - 1); //2的N次幂位操作取余
         slot = _wheels[0]->slots + index;
-        LOG_TRACK("wheel[%u], slot[%u], curSlot[%u], node[%p], msec[%u]", 0, index, _wheels[0]->slotIdx, node, milseconds);
+        //LOG_TRACK("wheel[%u], slot[%u], curSlot[%u], node[%p], msec[%u]", 0, index, _wheels[0]->slotIdx, node, milseconds);
     } else {
         for (int i = 1; i < WHEEL_NUM; ++i) {
             if (tickCnt < WHEEL_CAP[i]) {
                 uint32 preCap = WHEEL_CAP[i - 1]; //上一级总容量即为本级的一格容量
                 uint32 index = (_wheels[i]->slotIdx + tickCnt / preCap - 1) & (WHEEL_SIZE[i] - 1); //勿忘-1
                 slot = _wheels[i]->slots + index;
-                LOG_TRACK("wheel[%u], slot[%u], curSlot[%u], node[%p], msec[%u]", i, index, _wheels[i]->slotIdx, node, milseconds);
+                //LOG_TRACK("wheel[%u], slot[%u], curSlot[%u], node[%p], msec[%u]", i, index, _wheels[i]->slotIdx, node, milseconds);
                 break;
             }
         }
@@ -131,7 +131,7 @@ void CTimerMgr::Cascade(uint32 wheelIdx, const uint32 timenow) {
         if (node->timeDead <= timenow) {
             AddToReadyNode(node);
         } else {
-            LOG_TRACK("wheel[%u], curSlot[%u], node[%p], msec[%u]", wheelIdx, wheel->slotIdx, node, node->timeDead - timenow);
+            //LOG_TRACK("wheel[%u], curSlot[%u], node[%p], msec[%u]", wheelIdx, wheel->slotIdx, node, node->timeDead - timenow);
             //【Bug】加新Node，须加到其它槽位，本槽位已扫过(失效，等一整轮才会再扫到)
             _AddTimerNode(node->timeDead - timenow, node);
         }

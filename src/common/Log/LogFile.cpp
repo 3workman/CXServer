@@ -27,7 +27,7 @@ void LogFile::Log(const char* curFile, const int curLine, LogLv kLevel, const ch
     int idx = sprintf(g_logBuff, "[%s]", LevelToString[kLevel]);
     time_t t; time(&t);
     idx += strftime(g_logBuff+idx, 32, "[%Y-%m-%d %H:%M:%S]", localtime(&t));
-    idx += sprintf(g_logBuff+idx, "[%s(%d)]  ", Dir::FindName(curFile), curLine);
+    idx += sprintf(g_logBuff+idx, "[%s(%d)]\n", Dir::FindName(curFile), curLine);
 
     //TODO:[pid=15529][thread=0x12345]  进程id、线程id
 

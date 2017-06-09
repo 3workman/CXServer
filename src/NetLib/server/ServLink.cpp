@@ -266,6 +266,8 @@ bool ServLink::CloseLink()
 		Err("ErrorAPI_closelink_closesocket");
 
 	_sClient = INVALID_SOCKET;
+    _recvBuf.clear();
+    _sendBuf.clear();
 
 	if (_hEventClose) {
 		CloseHandle(_hEventClose);

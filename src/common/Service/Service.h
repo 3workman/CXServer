@@ -99,7 +99,7 @@ public:
 		return true;
 	}
 	void UnRegister(void* pObj){
-        if (m_runIt->second == pObj) {
+        if (m_runIt != m_list.end() && m_runIt->second == pObj) {
             m_runIt = m_list.erase(m_runIt);//删自己，迭代器到下一个
             --m_runIt;                      //回到上一个，循环中++m_runIt再挪回来【begin时会跪】
         } else {

@@ -2,12 +2,12 @@
 #include "../NetLib/server/ServLinkMgr.h"
 #include "../NetLib/server/define.h"
 #include "../rpc/RpcQueue.h"
-#include "Player/Player.h"
 #include "Service/ServiceMgr.h"
 #include "Timer/TimerWheel.h"
 #include "tool/GameApi.h"
 #include "Buffer/NetPack.h"
 #include "Log/LogFile.h"
+#include "../svr_battle/Player/Player.h"
 
 //【TODO:BUG】IOCP的这三个回调函数，是多线程调用的，应该转成消息发到主线程，由后者处理
 bool BindPlayerLink(void*& refPlayer, NetLink* p, const void* pMsg, int size)
@@ -22,7 +22,7 @@ bool BindPlayerLink(void*& refPlayer, NetLink* p, const void* pMsg, int size)
         refPlayer = player;
     } return true;
     case 2: {
-        uint idx; uint64 pid; //重连，client发来已有的“内存索引、pid”
+        uint idx; uint32 pid; //重连，client发来已有的“内存索引、pid”
         msg >> idx >> pid;
         if (Player* player = Player::FindByIdx(idx)) {
             if (player->m_pid == pid) {
@@ -53,12 +53,6 @@ void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
             delete player;
     }
 }
-void RunServerIOCP(ServLinkMgr& mgr)
-{
-    cout << "———————————— RunServerIOCP ————————————" << endl;
-    ServLinkMgr::InitWinsock();
-    mgr.CreateServer(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
-}
 int main(int argc, char* argv[])
 {
     LogFile log("log\\game", LogFile::TRACK, true);
@@ -66,7 +60,8 @@ int main(int argc, char* argv[])
 
     ServerConfig config;
     ServLinkMgr mgr(config);
-    RunServerIOCP(mgr);
+    ServLinkMgr::InitWinsock();
+    mgr.CreateServer(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 
     uint timeOld(0), timeNow = GetTickCount();
     while (true) {

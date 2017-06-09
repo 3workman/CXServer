@@ -49,7 +49,7 @@ void AsyncLog::_WriteLoop()
     BufferVec bufToWriteVec;
 	bufToWriteVec.reserve(8);
     while (_running){
-        printf("loop\n");
+        //printf("loop\n");
         {
             std::unique_lock<std::mutex> lock(_mutex);
             _cond.wait_for(lock, std::chrono::seconds(Flush_Interval_Sec));

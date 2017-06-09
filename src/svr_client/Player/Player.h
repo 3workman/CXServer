@@ -15,6 +15,7 @@ class Player : boost::noncopyable {
     UdpClient*      _netLink = NULL;
 public:
     uint            m_index = 0;
+    uint32          m_pid = 0;
     bool            m_isLogin = false;
 
     typedef void(Player::*_RpcFunc)(NetPack&);

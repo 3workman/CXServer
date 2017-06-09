@@ -28,10 +28,9 @@ public:
     static const size_t OPCODE_INDEX    = 1;
     static const size_t REQ_IDX_INDEX   = 3;
 
-    NetPack(uint16 opCode, int size = 128 - HEADER_SIZE)
+    NetPack(int size = 128 - HEADER_SIZE)
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
-        OpCode(opCode);
         FromType(135); //udp¡Ÿ ±±Íº«
     }
     NetPack(const void* pData, int size)

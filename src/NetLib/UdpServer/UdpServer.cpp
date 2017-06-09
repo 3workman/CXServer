@@ -11,8 +11,8 @@ bool UdpServer::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, Re
 
     char* password = "ChillyRoom";
     int passwordLength = strlen(password);
-    unsigned short port = 8989;
-    unsigned short maxClients = 3;
+    unsigned short port = 7030; //TODO:zhoumf
+    unsigned short maxClients = 300;
 
     m_rakPeer = RakNet::RakPeerInterface::GetInstance();
     m_rakPeer->SetTimeoutTime(10000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
@@ -21,22 +21,16 @@ bool UdpServer::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, Re
     m_rakPeer->SetOccasionalPing(true);
     m_rakPeer->SetUnreliableTimeout(1000);
 
-    RakNet::SocketDescriptor socketDescriptors[2];
-    socketDescriptors[0].port = port;
-    socketDescriptors[0].socketFamily = AF_INET; // Test out IPV4
-    socketDescriptors[1].port = port;
-    socketDescriptors[1].socketFamily = AF_INET6; // Test out IPV6
+    RakNet::SocketDescriptor socketDescriptors;
+    socketDescriptors.port = port;
+    socketDescriptors.socketFamily = AF_INET;
 
-    bool bOk = m_rakPeer->Startup(maxClients, socketDescriptors, 2) == RakNet::RAKNET_STARTED;
+    bool bOk = m_rakPeer->Startup(maxClients, &socketDescriptors, 1) == RakNet::RAKNET_STARTED;
     if (!bOk) {
-        printf("Failed to start dual IPV4 and IPV6 ports. Trying IPV4 only.\n");
-        bool bOk = m_rakPeer->Startup(maxClients, socketDescriptors, 1) == RakNet::RAKNET_STARTED;
-        if (!bOk) {
-            printf("Server failed to start.  Terminating.\n");
-            return false;
-        } else {
-            printf("IPV4 only success.\n");
-        }
+        printf("Server failed to start.  Terminating.\n");
+        return false;
+    } else {
+        printf("Udp server success.\n");
     }
     return true;
 }

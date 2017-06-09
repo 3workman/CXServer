@@ -93,8 +93,6 @@ bool ClientLink::CreateLinkAndConnect(const HandleMsgFunc& handleMsg)
 
 	_ovSend.SetLink(this);
 	_ovRecv.SetLink(this);
-    _sendBuf.clear();
-    _recvBuf.clear();
     _bCanWrite = false;
     _bReConnect = true;
     _eState = State_Close;
@@ -179,9 +177,10 @@ void ClientLink::CloseLink(int nErrorCode)
 	shutdown(_sClient, SD_BOTH);
 	closesocket(_sClient); // 客户端的关闭好暴力~
     _sClient = INVALID_SOCKET;
+    _recvBuf.clear();
+    _sendBuf.clear();
 
-    if (_bReConnect)
-    {
+    if (_bReConnect) {
         while (!Connect()){
             DWORD dwError = GetLastError();
             if (WSAEWOULDBLOCK != dwError && ERROR_IO_PENDING != dwError)

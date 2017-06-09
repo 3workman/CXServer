@@ -20,13 +20,14 @@ class NetPack;
 class PlayerRoomData;
 class Player {
     Pool_Index_Define(Player, MAX_PLAYER_COUNT);
+    static std::map<uint32, Player*> PlayerList;
 private:
     NetLink*        _clientNetLink = NULL;
 public:
-    uint64          m_pid = 0;
+    uint32          m_pid = 0;
     bool            m_isLogin = false;
 //////////////////////////////////////////////////////////////////////////
-    PlayerRoomData* m_RoomData;
+    PlayerRoomData* m_RoomData = NULL;
 public:
     Player();
     ~Player();
@@ -40,5 +41,5 @@ public:
     static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc
     Rpc_For_Player;
 public:
-
+    static Player* FindByPid(uint32 pid);
 };

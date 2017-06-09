@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "../Player/Player.h"
 #include "Room.h"
 #include "PlayerRoomData.h"
 #include "Buffer/NetPack.h"
+#include "Player/Player.h"
 
 static CRoom* g_test_room = NULL;
 
@@ -10,13 +10,12 @@ Rpc_Realize(rpc_create_room)
 {
     recvBuf >> m_RoomData->m_posX >> m_RoomData->m_posY;
 
-    if (CRoom* pRoom = CRoom::CreateRoom(*this))
-    {
-        g_test_room = pRoom;
+    CRoom* pRoom = new CRoom;
+    pRoom->JoinRoom(*this);
+    g_test_room = pRoom;
 
-        NetPack& backBuffer = BackBuffer();
-        backBuffer << pRoom->GetUniqueId();
-    }
+    NetPack& backBuffer = BackBuffer();
+    backBuffer << pRoom->GetUniqueId();
 }
 Rpc_Realize(rpc_join_room)
 {
@@ -46,17 +45,22 @@ Rpc_Realize(rpc_join_room)
 }
 Rpc_Realize(rpc_exit_room)
 {
-    if (CRoom* pRoom = CRoom::FindByUniqueId(m_RoomData->m_RoomId))
+    if (CRoom* pRoom = CRoom::FindByUniqueId(m_RoomData->m_roomId))
     {
         pRoom->ExitRoom(*this);
     }
 }
 Rpc_Realize(rpc_move_delta)
 {
+    recvBuf >> m_RoomData->m_netId;
     float deltaMoveX = recvBuf.ReadFloat();
     float deltaMoveY = recvBuf.ReadFloat();
     //m_RoomData->m_posX += deltaMoveX;
     //m_RoomData->m_posY += deltaMoveY;
     m_RoomData->m_posX = deltaMoveX;
     m_RoomData->m_posY = deltaMoveY;
+}
+Rpc_Realize(rpc_client_load_battle_scene_ok)
+{
+    m_RoomData->OnClientJoinRoomOK();
 }

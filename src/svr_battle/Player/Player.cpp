@@ -3,9 +3,10 @@
 #include "../NetLib/UdpServer/UdpClientAgent.h"
 #include "Player.h"
 #include "Buffer/NetPack.h"
-#include "../Room/PlayerRoomData.h"
+#include "../svr_battle/Room/PlayerRoomData.h"
 
 std::map<int, Player::_RpcFunc> Player::_rpc;
+std::map<uint32, Player*> Player::PlayerList;
 
 Player::Player()
 {
@@ -15,13 +16,13 @@ Player::Player()
 #define Rpc_Declare(typ) _rpc[sRpcClient.RpcNameToId(#typ)] = &Player::HandleRpc_##typ;
         Rpc_For_Player;
     }
-    m_RoomData = new PlayerRoomData();
+    m_RoomData = new PlayerRoomData(*this);
 }
 Player::~Player()
 {
-    m_RoomData->ExitRoom(*this);
+    PlayerList.erase(m_pid);
 
-    delete m_RoomData;
+    delete m_RoomData; m_RoomData = NULL;
 }
 void Player::SetNetLink(NetLink* p)
 {
@@ -43,16 +44,26 @@ void Player::CallRpc(const char* name, const ParseRpcParam& sendFun, const Parse
     uint64 reqKey = CallRpc(name, sendFun);
     sRpcClient.RegistResponse(reqKey, recvFun);
 }
+Player* Player::FindByPid(uint32 pid)
+{
+    auto it = PlayerList.find(pid);
+    if (it == PlayerList.end()) return NULL;
+    return it->second;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // rpc
 Rpc_Realize(rpc_login)
 {
     printf("rpc_login\n");
-    recvBuf >> m_RoomData->m_netId;
+    recvBuf >> m_index >> m_pid;
+
+    if (m_RoomData->m_roomId > 0)
+    {
+        m_RoomData->NotifyClientJoinRoom();
+    }
 
     NetPack& backBuffer = BackBuffer();
-    backBuffer << m_index;
 }
 Rpc_Realize(rpc_logout)
 {

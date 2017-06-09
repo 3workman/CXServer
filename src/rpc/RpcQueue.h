@@ -33,11 +33,7 @@ class RpcQueue {
 public:
     NetPack BackBuffer;
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
-    RpcQueue()
-        : BackBuffer(0)
-        , m_SendBuffer(0) {
-        LoadRpcCsv();
-    }
+    RpcQueue() { LoadRpcCsv(); }
 
     void Insert(Typ* pObj, const void* pData, uint size)
     {
@@ -54,14 +50,14 @@ public:
     void _Handle(Typ* pObj, NetPack& buf)
     {
         uint16 opCode = buf.OpCode();
-#ifdef _DEBUG
-        LOG_TRACK("Recv Msg ID(%d) \n", opCode);
-#endif
         auto it = Typ::_rpc.find(opCode);
         if (it != Typ::_rpc.end()) {
             BackBuffer.ResetHead(buf);
             (pObj->*(it->second))(buf);
             if (BackBuffer.BodySize()) pObj->SendMsg(BackBuffer);
+#ifdef _DEBUG
+            LOG_TRACK("Recv Msg: %s(%d) \n", DebugRpcIdToName(opCode), opCode);
+#endif
         } else {
             auto it = m_response.find(buf.GetReqKey());
             assert(it != m_response.end());
@@ -84,6 +80,14 @@ public:
             return 0;
         }
         return it->second;
+    }
+    const char* DebugRpcIdToName(int id)
+    {
+        for (auto& it : _rpc_table)
+        {
+            if (it.second == id) return it.first.c_str();
+        }
+        return "nil";
     }
     uint64 _CallRpc(const char* name, const ParseRpcParam& func, const SendMsgFunc& doSend)
     {

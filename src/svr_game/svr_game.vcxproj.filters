@@ -1,74 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Player">
-      <UniqueIdentifier>{0aabffe6-11fc-49d5-990f-413a2c05b4c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Reward">
-      <UniqueIdentifier>{ee88d2a5-d2c4-48bb-a28b-da0cfb805b01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Trigger">
-      <UniqueIdentifier>{0119609b-f740-4e7d-825d-552c12a24afe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="rpc">
-      <UniqueIdentifier>{8850c8ca-fcd3-45c7-a5b6-f7474bc893de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Room">
-      <UniqueIdentifier>{0a16545e-992b-459c-801d-53bcce12933e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Room\Table">
-      <UniqueIdentifier>{5d2e0ed6-39c2-4f88-91bd-c0873af688df}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Player\Player.cpp">
-      <Filter>Player</Filter>
+    <ClCompile Include="..\include\stdafx.cpp" />
+    <ClCompile Include="svr_game.cpp" />
+    <ClCompile Include="Reward\reward.cpp">
+      <Filter>Reward</Filter>
     </ClCompile>
     <ClCompile Include="Trigger\trigger.cpp">
       <Filter>Trigger</Filter>
     </ClCompile>
-    <ClCompile Include="Reward\reward.cpp">
-      <Filter>Reward</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\stdafx.cpp" />
-    <ClCompile Include="svr_game.cpp" />
-    <ClCompile Include="Room\Room.cpp">
-      <Filter>Room</Filter>
-    </ClCompile>
-    <ClCompile Include="Room\PlayerRoomRpc.cpp">
-      <Filter>Room</Filter>
-    </ClCompile>
-    <ClCompile Include="Room\PlayerRoomData.cpp">
-      <Filter>Room</Filter>
-    </ClCompile>
-    <ClCompile Include="Player\PlayerDataSend.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Player\Player.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Trigger\trigger.h">
-      <Filter>Trigger</Filter>
-    </ClInclude>
+    <Filter Include="Trigger">
+      <UniqueIdentifier>{16b1c3fa-c92c-4a8d-a74a-e88e0e40e916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reward">
+      <UniqueIdentifier>{cd2d7797-65a7-4d44-8d5b-7f7e3035971f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="Reward\reward.h">
       <Filter>Reward</Filter>
     </ClInclude>
-    <ClInclude Include="..\rpc\RpcEnum.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rpc\RpcQueue.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="Room\Room.h">
-      <Filter>Room</Filter>
-    </ClInclude>
-    <ClInclude Include="Room\PlayerRoomData.h">
-      <Filter>Room</Filter>
-    </ClInclude>
-    <ClInclude Include="Player\PlayerDataSend.h">
-      <Filter>Player</Filter>
+    <ClInclude Include="Trigger\trigger.h">
+      <Filter>Trigger</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
