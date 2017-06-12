@@ -36,26 +36,26 @@ bool CRoom::JoinRoom(Player& player)
         Player* ptr = it.second;
         ptr->CallRpc("rpc_notify_player_join_room", [&](NetPack& buf){
             buf.WriteUInt32(player.m_index);
-            buf.WriteUInt32(player.m_RoomData->m_netId);
-            buf.WriteFloat(player.m_RoomData->m_posX);
-            buf.WriteFloat(player.m_RoomData->m_posY);
+            buf.WriteUInt32(player.m_Room->m_netId);
+            buf.WriteFloat(player.m_Room->m_posX);
+            buf.WriteFloat(player.m_Room->m_posY);
         });
     }
     m_players[player.m_index] = &player;
-    player.m_RoomData->m_roomId = GetUniqueId();
+    player.m_Room->m_roomId = GetUniqueId();
     return true;
 }
 bool CRoom::ExitRoom(Player& player)
 {
     m_players.erase(player.m_index);
-    player.m_RoomData->m_roomId = 0;
+    player.m_Room->m_roomId = 0;
 
     // 广播，有人退出
     for (auto& it : m_players) {
         Player* ptr = it.second;
         ptr->CallRpc("rpc_notify_player_exit_room", [&](NetPack& buf){
             buf.WriteUInt32(player.m_index);
-            buf.WriteUInt32(player.m_RoomData->m_netId);
+            buf.WriteUInt32(player.m_Room->m_netId);
         });
     }
     if (m_players.empty()) DestroyRoom();
@@ -66,6 +66,20 @@ Player* CRoom::FindBattlePlayer(uint idx)
     auto it = m_players.find(idx);
     if (it == m_players.end()) return nullptr;
     return it->second;
+}
+void CRoom::ForEachTeammate(uint8 teamId, std::function<void(Player&)>& func)
+{
+    for (auto& it : m_players) {
+        Player* ptr = it.second;
+        if (teamId == ptr->m_Room->m_teamId)
+        {
+            func(*ptr);
+        }
+    }
+}
+void CRoom::ForEachPlayer(std::function<void(Player&)>& func)
+{
+    for (auto& it : m_players) func(*it.second);
 }
 
 bool CRoom::TryToJoinWaitLst(const std::vector<Player*>& lst)
@@ -79,7 +93,7 @@ bool CRoom::TryToJoinWaitLst(const std::vector<Player*>& lst)
 
     std::map<uint8, uint> teamInfos;
     for (auto& it : m_players) {
-        teamInfos[it.second->m_RoomData->m_teamId] += 1;
+        teamInfos[it.second->m_Room->m_teamId] += 1;
     }
     for (auto& it : m_waitLst) {
         teamInfos[it.first] += it.second.size();
@@ -129,10 +143,10 @@ void CRoom::_FlushWaitLst(const std::map<uint8, uint>& teamInfos)
         */
         for (auto& it : m_waitLst) {
             for (auto& player : it.second) {
-                player->m_RoomData->m_roomId = m_unique_id;
-                player->m_RoomData->m_teamId = it.first;
+                player->m_Room->m_roomId = m_unique_id;
+                player->m_Room->m_teamId = it.first;
                 if (player->m_isLogin) {
-                    player->m_RoomData->NotifyClientJoinRoom();
+                    player->m_Room->NotifyClientJoinRoom();
                 }
             }
         }
@@ -147,7 +161,7 @@ void CRoom::SyncPlayerPosition()
             for (auto& itr : m_players) {
                 Player* ptr = itr.second;
                 buf.WriteUInt32(ptr->m_index);
-                ptr->m_RoomData->m_SendData.ToBuf(buf);
+                ptr->m_Room->m_SendData.ToBuf(buf);
             }
         });
     }

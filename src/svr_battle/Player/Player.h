@@ -27,7 +27,7 @@ public:
     uint32          m_pid = 0;
     bool            m_isLogin = false;
 //////////////////////////////////////////////////////////////////////////
-    PlayerRoomData* m_RoomData = NULL;
+    PlayerRoomData* m_Room = NULL;
 public:
     Player();
     ~Player();

@@ -16,16 +16,20 @@ Player::Player()
 #define Rpc_Declare(typ) _rpc[sRpcClient.RpcNameToId(#typ)] = &Player::HandleRpc_##typ;
         Rpc_For_Player;
     }
-    m_RoomData = new PlayerRoomData(*this);
+    m_Room = new PlayerRoomData(*this);
 }
 Player::~Player()
 {
     PlayerList.erase(m_pid);
 
-    delete m_RoomData; m_RoomData = NULL;
+    delete m_Room; m_Room = NULL;
 }
 void Player::SetNetLink(NetLink* p)
 {
+    if (_clientNetLink)
+    {
+        _clientNetLink->CloseLink();
+    }
     _clientNetLink = p;
 }
 void Player::SendMsg(const NetPack& pack)
@@ -58,9 +62,9 @@ Rpc_Realize(rpc_login)
     printf("rpc_login\n");
     recvBuf >> m_index >> m_pid;
 
-    if (m_RoomData->m_roomId > 0)
+    if (m_Room->m_roomId > 0)
     {
-        m_RoomData->NotifyClientJoinRoom();
+        m_Room->NotifyClientJoinRoom();
     }
 
     NetPack& backBuffer = BackBuffer();

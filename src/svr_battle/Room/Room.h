@@ -16,8 +16,12 @@ public:
     void DestroyRoom();
     bool JoinRoom(Player& player);
     bool ExitRoom(Player& player);
+
     const std::map<uint, Player*>& GetPlayerLst(){ return m_players; }
     Player* FindBattlePlayer(uint idx);
+
+    void ForEachTeammate(uint8 teamId, std::function<void(Player&)>& func);
+    void ForEachPlayer(std::function<void(Player&)>& func);
 
     bool TryToJoinWaitLst(const std::vector<Player*>& lst);
     void _FlushWaitLst(const std::map<uint8, uint>& teamInfos);
