@@ -24,12 +24,16 @@ bool BindPlayerLink(void*& refPlayer, NetLink* p, const void* pMsg, int size)
     {
         uint32 idx, pid;
         msg >> idx >> pid;
+        printf("Player login idx(%d) pid(%d) \n", idx, pid);
         if (Player* player = Player::FindByIdx(idx)) {
             if (player->m_pid == pid) {
                 player->SetNetLink(p);
                 player->m_isLogin = true;
                 refPlayer = player;
             }
+        } else {
+            assert(0);
+            return false;
         }
     } return true;
     default: assert(0); return false;

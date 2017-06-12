@@ -90,7 +90,7 @@ void UdpServer::_HandlePacket(RakNet::Packet* packet) {
             clientAgent->m_guid = guid;
             clientAgent->m_addr = packet->systemAddress;
         }
-        printf("New Client Connnect(%d) ...\n", m_clientList.size());
+        printf("New Client Connnect(%d)  cnt(%d) ...\n", guid.ToUint32(guid), m_clientList.size());
     } break;
     case ID_DISCONNECTION_NOTIFICATION: {
         // 连接主动断开，自己调CloseConnection()一定收到本消息

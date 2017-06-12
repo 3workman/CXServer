@@ -40,7 +40,24 @@ typedef uint64_t	uint64;
 typedef uint32_t	uint32;
 typedef uint16_t	uint16;
 typedef uint8_t		uint8;
-
-typedef unsigned int		uint;
-
+typedef unsigned    uint;
 typedef std::vector< std::pair<int, int> > IntPairVec;
+
+#ifdef _WIN32
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+
+#else
+inline long GetTickCount()
+{
+    struct timespec spec;
+    clock_gettime(CLOCK_REALTIME, &spec);
+
+    time_t s = spec.tv_sec;
+    long ms = std::round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
+    return s * 1000 + ms;
+}
+#endif

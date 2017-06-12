@@ -9,6 +9,7 @@ UdpClientAgent::UdpClientAgent(UdpServer* p)
 }
 void UdpClientAgent::CloseLink()
 {
+    printf("Udp CloseLink(%d)... \n", m_guid.ToUint32(m_guid));
     m_pMgr->CloseLink(m_addr);
 }
 void UdpClientAgent::RecvMsg(const void* pMsg, int size)

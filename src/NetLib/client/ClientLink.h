@@ -9,10 +9,10 @@
 #pragma  once
 //////////////////////////////////////////////////////////////////////////
 //  π”√winsock2  ±‹√‚Õ¨winsock≥ÂÕª
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
+//#ifndef WIN32_LEAN_AND_MEAN
+//#define WIN32_LEAN_AND_MEAN
+//#endif
+//#include <windows.h>
 #include <winsock2.h>
 //////////////////////////////////////////////////////////////////////////
 #include <mswsock.h>

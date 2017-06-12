@@ -95,11 +95,11 @@ Rpc_Realize(rpc_handle_battle_data)
         player->m_pid = pid;
         Player::PlayerList[pid] = player;
 
-        //一段时间内，client没连上来，防止等待加入中途出错(强杀进程)，内存泄露
+        //【最长等待匹配时间】内，client没连上来，防止等待加入中途出错(强杀进程)，内存泄露
         //【Bug】可能在定时器期间，玩家登录又离线，所以还需判断player是否已被delete
         sTimerMgr.AddTimer([=]{
             if (!player->m_isLogin && player->m_Room) delete player;
-        }, 10);
+        }, 60);
 
         lst.push_back(player);
         backBuffer << pid << player->m_index;

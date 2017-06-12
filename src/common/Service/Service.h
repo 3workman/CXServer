@@ -28,7 +28,6 @@ public:
     virtual bool Register(void* pObj, uint exeTime = 0) = 0; //哪个时刻执行
     virtual void RunSevice(uint time_elapse, uint timenow) = 0; //循环内的回调函数(m_func)可能调到Register、UnRegister
 protected:
-    typedef uint(*RefreshFun)(void*);
     typedef std::multimap<uint, void*>  mapTimer;
     typedef std::pair<uint, void*>      TimerPair;
     typedef std::list<TimerPair>        listTimer;
