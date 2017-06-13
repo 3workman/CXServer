@@ -8,21 +8,24 @@
 std::map<int, Player::_RpcFunc> Player::_rpc;
 std::map<uint32, Player*> Player::PlayerList;
 
-Player::Player()
+Player::Player(uint32 pid)
+    : m_pid(pid)
+    , m_Room(*new PlayerRoomData(*this))
 {
+    PlayerList[pid] = this;
+
     if (_rpc.empty())
     {
 #undef Rpc_Declare
 #define Rpc_Declare(typ) _rpc[sRpcClient.RpcNameToId(#typ)] = &Player::HandleRpc_##typ;
         Rpc_For_Player;
     }
-    m_Room = new PlayerRoomData(*this);
 }
 Player::~Player()
 {
-    PlayerList.erase(m_pid);
+    delete &m_Room;
 
-    delete m_Room; m_Room = NULL;
+    PlayerList.erase(m_pid); m_pid = 0;
 }
 void Player::SetNetLink(NetLink* p)
 {
@@ -62,9 +65,9 @@ Rpc_Realize(rpc_login)
     printf("rpc_login\n");
     recvBuf >> m_index >> m_pid;
 
-    if (m_Room->m_roomId > 0)
+    if (m_Room.m_roomId > 0)
     {
-        m_Room->NotifyClientJoinRoom();
+        m_Room.NotifyClientJoinRoom();
     }
 
     NetPack& backBuffer = BackBuffer();

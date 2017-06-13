@@ -73,38 +73,34 @@ Rpc_Realize(rpc_svr_accept)
     auto connId = recvBuf.ReadUInt32();
     _first_buf.SetPos(0, connId);
 }
-Rpc_Realize(rpc_handle_battle_data)
+Rpc_Realize(rpc_handle_battle_data) //回复<pid, roomId>列表
 {
-    NetPack& backBuffer = BackBuffer(); //回复<pid, roomId, teamId>列表
-
     uint8 cnt = recvBuf.ReadUInt8();
     vector<Player*> lst; lst.reserve(cnt);
-    backBuffer << cnt;
-    for (uint8 i = 0; i < cnt; ++i) {
+    NetPack& backBuffer = BackBuffer(); backBuffer << cnt;
+    for (uint i = 0; i < cnt; ++i) {
         //svr_game --- Rpc_Battle_Begin
         uint32 pid = recvBuf.ReadUInt32();
 
-        if (Player* player = Player::FindByPid(pid)) {
-            LOG_TRACK("PlayerId(%d) is already in room", pid);
-            backBuffer << pid << player->m_index;
+        Player* player = Player::FindByPid(pid);
+        if (player == NULL) player = new Player(pid);
+
+        backBuffer << pid << player->m_index;
+
+        if (player->m_Room.m_roomId) {
+            LOG_TRACK("PlayerId(%d) is already in room(%d)", pid, player->m_Room.m_roomId);
             continue;
         }
+        //用svr_game发来的战斗数据，更新玩家
 
-        //根据svr_game发来的战斗数据，创建玩家
-        Player* player = new Player();
-        player->m_pid = pid;
-        Player::PlayerList[pid] = player;
-
-        //【最长等待匹配时间】内，client没连上来，防止等待加入中途出错(强杀进程)，内存泄露
+        //一段时间client没连上来，防止等待加入中途出错(强杀进程)，内存泄露
         //【Bug】可能在定时器期间，玩家登录又离线，所以还需判断player是否已被delete
         sTimerMgr.AddTimer([=]{
-            if (!player->m_isLogin && player->m_Room) delete player;
-        }, 60);
+            if (!player->m_isLogin && player->m_pid) delete player;
+        }, 10);
 
         lst.push_back(player);
-        backBuffer << pid << player->m_index;
-    }
-
+    } 
     bool isJoin = false;
     for (auto& it : CRoom::RoomList) {
         if (it.second->TryToJoinWaitLst(lst)) {

@@ -20,16 +20,17 @@ class NetPack;
 class PlayerRoomData;
 class Player {
     Pool_Index_Define(Player, MAX_PLAYER_COUNT);
-    static std::map<uint32, Player*> PlayerList;
 private:
+    static std::map<uint32, Player*> PlayerList;
+
     NetLink*        _clientNetLink = NULL;
 public:
     uint32          m_pid = 0;
     bool            m_isLogin = false;
 //////////////////////////////////////////////////////////////////////////
-    PlayerRoomData* m_Room = NULL;
+    PlayerRoomData& m_Room;
 public:
-    Player();
+    Player(uint32 pid);
     ~Player();
     void SetNetLink(NetLink* p);
     void SendMsg(const NetPack& pack);

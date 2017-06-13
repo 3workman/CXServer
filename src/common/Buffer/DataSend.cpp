@@ -14,7 +14,7 @@ void DataSend::Set(uint index, int value){
 }
 void DataSend::ReadDif(ByteBuffer& bf, bool bReadAll){
     bf.clear();
-    for (uint8 i = 0; i < DATA_SEND_SIZE; ++i)
+    for (uint i = 0; i < DATA_SEND_SIZE; ++i)
     {
         if (bReadAll || (m_bits & (1 << i)))
         {
@@ -24,8 +24,8 @@ void DataSend::ReadDif(ByteBuffer& bf, bool bReadAll){
 }
 void DataSend::WriteDif(ByteBuffer& bf){
     uint8 index; int32 value;
-    const uint8 size = bf.size() / (sizeof(uint8) + sizeof(int32));
-    for (uint8 i = 0; i < size; ++i)
+    const int size = bf.size() / (sizeof(uint8) + sizeof(int32));
+    for (int i = 0; i < size; ++i)
     {
         bf >> index >> value;
         OnDataChange(index, m_data[index], value);

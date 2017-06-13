@@ -8,7 +8,7 @@ static CRoom* g_test_room = NULL;
 
 Rpc_Realize(rpc_create_room)
 {
-    recvBuf >> m_Room->m_posX >> m_Room->m_posY;
+    recvBuf >> m_Room.m_posX >> m_Room.m_posY;
 
     CRoom* pRoom = new CRoom;
     pRoom->JoinRoom(*this);
@@ -19,7 +19,7 @@ Rpc_Realize(rpc_create_room)
 }
 Rpc_Realize(rpc_join_room)
 {
-    recvBuf >> m_Room->m_posX >> m_Room->m_posY;
+    recvBuf >> m_Room.m_posX >> m_Room.m_posY;
 
     uint32 roomId = recvBuf.ReadUInt32();
 
@@ -37,30 +37,30 @@ Rpc_Realize(rpc_join_room)
             Player* ptr = it.second;
             if (ptr == this) continue;
             backBuffer.WriteUInt32(ptr->m_index);
-            backBuffer.WriteUInt32(ptr->m_Room->m_netId);
-            backBuffer.WriteFloat(ptr->m_Room->m_posX);
-            backBuffer.WriteFloat(ptr->m_Room->m_posY);
+            backBuffer.WriteUInt32(ptr->m_Room.m_netId);
+            backBuffer.WriteFloat(ptr->m_Room.m_posX);
+            backBuffer.WriteFloat(ptr->m_Room.m_posY);
         }
     }
 }
 Rpc_Realize(rpc_exit_room)
 {
-    if (CRoom* pRoom = CRoom::FindByUniqueId(m_Room->m_roomId))
+    if (CRoom* pRoom = CRoom::FindByUniqueId(m_Room.m_roomId))
     {
         pRoom->ExitRoom(*this);
     }
 }
 Rpc_Realize(rpc_move_delta)
 {
-    recvBuf >> m_Room->m_netId;
+    recvBuf >> m_Room.m_netId;
     float deltaMoveX = recvBuf.ReadFloat();
     float deltaMoveY = recvBuf.ReadFloat();
-    //m_RoomData->m_posX += deltaMoveX;
-    //m_RoomData->m_posY += deltaMoveY;
-    m_Room->m_posX = deltaMoveX;
-    m_Room->m_posY = deltaMoveY;
+    //m_Room.m_posX += deltaMoveX;
+    //m_Room.m_posY += deltaMoveY;
+    m_Room.m_posX = deltaMoveX;
+    m_Room.m_posY = deltaMoveY;
 }
 Rpc_Realize(rpc_client_load_battle_scene_ok)
 {
-    m_Room->OnClientJoinRoomOK();
+    m_Room.OnClientJoinRoomOK();
 }

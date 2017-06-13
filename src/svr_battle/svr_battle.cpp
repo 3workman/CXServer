@@ -61,7 +61,7 @@ void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
             player->m_isLogin = false;
             sTimerMgr.AddTimer([=]{
                 if (!player->m_isLogin) delete player;
-            }, 10); //期间允许断线重连
+            }, 60); //期间允许断线重连
         } else
             delete player;
     }
