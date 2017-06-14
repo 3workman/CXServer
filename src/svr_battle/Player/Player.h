@@ -13,8 +13,8 @@ typedef ServLink  NetLink;
 
 #undef Rpc_Declare
 #undef Rpc_Realize
-#define Rpc_Declare(typ) void HandleRpc_##typ(NetPack&);
-#define Rpc_Realize(typ) void Player::HandleRpc_##typ(NetPack& recvBuf)
+#define Rpc_Declare(typ) void HandleRpc_##typ(NetPack&, NetPack&);
+#define Rpc_Realize(typ) void Player::HandleRpc_##typ(NetPack& req, NetPack& ack)
 
 class NetPack;
 class PlayerRoomData;
@@ -34,11 +34,10 @@ public:
     ~Player();
     void SetNetLink(NetLink* p);
     void SendMsg(const NetPack& pack);
-    NetPack& BackBuffer() { return sRpcClient.BackBuffer; }
     uint64 CallRpc(const char* name, const ParseRpcParam& sendFun);
     void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
 public:
-    typedef void(Player::*_RpcFunc)(NetPack&);
+    typedef void(Player::*_RpcFunc)(NetPack&, NetPack&);
     static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc
     Rpc_For_Player;
 public:

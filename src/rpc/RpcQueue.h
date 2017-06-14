@@ -30,8 +30,8 @@ class RpcQueue {
     std::map<uint64, ParseRpcParam> m_response;  //rpc远端的回复
     SafeQueue<RpcPair>          m_queue; //Notice：为避免缓存指针野掉，主循环HandleMsg之后，处理登出逻辑
     NetPack m_SendBuffer;
+    NetPack m_BackBuffer;
 public:
-    NetPack BackBuffer;
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
     RpcQueue() { LoadRpcCsv(); }
 
@@ -52,9 +52,9 @@ public:
         uint16 opCode = buf.OpCode();
         auto it = Typ::_rpc.find(opCode);
         if (it != Typ::_rpc.end()) {
-            BackBuffer.ResetHead(buf);
-            (pObj->*(it->second))(buf);
-            if (BackBuffer.BodySize()) pObj->SendMsg(BackBuffer);
+            m_BackBuffer.ResetHead(buf);
+            (pObj->*(it->second))(buf, m_BackBuffer);
+            if (m_BackBuffer.BodySize()) pObj->SendMsg(m_BackBuffer);
 #ifdef _DEBUG
             LOG_TRACK("Recv Msg: %s(%d) \n", DebugRpcIdToName(opCode), opCode);
 #endif

@@ -63,14 +63,12 @@ Player* Player::FindByPid(uint32 pid)
 Rpc_Realize(rpc_login)
 {
     printf("rpc_login\n");
-    recvBuf >> m_index >> m_pid;
+    req >> m_index >> m_pid;
 
     if (m_Room.m_roomId > 0)
     {
         m_Room.NotifyClientJoinRoom();
     }
-
-    NetPack& backBuffer = BackBuffer();
 }
 Rpc_Realize(rpc_logout)
 {
@@ -85,10 +83,9 @@ Rpc_Realize(rpc_reconnect)
 }
 Rpc_Realize(rpc_echo)
 {
-    string str = recvBuf.ReadString();
+    string str = req.ReadString();
     const char* pstr = str.c_str();
     LOG_TRACK("Echo: %s\n", pstr);
 
-    NetPack& backBuffer = BackBuffer();
-    backBuffer << str;
+    ack << str;
 }

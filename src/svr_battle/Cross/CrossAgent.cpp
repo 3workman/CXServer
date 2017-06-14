@@ -62,7 +62,7 @@ void CrossAgent::SendMsg(const NetPack& pack)
 // rpc
 Rpc_Realize(rpc_echo)
 {
-    string str = recvBuf.ReadString();
+    string str = req.ReadString();
     printf("Echo: %s\n", str.c_str());
 
     //NetPack& backBuffer = BackBuffer();
@@ -70,22 +70,22 @@ Rpc_Realize(rpc_echo)
 }
 Rpc_Realize(rpc_svr_accept)
 {
-    auto connId = recvBuf.ReadUInt32();
+    auto connId = req.ReadUInt32();
     _first_buf.SetPos(0, connId);
 }
 Rpc_Realize(rpc_handle_battle_data) //»Ø¸´<pid, roomId>ÁÐ±í
 {
-    uint8 cnt = recvBuf.ReadUInt8();
+    uint8 cnt = req.ReadUInt8();
+    ack << cnt;
     vector<Player*> lst; lst.reserve(cnt);
-    NetPack& backBuffer = BackBuffer(); backBuffer << cnt;
     for (uint i = 0; i < cnt; ++i) {
         //svr_game --- Rpc_Battle_Begin
-        uint32 pid = recvBuf.ReadUInt32();
+        uint32 pid = req.ReadUInt32();
 
         Player* player = Player::FindByPid(pid);
         if (player == NULL) player = new Player(pid);
 
-        backBuffer << pid << player->m_index;
+        ack << pid << player->m_index;
 
         if (player->m_Room.m_roomId) {
             LOG_TRACK("PlayerId(%d) is already in room(%d)", pid, player->m_Room.m_roomId);

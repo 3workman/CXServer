@@ -8,38 +8,36 @@ static CRoom* g_test_room = NULL;
 
 Rpc_Realize(rpc_create_room)
 {
-    recvBuf >> m_Room.m_posX >> m_Room.m_posY;
+    req >> m_Room.m_posX >> m_Room.m_posY;
 
     CRoom* pRoom = new CRoom;
     pRoom->JoinRoom(*this);
     g_test_room = pRoom;
 
-    NetPack& backBuffer = BackBuffer();
-    backBuffer << pRoom->GetUniqueId();
+    ack << pRoom->GetUniqueId();
 }
 Rpc_Realize(rpc_join_room)
 {
-    recvBuf >> m_Room.m_posX >> m_Room.m_posY;
+    req >> m_Room.m_posX >> m_Room.m_posY;
 
-    uint32 roomId = recvBuf.ReadUInt32();
+    uint32 roomId = req.ReadUInt32();
 
     CRoom* pRoom = roomId ? CRoom::FindByUniqueId(roomId) : g_test_room;
 
     if (pRoom && pRoom->JoinRoom(*this))
     {
-        NetPack& backBuffer = BackBuffer();
-        backBuffer << pRoom->GetUniqueId();
+        ack << pRoom->GetUniqueId();
 
         // 通知新人，既有玩家信息
         const auto& lst = pRoom->GetPlayerLst();
-        backBuffer.WriteUInt8(lst.size() - 1);
+        ack.WriteUInt8(lst.size() - 1);
         for (auto& it : lst) {
             Player* ptr = it.second;
             if (ptr == this) continue;
-            backBuffer.WriteUInt32(ptr->m_index);
-            backBuffer.WriteUInt32(ptr->m_Room.m_netId);
-            backBuffer.WriteFloat(ptr->m_Room.m_posX);
-            backBuffer.WriteFloat(ptr->m_Room.m_posY);
+            ack.WriteUInt32(ptr->m_index);
+            ack.WriteUInt32(ptr->m_Room.m_netId);
+            ack.WriteFloat(ptr->m_Room.m_posX);
+            ack.WriteFloat(ptr->m_Room.m_posY);
         }
     }
 }
@@ -52,9 +50,9 @@ Rpc_Realize(rpc_exit_room)
 }
 Rpc_Realize(rpc_move_delta)
 {
-    recvBuf >> m_Room.m_netId;
-    float deltaMoveX = recvBuf.ReadFloat();
-    float deltaMoveY = recvBuf.ReadFloat();
+    req >> m_Room.m_netId;
+    float deltaMoveX = req.ReadFloat();
+    float deltaMoveY = req.ReadFloat();
     //m_Room.m_posX += deltaMoveX;
     //m_Room.m_posY += deltaMoveY;
     m_Room.m_posX = deltaMoveX;
