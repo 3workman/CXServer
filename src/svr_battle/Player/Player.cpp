@@ -60,22 +60,23 @@ Player* Player::FindByPid(uint32 pid)
 
 //////////////////////////////////////////////////////////////////////////
 // rpc
-Rpc_Realize(rpc_login)
+Rpc_Realize(rpc_battle_login)
 {
     printf("rpc_login\n");
-    req >> m_index >> m_pid;
 
     if (m_Room.m_roomId > 0)
     {
         m_Room.NotifyClientJoinRoom();
     }
+
+    ack << m_index;
 }
-Rpc_Realize(rpc_logout)
+Rpc_Realize(rpc_battle_logout)
 {
     printf("rpc_logout\n");
     m_isLogin = false;
 }
-Rpc_Realize(rpc_reconnect)
+Rpc_Realize(rpc_battle_reconnect)
 {
     printf("rpc_reconnect\n");
 

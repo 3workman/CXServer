@@ -33,9 +33,11 @@ bool CRoom::JoinRoom(Player& player)
     //assert(m_players.find(player.m_index) == m_players.end());
     // 广播，有人加入游戏
     for (auto& it : m_players) {
-        Player* ptr = it.second;
-        ptr->CallRpc("rpc_notify_player_join_room", [&](NetPack& buf){
+        it.second->CallRpc("rpc_client_notify_player_join_room", [&](NetPack& buf){
+            buf.WriteUInt32(player.m_pid);
+            buf.WriteString(player.m_name);
             buf.WriteUInt32(player.m_index);
+            buf.WriteUInt8(player.m_Room.m_teamId);
             buf.WriteUInt32(player.m_Room.m_netId);
             buf.WriteFloat(player.m_Room.m_posX);
             buf.WriteFloat(player.m_Room.m_posY);
@@ -53,7 +55,7 @@ bool CRoom::ExitRoom(Player& player)
     // 广播，有人退出
     for (auto& it : m_players) {
         Player* ptr = it.second;
-        ptr->CallRpc("rpc_notify_player_exit_room", [&](NetPack& buf){
+        ptr->CallRpc("rpc_client_notify_player_exit_room", [&](NetPack& buf){
             buf.WriteUInt32(player.m_index);
             buf.WriteUInt32(player.m_Room.m_netId);
         });
@@ -125,17 +127,18 @@ bool CRoom::TryToJoinWaitLst(const std::vector<Player*>& lst)
 }
 void CRoom::_FlushWaitLst(const std::map<uint8, uint>& teamInfos)
 {
-    if (teamInfos.size() < 2) return;
+    //if (teamInfos.size() < 2) return;
 
-    uint min = 100, max = 0;
+    uint min = 100, max = 0, total = 0;
     for (auto& it : teamInfos) {
         if (it.second < min) min = it.second;
         if (it.second > max) max = it.second;
+        total += it.second;
     }
-    if (max - min <= 1) {
+    if (total >= Room_Player_Min && max - min <= 1) {
         //设置玩家的m_roomId，登录时，若自己m_roomId有效，开启“进入战斗场景流程”
         //已登录的，直接开启“进入战斗场景流程”
-        /* 进入战斗场景流程：
+        /* 废弃：进入战斗场景流程：
             1、通知Client关闭等待界面，载入战斗场景
             2、完毕后上报svr_battle，此时尚不能操作
             3、svr_battle收到载入完毕消息，真正将玩家加入房间，进场景，再回复client
@@ -145,18 +148,15 @@ void CRoom::_FlushWaitLst(const std::map<uint8, uint>& teamInfos)
             for (auto& player : it.second) {
                 player->m_Room.m_roomId = m_unique_id;
                 player->m_Room.m_teamId = it.first;
-                if (player->m_isLogin) {
-                    player->m_Room.NotifyClientJoinRoom();
-                }
+                if (player->m_isLogin) { player->m_Room.NotifyClientJoinRoom(); }
             }
         }
     }
 }
-
 void CRoom::SyncPlayerPosition()
 {
     for (auto& it : m_players) {
-        it.second->CallRpc("rpc_sync_position", [&](NetPack& buf){
+        it.second->CallRpc("rpc_client_sync_position", [&](NetPack& buf){
             buf.WriteUInt8(m_players.size());
             for (auto& itr : m_players) {
                 Player* ptr = itr.second;

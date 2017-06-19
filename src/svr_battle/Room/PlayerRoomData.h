@@ -23,7 +23,6 @@ public:
         m_SendData << m_posY;
     }
     ~PlayerRoomData();
-    
+
     void NotifyClientJoinRoom();
-    void OnClientJoinRoomOK();
 };

@@ -73,19 +73,20 @@ Rpc_Realize(rpc_svr_accept)
     auto connId = req.ReadUInt32();
     _first_buf.SetPos(0, connId);
 }
-Rpc_Realize(rpc_handle_battle_data) //回复<pid, roomId>列表
+Rpc_Realize(rpc_battle_handle_player_data) //回复<pid>列表
 {
     uint8 cnt = req.ReadUInt8();
     ack << cnt;
     vector<Player*> lst; lst.reserve(cnt);
     for (uint i = 0; i < cnt; ++i) {
-        //svr_game --- Rpc_Battle_Begin
         uint32 pid = req.ReadUInt32();
-
         Player* player = Player::FindByPid(pid);
         if (player == NULL) player = new Player(pid);
 
-        ack << pid << player->m_index;
+        //svr_game --- Rpc_Battle_Begin
+        player->m_name = req.ReadString();
+
+        ack << pid;
 
         if (player->m_Room.m_roomId) {
             LOG_TRACK("PlayerId(%d) is already in room(%d)", pid, player->m_Room.m_roomId);

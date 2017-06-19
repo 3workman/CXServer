@@ -12,19 +12,22 @@ PlayerRoomData::~PlayerRoomData()
 }
 void PlayerRoomData::NotifyClientJoinRoom()
 {
-    m_player.CallRpc("rpc_stop_wait_and_load_battle_scene", [&](NetPack& buf){
-        // 通知Client关闭等待界面，载入战斗场景，载入完毕后回复svr；此时尚不能操作
-    });
-}
-void PlayerRoomData::OnClientJoinRoomOK()
-{
     if (CRoom* p = CRoom::FindByUniqueId(m_roomId))
     {
-        if (p->JoinRoom(m_player))
-        {
-            m_player.CallRpc("rpc_svr_join_room_ok", [&](NetPack& buf){
-                // 真正将玩家加入房间，进场景，再回复client；client方可操作
-            });
-        }
+        p->JoinRoom(m_player); //后台必须先加进来，否则两个人同时进房间，有bug：不知道彼此加入
+
+        m_player.CallRpc("rpc_client_stop_wait_and_load_battle_scene", [&](NetPack& buf){
+            // 通知Client关闭等待界面，载入战斗场景，载入完毕后回复svr
+            // 下发房间内玩家的数据，给client创建远程镜像(包含自己)
+            buf << p->GetUniqueId();
+            buf.WriteUInt8(p->GetPlayerLst().size());
+            for (auto& it : p->GetPlayerLst()) {
+                Player* ptr = it.second;
+                buf.WriteUInt32(ptr->m_pid);
+                buf.WriteString(ptr->m_name);
+                buf.WriteUInt32(ptr->m_index);
+                buf.WriteUInt8(ptr->m_Room.m_teamId);
+            }
+        });
     }
 }

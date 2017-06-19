@@ -22,15 +22,12 @@ bool BindPlayerLink(void*& refPlayer, NetLink* p, const void* pMsg, int size)
     case 1:
     case 2:
     {
-        uint32 idx, pid;
-        msg >> idx >> pid;
-        printf("Player login idx(%d) pid(%d) \n", idx, pid);
-        if (Player* player = Player::FindByIdx(idx)) {
-            if (player->m_pid == pid) {
-                player->SetNetLink(p);
-                player->m_isLogin = true;
-                refPlayer = player;
-            }
+        uint32 pid = msg.ReadUInt32();
+        if (Player* player = Player::FindByPid(pid)) {
+            player->SetNetLink(p);
+            player->m_isLogin = true;
+            refPlayer = player;
+            printf("Player login idx(%d) pid(%d) \n", player->m_index, pid);
         } else {
             assert(0);
             return false;

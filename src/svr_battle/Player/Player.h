@@ -26,6 +26,7 @@ private:
     NetLink*        _clientNetLink = NULL;
 public:
     uint32          m_pid = 0;
+    string          m_name;
     bool            m_isLogin = false;
 //////////////////////////////////////////////////////////////////////////
     PlayerRoomData& m_Room;

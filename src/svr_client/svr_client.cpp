@@ -13,14 +13,14 @@ int main(int argc, char* argv[])
     //test_svr_battle(200);
 
     Player player;
-    player.CallRpc("rpc_login", [&](NetPack& buf){
+    player.CallRpc("rpc_battle_login", [&](NetPack& buf){
         buf.WriteUInt32(1);
     });
-    player.CallRpc("rpc_create_room", [&](NetPack& buf){
+    player.CallRpc("rpc_battle_create_room", [&](NetPack& buf){
         buf.WriteFloat(1);
         buf.WriteFloat(1);
     });
-    //CallRpc("rpc_logout", [&](NetPack& buf){
+    //CallRpc("rpc_battle_logout", [&](NetPack& buf){
     //});
 
 /*

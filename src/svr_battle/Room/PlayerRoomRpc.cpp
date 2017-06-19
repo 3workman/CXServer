@@ -6,7 +6,7 @@
 
 static CRoom* g_test_room = NULL;
 
-Rpc_Realize(rpc_create_room)
+Rpc_Realize(rpc_battle_create_room)
 {
     req >> m_Room.m_posX >> m_Room.m_posY;
 
@@ -16,7 +16,7 @@ Rpc_Realize(rpc_create_room)
 
     ack << pRoom->GetUniqueId();
 }
-Rpc_Realize(rpc_join_room)
+Rpc_Realize(rpc_battle_join_room)
 {
     req >> m_Room.m_posX >> m_Room.m_posY;
 
@@ -41,14 +41,14 @@ Rpc_Realize(rpc_join_room)
         }
     }
 }
-Rpc_Realize(rpc_exit_room)
+Rpc_Realize(rpc_battle_exit_room)
 {
     if (CRoom* pRoom = CRoom::FindByUniqueId(m_Room.m_roomId))
     {
         pRoom->ExitRoom(*this);
     }
 }
-Rpc_Realize(rpc_move_delta)
+Rpc_Realize(rpc_battle_move_delta)
 {
     req >> m_Room.m_netId;
     float deltaMoveX = req.ReadFloat();
@@ -57,8 +57,4 @@ Rpc_Realize(rpc_move_delta)
     //m_Room.m_posY += deltaMoveY;
     m_Room.m_posX = deltaMoveX;
     m_Room.m_posY = deltaMoveY;
-}
-Rpc_Realize(rpc_client_load_battle_scene_ok)
-{
-    m_Room.OnClientJoinRoomOK();
 }

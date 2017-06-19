@@ -18,7 +18,7 @@ Player::Player()
 
     _netLink = new UdpClient();
     _netLink->SetOnConnect([&](){
-        this->CallRpc("rpc_login", [](NetPack& buf){
+        this->CallRpc("rpc_battle_login", [](NetPack& buf){
             buf.WriteUInt32(1);
         },
             [&](NetPack& recvBuf){
