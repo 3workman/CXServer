@@ -5,8 +5,6 @@
     Rpc_Declare(rpc_battle_login)\
     Rpc_Declare(rpc_battle_logout)\
     Rpc_Declare(rpc_battle_reconnect)\
-    Rpc_Declare(rpc_battle_create_room)\
-    Rpc_Declare(rpc_battle_join_room)\
     Rpc_Declare(rpc_battle_exit_room)\
     Rpc_Declare(rpc_battle_move_delta)\
 

@@ -83,7 +83,7 @@ Rpc_Realize(rpc_battle_handle_player_data) //回复<pid>列表
         Player* player = Player::FindByPid(pid);
         if (player == NULL) player = new Player(pid);
 
-        //svr_game --- Rpc_Battle_Begin
+        //svr_game --- Rpc_Battle_Begin，更新玩家战斗数据
         player->m_name = req.ReadString();
 
         ack << pid;
@@ -92,7 +92,6 @@ Rpc_Realize(rpc_battle_handle_player_data) //回复<pid>列表
             LOG_TRACK("PlayerId(%d) is already in room(%d)", pid, player->m_Room.m_roomId);
             continue;
         }
-        //用svr_game发来的战斗数据，更新玩家
 
         //一段时间client没连上来，防止等待加入中途出错(强杀进程)，内存泄露
         //【Bug】可能在定时器期间，玩家登录又离线，所以还需判断player是否已被delete

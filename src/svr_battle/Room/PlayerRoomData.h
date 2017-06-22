@@ -10,10 +10,12 @@ public:
     Player& m_player;
     PlayerDataSend m_SendData;
     uint32 m_roomId = 0;
+    uint8  m_teamId = 0;//敌对关系
+    bool   m_canJoinRoom = false;
+
     uint32 m_netId;
     float  m_posX;
     float  m_posY;
-    uint8  m_teamId = 0;//敌对关系
 public:
     PlayerRoomData(Player& ref) : m_player(ref)
     {

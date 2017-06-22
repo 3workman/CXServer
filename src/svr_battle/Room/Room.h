@@ -16,6 +16,7 @@ public:
     void DestroyRoom();
     bool JoinRoom(Player& player);
     bool ExitRoom(Player& player);
+    void CancelWait(Player& player);
 
     const std::map<uint, Player*>& GetPlayerLst(){ return m_players; }
     Player* FindBattlePlayer(uint idx);

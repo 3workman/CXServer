@@ -56,7 +56,7 @@ public:
             (pObj->*(it->second))(buf, m_BackBuffer);
             if (m_BackBuffer.BodySize()) pObj->SendMsg(m_BackBuffer);
 #ifdef _DEBUG
-            LOG_TRACK("Recv Msg: %s(%d) \n", DebugRpcIdToName(opCode), opCode);
+            std::cout << "Recv Msg: " << DebugRpcIdToName(opCode) << " id:" << opCode << endl;
 #endif
         } else {
             auto it = m_response.find(buf.GetReqKey());

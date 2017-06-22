@@ -64,10 +64,7 @@ Rpc_Realize(rpc_battle_login)
 {
     printf("rpc_login\n");
 
-    if (m_Room.m_roomId > 0)
-    {
-        m_Room.NotifyClientJoinRoom();
-    }
+    if (m_Room.m_canJoinRoom) m_Room.NotifyClientJoinRoom();
 
     ack << m_index;
 }

@@ -26,11 +26,20 @@ void CRoom::DestroyRoom()
 {
     ServiceMgr::UnRegister(Service_Sync_Position, this);
     RoomList.erase(m_unique_id);
+
+    // 战斗结束，重置仍在的玩家
+    for (auto& it : m_waitLst) {
+        for (auto& player : it.second) {
+            player->m_Room.m_roomId = 0;
+        }
+    }
+    for (auto& it : m_players) {
+        it.second->m_Room.m_roomId = 0;
+    }
     delete this;
 }
 bool CRoom::JoinRoom(Player& player)
 {
-    //assert(m_players.find(player.m_index) == m_players.end());
     // 广播，有人加入游戏
     for (auto& it : m_players) {
         it.second->CallRpc("rpc_client_notify_player_join_room", [&](NetPack& buf){
@@ -49,19 +58,32 @@ bool CRoom::JoinRoom(Player& player)
 }
 bool CRoom::ExitRoom(Player& player)
 {
+    CancelWait(player);
+
     m_players.erase(player.m_index);
     player.m_Room.m_roomId = 0;
 
     // 广播，有人退出
     for (auto& it : m_players) {
-        Player* ptr = it.second;
-        ptr->CallRpc("rpc_client_notify_player_exit_room", [&](NetPack& buf){
+        it.second->CallRpc("rpc_client_notify_player_exit_room", [&](NetPack& buf){
+            buf.WriteUInt32(player.m_pid);
             buf.WriteUInt32(player.m_index);
             buf.WriteUInt32(player.m_Room.m_netId);
         });
     }
-    if (m_players.empty()) DestroyRoom();
+    if (m_players.empty() && m_waitLst.empty()) DestroyRoom();
     return true;
+}
+void CRoom::CancelWait(Player& player)
+{
+    for (auto& it : m_waitLst) {
+        for (auto itt = it.second.begin(); itt != it.second.end(); ++itt) {
+            if ((*itt)->m_index == player.m_index) {
+                it.second.erase(itt);
+                return;
+            }
+        }
+    }
 }
 Player* CRoom::FindBattlePlayer(uint idx)
 {
@@ -104,6 +126,7 @@ bool CRoom::TryToJoinWaitLst(const std::vector<Player*>& lst)
     if (teamInfos.size() < m_kTeamCntMax) {
         uint8 newTeamId = teamInfos.empty() ? 1 : teamInfos.rbegin()->first + 1;
         teamInfos[newTeamId] = lst.size();
+        for (auto& it : lst) it->m_Room.m_roomId = m_unique_id;
         m_waitLst[newTeamId] = std::move(lst);
         _FlushWaitLst(teamInfos);
         return true;
@@ -118,8 +141,10 @@ bool CRoom::TryToJoinWaitLst(const std::vector<Player*>& lst)
     }
     if (teamInfos[minId] + lst.size() <= OneTeamPlayerMax) {
         teamInfos[minId] += lst.size();
-        auto& refLst = m_waitLst[minId];
-        for (auto& it : lst) refLst.push_back(it);
+        for (auto& it : lst) {
+            it->m_Room.m_roomId = m_unique_id;
+            m_waitLst[minId].push_back(it);
+        }
         _FlushWaitLst(teamInfos);
         return true;
     }
@@ -127,7 +152,7 @@ bool CRoom::TryToJoinWaitLst(const std::vector<Player*>& lst)
 }
 void CRoom::_FlushWaitLst(const std::map<uint8, uint>& teamInfos)
 {
-    //if (teamInfos.size() < 2) return;
+    if (teamInfos.size() < 2) return;
 
     uint min = 100, max = 0, total = 0;
     for (auto& it : teamInfos) {
@@ -146,11 +171,12 @@ void CRoom::_FlushWaitLst(const std::map<uint8, uint>& teamInfos)
         */
         for (auto& it : m_waitLst) {
             for (auto& player : it.second) {
-                player->m_Room.m_roomId = m_unique_id;
                 player->m_Room.m_teamId = it.first;
+                player->m_Room.m_canJoinRoom = true;
                 if (player->m_isLogin) { player->m_Room.NotifyClientJoinRoom(); }
             }
         }
+        m_waitLst.clear();
     }
 }
 void CRoom::SyncPlayerPosition()
