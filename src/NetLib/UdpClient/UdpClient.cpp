@@ -2,16 +2,20 @@
 #include "UdpClient.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
+#include "config_net.h"
 
 #pragma comment(lib,"Ws2_32.lib")
 
+UdpClient::UdpClient(const NetCfgClient& info)
+: m_config(info)
+{
+
+}
 bool UdpClient::Start(const HandleMsgFunc& func) {
     // Pointers to the interfaces of our server and client.
     // Note we can easily have both in the same program
     m_rakPeer = RakNet::RakPeerInterface::GetInstance();
-    char* ip = "127.0.0.1";
-    uint16 port = 8989;
-    char* password = "ChillyRoom";
+    const char* password = m_config.kPassword;
     int   passwordLength = strlen(password);
     // Connecting the client is very simple.  0 means we don't care about
     // a connectionValidationInteger, and false for low priority threads
@@ -20,7 +24,7 @@ bool UdpClient::Start(const HandleMsgFunc& func) {
     m_rakPeer->Startup(8, &socketDescriptor, 1);
     m_rakPeer->SetOccasionalPing(true);
 
-    RakNet::ConnectionAttemptResult ret = m_rakPeer->Connect(ip, port, password, passwordLength);
+    RakNet::ConnectionAttemptResult ret = m_rakPeer->Connect(m_config.svrIp, m_config.svrPort, password, passwordLength);
     RakAssert(ret == RakNet::CONNECTION_ATTEMPT_STARTED);
     m_eState = State_Connecting;
 

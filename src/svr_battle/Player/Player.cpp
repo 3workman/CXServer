@@ -4,15 +4,16 @@
 #include "Player.h"
 #include "Buffer/NetPack.h"
 #include "../svr_battle/Room/PlayerRoomData.h"
+#include "room_generated.h"
 
 std::map<int, Player::_RpcFunc> Player::_rpc;
-std::map<uint32, Player*> Player::PlayerList;
+std::map<uint32, Player*> Player::G_PlayerList;
 
 Player::Player(uint32 pid)
     : m_pid(pid)
     , m_Room(*new PlayerRoomData(*this))
 {
-    PlayerList[pid] = this;
+    G_PlayerList[pid] = this;
 
     if (_rpc.empty())
     {
@@ -25,7 +26,7 @@ Player::~Player()
 {
     delete &m_Room;
 
-    PlayerList.erase(m_pid); m_pid = 0;
+    G_PlayerList.erase(m_pid); m_pid = 0;
 }
 void Player::SetNetLink(NetLink* p)
 {
@@ -53,9 +54,14 @@ void Player::CallRpc(const char* name, const ParseRpcParam& sendFun, const Parse
 }
 Player* Player::FindByPid(uint32 pid)
 {
-    auto it = PlayerList.find(pid);
-    if (it == PlayerList.end()) return NULL;
+    auto it = G_PlayerList.find(pid);
+    if (it == G_PlayerList.end()) return NULL;
     return it->second;
+}
+flatbuffers::FlatBufferBuilder& Player::SendBuild()
+{
+    sRpcClient.SendBuilder.Clear();
+    return sRpcClient.SendBuilder;
 }
 
 //////////////////////////////////////////////////////////////////////////

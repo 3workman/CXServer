@@ -33,20 +33,20 @@
 
 class ServLink;
 class Thread;
-struct ServerConfig;
+struct NetCfgServer;
 class ServLinkMgr{
 public:
     typedef void(*HandleMsgFunc)(void* player, const void* pMsg, int size);
     typedef bool(*BindLinkFunc)(void*& refPlayer, ServLink* p, const void* pMsg, int size);
     typedef void(*ReportErrorFunc)(void* player, int InvalidEnum, int nErrorCode, int nParam);
 
-	const ServerConfig& _config;
+	const NetCfgServer& _config;
 	time_t              _timeNow = 0;
     BindLinkFunc        _BindLinkAndPlayer = NULL;
     HandleMsgFunc       _HandleClientMsg = NULL;
     ReportErrorFunc     _ReportErrorMsg = NULL;
 public:
-    ServLinkMgr(const ServerConfig& info);
+    ServLinkMgr(const NetCfgServer& info);
     ~ServLinkMgr();
 
 	static bool InitWinsock();

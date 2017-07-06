@@ -5,7 +5,7 @@
 #include "Buffer/NetPack.h"
 #include "Player/Player.h"
 
-static const uint Room_Player_Min = 2;
+static const uint Room_Player_Min = 1;
 static const uint Room_Player_Max = 20;
 
 uint _Service_Sync_Position(void* p){
@@ -152,7 +152,7 @@ bool CRoom::TryToJoinWaitLst(const std::vector<Player*>& lst)
 }
 void CRoom::_FlushWaitLst(const std::map<uint8, uint>& teamInfos)
 {
-    if (teamInfos.size() < 2) return;
+    //if (teamInfos.size() < 2) return;//TODO:zhoumf:ÁÙÊ±·Å¿ª
 
     uint min = 100, max = 0, total = 0;
     for (auto& it : teamInfos) {

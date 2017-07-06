@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ClientLink.h"
+#include "../config_net.h"
 
 #pragma comment(lib,"Ws2_32.lib")
 
@@ -46,7 +47,7 @@ bool ClientLink::CleanWinsock()
 	return nError == 0;
 }
 
-ClientLink::ClientLink(const ClientLinkConfig& info) 
+ClientLink::ClientLink(const NetCfgClient& info) 
 	: _config(info)
     , _sendBuf(IN_BUFFER_SIZE)
     , _recvBuf(IN_BUFFER_SIZE * 2)
@@ -147,8 +148,8 @@ BOOL ClientLink::ConnectEx()
 
     SOCKADDR_IN addr;
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr(_config.strIP.c_str());
-	addr.sin_port = htons(_config.wServerPort);
+	addr.sin_addr.s_addr = inet_addr(_config.svrIp);
+	addr.sin_port = htons(_config.svrPort);
 
 	LPFN_CONNECTEX pfnConnectEx;
 	GUID GuidConnectEx = WSAID_CONNECTEX;

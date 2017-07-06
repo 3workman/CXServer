@@ -1,6 +1,7 @@
 #pragma once
 #include "RakNetTypes.h"
 
+struct NetCfgClient;
 class UdpClient {
     typedef std::function<void(void* pMsg, int size)> HandleMsgFunc;
 
@@ -12,8 +13,10 @@ private:
 
     HandleMsgFunc               m_HandleServerMsg;
     std::function<void()>       m_onConnect;
+    const NetCfgClient&         m_config;
 
 public:
+    UdpClient(const NetCfgClient& info);
     bool Start(const HandleMsgFunc& func);
     void Stop();
     void Update();

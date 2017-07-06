@@ -53,12 +53,36 @@
 #include <Mswsock.h> // AcceptEx
 #include "Buffer/buffer.h"
 #include "tool/cLock.h"
-#include "define.h"
 #include <time.h>
+
+enum InvalidMessageEnum{
+    Message_NoError,
+    Message_InvalidPacket = 1,
+    Message_TypeError = 2,
+    Message_SizeError = 3,
+    Message_NotConnect = 4,
+    Net_InvalidIP = 5,
+    Net_HeartKick = 6,
+    Message_Overflow7 = 7,
+    Net_BindIO = 9,
+    Net_ConnectNotSend = 10,
+    Net_IdleTooLong = 11,
+    Net_Dead = 12,
+    Message_AHServerKick = 13,
+    Message_Write = 14,
+    Message_Read = 15,
+    Message_TooHugePacket = 16,
+    DoneIO_Error = 17,
+    Message_TooMuchPacket = 18,
+    Setsockopt_Error = 19,
+    BindLinkAndPlayer_Err = 20,
+
+    _InvalidMsg_Num
+};
 
 class ServLink;
 class ServLinkMgr;
-struct ServerConfig;
+struct NetCfgServer;
 
 enum EnumIO{ IO_Write, IO_Read };
 
@@ -167,14 +191,14 @@ private:
 	My_OVERLAPPED _ovRecv;	// Used in WSARead() calls
 	My_OVERLAPPED _ovSend;	// Used in WSASend() calls
 
-	char _szIP[MAX_IP];
+	char _szIP[16];
 	sockaddr_in _local;
 	sockaddr_in _peer;
 	SOCKET _sClient = INVALID_SOCKET;
 	WSAEVENT _hEventClose;
 
 	ServLinkMgr* const _pMgr;
-	const ServerConfig& Config();
+	const NetCfgServer& Config();
 
 	LONG _bInvalid		= false;
 	time_t _timeInvalid = 0;

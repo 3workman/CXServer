@@ -3,29 +3,33 @@
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "UdpClientAgent.h"
+#include "config_net.h"
 
+UdpServer::UdpServer(const NetCfgServer& info)
+: _config(info)
+{
+
+}
 bool UdpServer::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg) {
     _BindLinkAndPlayer = bindPlayer;
     _HandleClientMsg = handleClientMsg;
     _ReportErrorMsg = reportErrorMsg;
 
-    char* password = "ChillyRoom";
+    const char* password = _config.kPassword;
     int passwordLength = strlen(password);
-    unsigned short port = 7030; //TODO:zhoumf
-    unsigned short maxClients = 300;
 
     m_rakPeer = RakNet::RakPeerInterface::GetInstance();
     m_rakPeer->SetTimeoutTime(10000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
     m_rakPeer->SetIncomingPassword(password, passwordLength);
-    m_rakPeer->SetMaximumIncomingConnections(maxClients);
+    m_rakPeer->SetMaximumIncomingConnections(_config.dwMaxLink);
     m_rakPeer->SetOccasionalPing(true);
     m_rakPeer->SetUnreliableTimeout(1000);
 
     RakNet::SocketDescriptor socketDescriptors;
-    socketDescriptors.port = port;
+    socketDescriptors.port = _config.wPort;
     socketDescriptors.socketFamily = AF_INET;
 
-    bool bOk = m_rakPeer->Startup(maxClients, &socketDescriptors, 1) == RakNet::RAKNET_STARTED;
+    bool bOk = m_rakPeer->Startup(_config.dwMaxLink, &socketDescriptors, 1) == RakNet::RAKNET_STARTED;
     if (!bOk) {
         printf("Server failed to start.  Terminating.\n");
         return false;

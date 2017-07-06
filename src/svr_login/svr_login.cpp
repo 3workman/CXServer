@@ -6,22 +6,18 @@ using namespace TestApp;
 int main(int argc, char* argv[])
 {
     flatbuffers::FlatBufferBuilder builder;
+    std::vector<uint64> vec{1,2,3,4,5,6,7,8,9};
 
-    std::vector<uint64> vec;
-    for (size_t i = 0; i < 10; i++)
-    {
-        vec.push_back(i);
-    }
     // Create flat buffer inner type
     auto id = 123;
     auto name = builder.CreateString("name");
     auto list = builder.CreateVector(vec); // vector
     auto flag = 233;
     auto kv = KV(1, 1.0); // struct
-    // table
-    auto mloc = CreateTestObj(builder, id, name, flag, list, &kv);
-    builder.Finish(mloc);
+    auto obj1 = CreateTestObj(builder, id, name, flag, list, &kv);
+    builder.Finish(obj1);
 
+    // 获取二进制buffer
     char* ptr = (char*)builder.GetBufferPointer();
     uint32 size = builder.GetSize();
 

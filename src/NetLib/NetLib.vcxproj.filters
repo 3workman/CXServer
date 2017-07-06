@@ -39,12 +39,6 @@
     <ClInclude Include="client\ClientLink.h">
       <Filter>client</Filter>
     </ClInclude>
-    <ClInclude Include="client\config_client.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="server\define.h">
-      <Filter>server</Filter>
-    </ClInclude>
     <ClInclude Include="server\ServLink.h">
       <Filter>server</Filter>
     </ClInclude>
@@ -60,5 +54,6 @@
     <ClInclude Include="UdpServer\UdpServer.h">
       <Filter>UdpServer</Filter>
     </ClInclude>
+    <ClInclude Include="config_net.h" />
   </ItemGroup>
 </Project>

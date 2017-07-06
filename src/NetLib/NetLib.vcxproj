@@ -23,8 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client\ClientLink.h" />
-    <ClInclude Include="client\config_client.h" />
-    <ClInclude Include="server\define.h" />
+    <ClInclude Include="config_net.h" />
     <ClInclude Include="server\ServLink.h" />
     <ClInclude Include="server\ServLinkMgr.h" />
     <ClInclude Include="UdpClient\UdpClient.h" />

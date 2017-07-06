@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Player/Player.h"
+#include "Player/CPlayer.h"
 #include "RakSleep.h"
 #include "../NetLib/UdpClient/UdpClient.h"
 
@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 
     //test_svr_battle(200);
 
-    Player player;
+    CPlayer player;
     player.CallRpc("rpc_battle_login", [&](NetPack& buf){
         buf.WriteUInt32(1);
     });
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
 void test_svr_battle(int playerCnt)
 {
-    std::vector<Player> vec(playerCnt);
+    std::vector<CPlayer> vec(playerCnt);
 
     char strbuff[1024] = { '\0' };
     while (true)

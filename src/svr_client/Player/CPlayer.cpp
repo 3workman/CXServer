@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "Player.h"
+#include "CPlayer.h"
 #include "../NetLib/UdpClient/UdpClient.h"
 
-std::map<int, Player::_RpcFunc> Player::_rpc;
+std::map<int, CPlayer::_RpcFunc> CPlayer::_rpc;
+NetCfgClient CPlayer::_netCfg;
 
+void CPlayer::UpdateNet(){ _netLink->Update(); }
 
-void Player::UpdateNet(){ _netLink->Update(); }
-
-Player::Player()
+CPlayer::CPlayer()
 {
     if (_rpc.empty())
     {
@@ -16,7 +16,7 @@ Player::Player()
         Rpc_For_Client;
     }
 
-    _netLink = new UdpClient();
+    _netLink = new UdpClient(_netCfg);
     _netLink->SetOnConnect([&](){
         this->CallRpc("rpc_battle_login", [](NetPack& buf){
             buf.WriteUInt32(1);
@@ -31,22 +31,22 @@ Player::Player()
         sRpcClientPlayer._Handle(this, msg);
     });
 }
-Player::~Player()
+CPlayer::~CPlayer()
 {
     _netLink->Stop();
     delete _netLink;
 }
-uint64 Player::CallRpc(const char* name, const ParseRpcParam& sendFun)
+uint64 CPlayer::CallRpc(const char* name, const ParseRpcParam& sendFun)
 {
-    return sRpcClientPlayer._CallRpc(name, sendFun, std::bind(&Player::SendMsg, this, std::placeholders::_1));
+    return sRpcClientPlayer._CallRpc(name, sendFun, std::bind(&CPlayer::SendMsg, this, std::placeholders::_1));
 }
-void Player::CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
+void CPlayer::CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {
     uint64 reqKey = CallRpc(name, sendFun);
 
     sRpcClientPlayer.RegistResponse(reqKey, recvFun);
 }
-void Player::SendMsg(const NetPack& pack)
+void CPlayer::SendMsg(const NetPack& pack)
 {
     _netLink->SendMsg(pack.Buffer(), pack.Size());
 }

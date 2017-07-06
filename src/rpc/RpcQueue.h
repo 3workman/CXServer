@@ -19,6 +19,7 @@
 #include "tool/SafeQueue.h"
 #include "Buffer/NetPack.h"
 #include "Csv/CSVparser.hpp"
+#include "flatbuffers/flatbuffers.h"
 
 typedef std::function<void(NetPack&)> ParseRpcParam;
 typedef std::function<void(const NetPack&)> SendMsgFunc;
@@ -34,6 +35,8 @@ class RpcQueue {
 public:
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
     RpcQueue() { LoadRpcCsv(); }
+
+    flatbuffers::FlatBufferBuilder SendBuilder;
 
     void Insert(Typ* pObj, const void* pData, uint size)
     {
@@ -98,7 +101,11 @@ public:
         m_SendBuffer.ClearBody();
         m_SendBuffer.OpCode(opCodeId);
         m_SendBuffer.ReqIdx(++_auto_req_idx);
+
         func(m_SendBuffer);
+        if (SendBuilder.GetSize()) {
+            m_SendBuffer.WriteBuf(SendBuilder.GetBufferPointer(), SendBuilder.GetSize());
+        }
         doSend(m_SendBuffer);
         return m_SendBuffer.GetReqKey();
     }

@@ -25,8 +25,11 @@ void CrossAgent::RunClientIOCP()
     // 等待ConnectEx三次握手完成的回调，之后才能发数据
     while (!_netLink->IsClose() && !_netLink->IsConnect()) Sleep(200);
 }
-CrossAgent::CrossAgent() : _netLink(new ClientLink(_config))
+CrossAgent::CrossAgent()
 {
+    _config.svrPort = 7003; //TODO: svr_cross: ip & port
+    _netLink = new ClientLink(_config);
+
     if (_rpc.empty())
     {
 #undef Rpc_Declare
@@ -35,7 +38,6 @@ CrossAgent::CrossAgent() : _netLink(new ClientLink(_config))
     }
 
     _first_buf << uint32(0);
-    _config.wServerPort = 7003; //TODO: go cross
 }
 CrossAgent::~CrossAgent()
 {

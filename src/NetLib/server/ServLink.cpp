@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ServLink.h"
 #include "ServLinkMgr.h"
+#include "../config_net.h"
 
 #pragma comment(lib,"Mswsock.lib")
 
@@ -278,7 +279,7 @@ bool ServLink::CloseLink()
 
 	return true;
 }
-const ServerConfig& ServLink::Config(){ return _pMgr->_config; }
+const NetCfgServer& ServLink::Config(){ return _pMgr->_config; }
 
 //Notice：在DoneIO的线程不能调用close，否则会死锁，只可以在服务器的maintain线程close
 void ServLink::Maintain(time_t timenow)

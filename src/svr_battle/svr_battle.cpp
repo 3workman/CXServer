@@ -72,12 +72,12 @@ int main(int argc, char* argv[])
     ClientLink::InitWinsock();
     sCrossAgent.RunClientIOCP();
 
+    NetCfgServer cfg;
 #ifdef _USE_UDP
-    UdpServer upd;
+    UdpServer upd(cfg);
     upd.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 #else
-    ServerConfig config;
-    ServLinkMgr mgr(config);
+    ServLinkMgr mgr(cfg);
     mgr.CreateServer(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 #endif
 

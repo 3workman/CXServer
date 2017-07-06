@@ -18,10 +18,11 @@ typedef ServLink  NetLink;
 
 class NetPack;
 class PlayerRoomData;
+class FlatBufferBuilder;
 class Player {
     Pool_Index_Define(Player, MAX_PLAYER_COUNT);
 private:
-    static std::map<uint32, Player*> PlayerList;
+    static std::map<uint32, Player*> G_PlayerList;
 
     NetLink*        _clientNetLink = NULL;
 public:
@@ -43,4 +44,5 @@ public:
     Rpc_For_Player;
 public:
     static Player* FindByPid(uint32 pid);
+    static flatbuffers::FlatBufferBuilder& SendBuild();
 };

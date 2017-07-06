@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ServLinkMgr.h"
-#include "define.h"
+#include "../config_net.h"
 #include "ServLink.h"
 #include "tool/thread.h"
 
@@ -8,7 +8,7 @@
 
 #define CHECK_INTERVAL		1000
 
-ServLinkMgr::ServLinkMgr(const ServerConfig& info) : _config(info)
+ServLinkMgr::ServLinkMgr(const NetCfgServer& info) : _config(info)
 {
 	_pThread = NULL;
 	_vecLink.reserve(info.dwMaxLink);
@@ -60,7 +60,7 @@ bool ServLinkMgr::CreateServer(BindLinkFunc bindPlayer, HandleMsgFunc handleClie
 
 	SOCKADDR_IN addr;
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr(_config.strIP.c_str());
+	addr.sin_addr.s_addr = inet_addr(_config.ip);
 	addr.sin_port = htons(_config.wPort);
 
 	if (0 != ::bind(_sListener, (SOCKADDR *)&addr, sizeof(addr)))

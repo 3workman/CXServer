@@ -18,7 +18,6 @@
 #include <mswsock.h>
 #include "tool/cLock.h"
 #include "Buffer/buffer.h"
-#include "config_client.h"
 
 enum EnumIO{ IO_Write, IO_Read };
 
@@ -35,10 +34,11 @@ struct My_OVERLAPPED : public OVERLAPPED
 	}
 };
 
-class ClientLink{
+struct NetCfgClient;
+class ClientLink {
 	enum EStatus { State_Close, State_Connecting, State_Connected };
 public:
-	ClientLink(const ClientLinkConfig& info);
+	ClientLink(const NetCfgClient& info);
     //~ClientLink(){};
 
 	static bool InitWinsock();
@@ -83,7 +83,7 @@ private:
 
     cMutex _csWrite;
 
-	const ClientLinkConfig& _config;
+	const NetCfgClient& _config;
 
     void*               _player = NULL;
     HandleMsgFunc       _HandleServerMsg;

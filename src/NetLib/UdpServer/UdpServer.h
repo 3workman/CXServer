@@ -1,6 +1,7 @@
 #pragma once
 #include "RakNetTypes.h"
 
+struct NetCfgServer;
 class UdpClientAgent;
 class UdpServer {
     RakNet::RakPeerInterface* m_rakPeer;
@@ -12,7 +13,9 @@ public:
     BindLinkFunc        _BindLinkAndPlayer = NULL;
     HandleMsgFunc       _HandleClientMsg = NULL;
     ReportErrorFunc     _ReportErrorMsg = NULL;
+    const NetCfgServer& _config;
 
+    UdpServer(const NetCfgServer& info);
     bool Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg);
     void Stop();
     void Update();

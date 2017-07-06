@@ -11,9 +11,10 @@
 #include <stack>
 #include <string>
 #include <memory> // std::shared_ptr
-#include "../common/tool/noncopyable.h"
-#include "../common/tool/ScopeGuard.h"
-#include "../common/Log/LogFile.h"
+#include "tool/noncopyable.h"
+#include "tool/ScopeGuard.h"
+#include "Log/LogFile.h"
+#include "Rand/rand.h"
 
 using namespace std;
 
@@ -49,6 +50,9 @@ typedef std::vector< std::pair<int, int> > IntPairVec;
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
+#undef min
+
+inline int random() { return Rand::rand(); }
 
 #else
 inline long GetTickCount()

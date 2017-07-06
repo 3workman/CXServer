@@ -1,7 +1,7 @@
 #pragma once
 #include "../rpc/RpcEnum.h"
 #include "../rpc/RpcQueue.h"
-#include "../NetLib/client/config_client.h"
+#include "../NetLib/config_net.h"
 
 #undef Rpc_Declare
 #undef Rpc_Realize
@@ -10,9 +10,9 @@
 
 class ClientLink;
 class CrossAgent {
-    ClientLinkConfig    _config;
-    ClientLink*         _netLink = NULL;
-    NetPack             _first_buf; // 连接建立后的第一个包，上报connId、密钥等
+    NetCfgClient    _config;
+    ClientLink*     _netLink = NULL;
+    NetPack         _first_buf; // 连接建立后的第一个包，上报connId、密钥等
 public:
     typedef void(CrossAgent::*_RpcFunc)(NetPack&, NetPack&);
     static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc
