@@ -21,9 +21,6 @@
     <ClCompile Include="Player\PlayerDataSend.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="NetConf\NetConf.cpp">
-      <Filter>NetConf</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Player">
@@ -37,9 +34,6 @@
     </Filter>
     <Filter Include="Cross">
       <UniqueIdentifier>{2a28db04-a257-4a2b-b7b1-c47478d4f1ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="NetConf">
-      <UniqueIdentifier>{63d733e1-4d4b-4d98-8dcf-138a801ad046}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -63,9 +57,6 @@
     </ClInclude>
     <ClInclude Include="Player\PlayerDataSend.h">
       <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="NetConf\NetConf.h">
-      <Filter>NetConf</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

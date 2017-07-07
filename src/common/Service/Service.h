@@ -92,6 +92,7 @@ class cServiceList: public iService{
 public:
 	cServiceList(RefreshFun func) : iService(func) {
         m_list.push_back(TimerPair(0, NULL)); //【填充头结点，防止--m_runIt宕机】
+        m_runIt = ++m_list.begin();           //【跳过头结点】
     }
 	bool Register(void* pObj, uint exeTime){
 		m_list.push_back(TimerPair(exeTime,pObj)); //list结构，放到最后面，在Run时调了Reg也没关系
@@ -111,14 +112,13 @@ public:
     }
 	void RunSevice(uint /*time_elapse*/, uint timenow){
 		m_bRun = true;
-        m_runIt = ++ m_list.begin(); //【跳过头结点】
         while (m_runIt != m_list.end())
         {
             if (m_runIt->first <= timenow) {
                 void* runObj = m_runIt->second;
                 uint nextTime = m_func(runObj);//里头可能把自己删掉，m_runIt指向改变
                 if (m_runIt->second == runObj) m_runIt->first = timenow + nextTime;
-                ++m_runIt;
+                if (++m_runIt == m_list.end()) m_runIt = ++m_list.begin();
             } else
                 break;
         }

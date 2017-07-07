@@ -87,7 +87,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Cross\CrossAgent.cpp" />
-    <ClCompile Include="NetConf\NetConf.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Player\PlayerDataSend.cpp" />
     <ClCompile Include="Room\PlayerRoomData.cpp" />
@@ -99,7 +98,6 @@
     <ClInclude Include="..\rpc\RpcEnum.h" />
     <ClInclude Include="..\rpc\RpcQueue.h" />
     <ClInclude Include="Cross\CrossAgent.h" />
-    <ClInclude Include="NetConf\NetConf.h" />
     <ClInclude Include="Player\Player.h" />
     <ClInclude Include="Player\PlayerDataSend.h" />
     <ClInclude Include="Room\PlayerRoomData.h" />

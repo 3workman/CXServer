@@ -58,11 +58,6 @@ Player* Player::FindByPid(uint32 pid)
     if (it == G_PlayerList.end()) return NULL;
     return it->second;
 }
-flatbuffers::FlatBufferBuilder& Player::SendBuild()
-{
-    sRpcClient.SendBuilder.Clear();
-    return sRpcClient.SendBuilder;
-}
 
 //////////////////////////////////////////////////////////////////////////
 // rpc

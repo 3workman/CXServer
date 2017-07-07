@@ -44,5 +44,6 @@ public:
     Rpc_For_Player;
 public:
     static Player* FindByPid(uint32 pid);
-    static flatbuffers::FlatBufferBuilder& SendBuild();
+    static flatbuffers::FlatBufferBuilder& SendBuild() { return sRpcClient.SendBuilder; }
+    static flatbuffers::FlatBufferBuilder& BackBuild() { return sRpcClient.BackBuilder; }
 };

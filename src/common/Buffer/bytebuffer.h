@@ -43,7 +43,6 @@ public:
     // one should never use resize probably
     void resize(size_t newsize) {//tolua_export
         _storage.resize(newsize);
-        _rpos = _wpos = _storage.size();
     }//tolua_export
     void reserve(size_t ressize) { if (ressize > size()) _storage.reserve(ressize); }//tolua_export
 
@@ -336,7 +335,7 @@ template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::vector<T> &v)
 	uint32 vsize; T t;
 	b >> vsize;
 	v.clear();
-	while (--vsize >= 0) {
+	while (--vsize) {
 		b >> t;
 		v.push_back(t);
 	}
@@ -356,7 +355,7 @@ template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::list<T> &v)
 	uint32 vsize; T t;
 	b >> vsize;
 	v.clear();
-	while (--vsize >= 0) {
+	while (--vsize) {
 		b >> t;
 		v.push_back(t);
 	}
@@ -376,7 +375,7 @@ template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::set<T> &v)
 	uint32 vsize; T t;
 	b >> vsize;
 	v.clear();
-	while (--vsize >= 0) {
+	while (--vsize) {
 		b >> t;
 		v.insert(t);
 	}
@@ -396,7 +395,7 @@ template <typename K, typename V> ByteBuffer &operator>>(ByteBuffer &b, std::map
 	uint32 msize; K k; V v;
 	b >> msize;
 	m.clear();
-	while (--msize >= 0) {
+	while (--msize) {
 		b >> k >> v;
 		m.insert(make_pair(k, v));
 	}
@@ -416,7 +415,7 @@ template <typename K, typename V> ByteBuffer &operator>>(ByteBuffer &b, stdext::
 	uint32 msize; K k; V v;
 	b >> msize;
 	m.clear();
-	while (--msize >= 0) {
+	while (--msize) {
 		b >> k >> v;
 		m.insert(make_pair(k, v));
 	}

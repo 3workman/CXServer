@@ -37,6 +37,7 @@ public:
     RpcQueue() { LoadRpcCsv(); }
 
     flatbuffers::FlatBufferBuilder SendBuilder;
+    flatbuffers::FlatBufferBuilder BackBuilder;
 
     void Insert(Typ* pObj, const void* pData, uint size)
     {
@@ -57,6 +58,10 @@ public:
         if (it != Typ::_rpc.end()) {
             m_BackBuffer.ResetHead(buf);
             (pObj->*(it->second))(buf, m_BackBuffer);
+            if (BackBuilder.GetSize()) {
+                m_BackBuffer.WriteBuf(BackBuilder.GetBufferPointer(), BackBuilder.GetSize());
+                BackBuilder.Clear();
+            }
             if (m_BackBuffer.BodySize()) pObj->SendMsg(m_BackBuffer);
 #ifdef _DEBUG
             std::cout << "Recv Msg: " << DebugRpcIdToName(opCode) << " id:" << opCode << endl;
@@ -75,14 +80,14 @@ public:
         m_response[reqKey] = func; //后来的应该覆盖之前的
         //m_response.insert(make_pair(reqKey, func));
     }
-    int RpcNameToId(const char* name)
+    uint16 RpcNameToId(const char* name)
     {
         auto it = _rpc_table.find(name);
         if (it == _rpc_table.end()) {
             assert(0);
             return 0;
         }
-        return it->second;
+        return (uint16)it->second;
     }
     const char* DebugRpcIdToName(int id)
     {
@@ -94,20 +99,23 @@ public:
     }
     uint64 _CallRpc(const char* name, const ParseRpcParam& func, const SendMsgFunc& doSend)
     {
+        assert(m_SendBuffer.OpCode() == 0); // CallRpc can't reentry
         static uint32 _auto_req_idx = 0;
-        int opCodeId = RpcNameToId(name);
+        auto opCodeId = RpcNameToId(name);
         // Server and Client have the same Rpc
         assert(Typ::_rpc.find(opCodeId) == Typ::_rpc.end());
-        m_SendBuffer.ClearBody();
         m_SendBuffer.OpCode(opCodeId);
         m_SendBuffer.ReqIdx(++_auto_req_idx);
+        auto ret = m_SendBuffer.GetReqKey();
 
         func(m_SendBuffer);
         if (SendBuilder.GetSize()) {
             m_SendBuffer.WriteBuf(SendBuilder.GetBufferPointer(), SendBuilder.GetSize());
+            SendBuilder.Clear();
         }
         doSend(m_SendBuffer);
-        return m_SendBuffer.GetReqKey();
+        m_SendBuffer.Clear();
+        return ret;
     }
 
 private:

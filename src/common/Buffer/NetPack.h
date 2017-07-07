@@ -31,6 +31,8 @@ public:
     NetPack(int size = 128 - HEADER_SIZE)
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
+        m_buf.wpos(HEADER_SIZE);
+        m_buf.rpos(HEADER_SIZE);
         FromType(135); //udp¡Ÿ ±±Íº«
     }
     NetPack(const void* pData, int size)
@@ -42,7 +44,7 @@ public:
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
     }
-    void ClearBody() { m_buf.clear(HEADER_SIZE); }
+    void Clear() { m_buf.clear(HEADER_SIZE); OpCode(0); }
     void ResetHead(const NetPack& other) {
         m_buf.clear();
         m_buf.append(other.m_buf.contents(), HEADER_SIZE);
