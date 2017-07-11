@@ -1,0 +1,26 @@
+#!/bin/sh
+
+FilePath="./file"
+GenerateOutPath="./output_cs"
+
+rm $GenerateOutPath/flat/*.cs
+rm $GenerateOutPath/*.cs
+
+SubDirFun() {
+    for file in $1/*.fbs; do
+        echo $file
+        ./flatc -n --gen-onefile -o $GenerateOutPath/${1##*/} $file
+    done
+}
+
+for file in $FilePath/*.fbs; do
+    if test -f $file; then
+        echo $file
+        ./flatc -n --gen-onefile -o $GenerateOutPath $file
+    fi
+done
+for file in $FilePath/*; do
+    if test -d $file; then
+        SubDirFun $file
+    fi
+done

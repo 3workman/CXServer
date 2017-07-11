@@ -4,7 +4,7 @@ set OutPath="./output_cs"
 
 for  %%i in (%FilePath%/*.fb) do (
    @echo Generate: %%i
-   flatc -n -o %OutPath% %FilePath%/%%i
+   flatc -n --gen-onefile -o %OutPath% %FilePath%/%%i
 )
 
 for /d %%i in (%FilePath%/*) do (
@@ -17,5 +17,5 @@ pause
 set CurSubDirPath=%1
 for  %%i in (%FilePath%/%CurSubDirPath%/*.fb) do (
    @echo Generate: %%i
-   flatc -n -o %OutPath%/%CurSubDirPath% %FilePath%/%CurSubDirPath%/%%i
+   flatc -n --gen-onefile -o %OutPath%/%CurSubDirPath% %FilePath%/%CurSubDirPath%/%%i
 )

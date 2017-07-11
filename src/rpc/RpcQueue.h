@@ -58,6 +58,7 @@ public:
         if (it != Typ::_rpc.end()) {
             m_BackBuffer.ResetHead(buf);
             (pObj->*(it->second))(buf, m_BackBuffer);
+
             if (BackBuilder.GetSize()) {
                 m_BackBuffer.WriteBuf(BackBuilder.GetBufferPointer(), BackBuilder.GetSize());
                 BackBuilder.Clear();
@@ -104,6 +105,7 @@ public:
         auto opCodeId = RpcNameToId(name);
         // Server and Client have the same Rpc
         assert(Typ::_rpc.find(opCodeId) == Typ::_rpc.end());
+
         m_SendBuffer.OpCode(opCodeId);
         m_SendBuffer.ReqIdx(++_auto_req_idx);
         auto ret = m_SendBuffer.GetReqKey();

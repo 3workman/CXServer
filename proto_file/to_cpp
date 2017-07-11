@@ -1,0 +1,25 @@
+#!/bin/sh
+
+FilePath="./file"
+GenerateOutPath="./output_cpp"
+
+rm $GenerateOutPath/flat/*.h
+
+SubDirFun() {
+    for file in $1/*.fbs; do
+        echo $file
+        ./flatc -c -o $GenerateOutPath/${1##*/} $file
+    done
+}
+
+for file in $FilePath/*.fbs; do
+    if test -f $file; then
+        echo $file
+        ./flatc -c -o $GenerateOutPath $file
+    fi
+done
+for file in $FilePath/*; do
+    if test -d $file; then
+        SubDirFun $file
+    fi
+done
