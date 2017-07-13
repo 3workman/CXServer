@@ -14,6 +14,7 @@
 #include "Player/Player.h"
 #include "Log/LogFile.h"
 #include "Cross/CrossAgent.h"
+#include "tool/UnitTest.h"
 
 bool BindPlayerLink(void*& refPlayer, NetLink* p, const void* pMsg, int size)
 {
@@ -69,6 +70,9 @@ int main(int argc, char* argv[])
     LogFile log("log\\battle", LogFile::TRACK, true);
     _LOG_MAIN_(log);
 
+    // unit test
+    unittest::UnitTest::RunAllTests();
+
     ClientLink::InitWinsock();
     sCrossAgent.RunClientIOCP();
 
@@ -81,6 +85,7 @@ int main(int argc, char* argv[])
     mgr.CreateServer(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 #endif
 
+    // main loop
     uint time_elapse(0), timeOld(0), timeNow = GetTickCount();
     while (true) {
         timeOld = timeNow;

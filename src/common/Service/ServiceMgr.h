@@ -1,9 +1,11 @@
 #pragma once
 
 enum ServiceEnum {
-    Service_Buff,
-    Service_NPCAI,
-    Service_PlayerSave,
+    Service_Test_Patch,
+    Service_Test_List,
+    Service_Test_Vec,
+    Service_Test_Map,
+
     Service_Sync_Position,
 
     _Service_Max
