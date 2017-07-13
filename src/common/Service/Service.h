@@ -52,7 +52,7 @@ public:
         for (int i = 0; i < (int)m_aObj.size(); ++i) {
             if (m_aObj[i] == pObj) {
                 m_aObj.erase(m_aObj.begin() + i);
-                if (i <= m_runPos) --m_runPos;
+                if (i < m_runPos) --m_runPos;
                 break;
             }
         }
@@ -92,7 +92,7 @@ class cServiceList: public iService{
 public:
 	cServiceList(RefreshFun func) : iService(func) {
         m_list.push_back(TimerPair(0, NULL)); //【填充头结点，防止--m_runIt宕机】
-        m_runIt = ++m_list.begin();           //【跳过头结点】
+        m_runIt = m_list.end();
     }
 	bool Register(void* pObj, uint exeTime){
 		m_list.push_back(TimerPair(exeTime,pObj)); //list结构，放到最后面，在Run时调了Reg也没关系
@@ -111,9 +111,9 @@ public:
         }
     }
 	void RunSevice(uint /*time_elapse*/, uint timenow){
-		m_bRun = true;
-        while (m_runIt != m_list.end())
-        {
+        if (m_runIt == m_list.end()) m_runIt = ++m_list.begin(); //【跳过头结点】
+        m_bRun = true;
+        while (m_runIt != m_list.end()) {
             if (m_runIt->first <= timenow) {
                 void* runObj = m_runIt->second;
                 uint nextTime = m_func(runObj);//里头可能把自己删掉，m_runIt指向改变
@@ -124,6 +124,41 @@ public:
         }
         m_bRun = false;
 	}
+};
+class cServiceVec : public iService {
+    int  m_runPos = 0;
+    std::vector<TimerPair> m_vec;
+public:
+    cServiceVec(RefreshFun func) : iService(func) {}
+
+    bool Register(void* pObj, uint exeTime) {
+        m_vec.push_back(TimerPair(exeTime, pObj));
+        return true;
+    }
+    void UnRegister(void* pObj) {
+        for (int i = 0; i < (int)m_vec.size(); ++i) {
+            if (m_vec[i].second == pObj) {
+                m_vec.erase(m_vec.begin() + i);
+                if (i < m_runPos) --m_runPos;
+                break;
+            }
+        }
+    }
+    void RunSevice(uint /*time_elapse*/, uint timenow) {
+        m_bRun = true;
+        while (m_runPos != m_vec.size()) {
+            TimerPair& it = m_vec[m_runPos];
+            if (it.first <= timenow) {
+                void* runObj = it.second;
+                uint nextTime = m_func(runObj);//里头可能把自己删掉，m_runIt指向改变
+                if (it.second == runObj) it.first = timenow + nextTime;
+                if (++m_runPos == m_vec.size()) m_runPos = 0;
+            }
+            else
+                break;
+        }
+        m_bRun = false;
+    }
 };
 class cServiceMap : public iService{
     mapTimer m_map;
