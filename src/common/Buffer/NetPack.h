@@ -22,6 +22,7 @@ class NetPack {
     Pool_Obj_Define(NetPack, 4096)
 private:
     ByteBuffer  m_buf;
+    const uint8 Udp_Flag = 135;
 public:
     static const size_t HEADER_SIZE     = sizeof(uint8)+sizeof(uint16)+sizeof(uint32); // packetType & Opcode & reqIdx
     static const size_t TYPE_INDEX      = 0;
@@ -33,18 +34,17 @@ public:
         m_buf.resize(HEADER_SIZE);
         m_buf.wpos(HEADER_SIZE);
         m_buf.rpos(HEADER_SIZE);
-        FromType(135); //udp临时标记
+        Type(Udp_Flag);
     }
     NetPack(const void* pData, int size)
         :m_buf(size) {
         m_buf.append(pData, size);
         m_buf.rpos(HEADER_SIZE);
-        FromType(135); //udp临时标记
     }
     NetPack(const NetPack& other)
         :m_buf(other.m_buf) {
     }
-    void Clear() { m_buf.clear(HEADER_SIZE); OpCode(0); }
+    void Clear() { m_buf.clear(HEADER_SIZE); OpCode(0); Type(Udp_Flag); }
     void ResetHead(const NetPack& other) {
         m_buf.clear();
         m_buf.append(other.m_buf.contents(), HEADER_SIZE);
@@ -53,8 +53,8 @@ public:
 public: // header
     void    OpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }
     uint16  OpCode() const { return m_buf.show<uint16>(OPCODE_INDEX); }
-    void    FromType(uint8 packType) { m_buf.put(TYPE_INDEX, packType); }
-    uint8   FromType() const { return m_buf.show<uint8>(TYPE_INDEX); }
+    void    Type(uint8 packType) { m_buf.put(TYPE_INDEX, packType); }
+    uint8   Type() const { return m_buf.show<uint8>(TYPE_INDEX); }
     void    ReqIdx(uint32 idx) { m_buf.put(REQ_IDX_INDEX, idx); }
     uint32  ReqIdx() const { return m_buf.show<uint32>(REQ_IDX_INDEX); }
 public:

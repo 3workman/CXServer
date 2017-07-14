@@ -49,8 +49,11 @@ bool UdpClient::SendMsg(const void* pMsg, int size)
 {
     return m_rakPeer->Send((const char*)pMsg, size, LOW_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddr, false) > 0;
 }
+
+extern unsigned char GetPacketIdentifier(RakNet::Packet* p);
+
 void UdpClient::_HandlePacket(RakNet::Packet* packet) {
-    RakNet::MessageID raknetMsgId = packet->data[0];
+    RakNet::MessageID raknetMsgId = GetPacketIdentifier(packet);
     switch (raknetMsgId) {
     case ID_CONNECTION_REQUEST_ACCEPTED: {
         // 连接成功

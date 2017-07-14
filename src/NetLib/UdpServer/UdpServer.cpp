@@ -75,17 +75,28 @@ void UdpServer::OnLinkClosed(const RakNet::RakNetGUID& guid)
         delete clientAgent;
     }
 }
-bool UdpServer::SendMsg(const RakNet::SystemAddress& clientAddr, const void* pMsg, int size)
-{
-    return m_rakPeer->Send((const char*)pMsg, size, LOW_PRIORITY, RELIABLE_ORDERED, 0, clientAddr, false) > 0;
-}
 void UdpServer::Update() {
     for (RakNet::Packet* packet = m_rakPeer->Receive(); packet; m_rakPeer->DeallocatePacket(packet), packet = m_rakPeer->Receive()) {
         _HandlePacket(packet);
     }
 }
+// Copied from Multiplayer.cpp
+// If the first byte is ID_TIMESTAMP, then we want the 5th byte
+// Otherwise we want the 1st byte
+unsigned char GetPacketIdentifier(RakNet::Packet* p)
+{
+    if (p == 0) return 255;
+
+    if (p->data[0] == ID_TIMESTAMP)
+    {
+        RakAssert(p->length > sizeof(RakNet::MessageID) + sizeof(RakNet::Time));
+        return p->data[sizeof(RakNet::MessageID) + sizeof(RakNet::Time)];
+    }
+    else
+        return p->data[0];
+}
 void UdpServer::_HandlePacket(RakNet::Packet* packet) {
-    RakNet::MessageID raknetMsgId = packet->data[0];
+    RakNet::MessageID raknetMsgId = GetPacketIdentifier(packet);
     switch (raknetMsgId) {
     case ID_NEW_INCOMING_CONNECTION: {
         // 新连接建立

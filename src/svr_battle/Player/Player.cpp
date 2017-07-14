@@ -38,10 +38,9 @@ void Player::SetNetLink(NetLink* p)
 }
 void Player::SendMsg(const NetPack& pack)
 {
-    //Notice：断线重连期间，连接无效
-    if (_clientNetLink) {
-        _clientNetLink->SendMsg(pack.Buffer(), pack.Size());
-    }
+    if (!_clientNetLink) return; //Notice：断线重连期间，连接无效
+
+    _clientNetLink->SendMsg(pack.Buffer(), pack.Size());
 }
 uint64 Player::CallRpc(const char* name, const ParseRpcParam& sendFun)
 {

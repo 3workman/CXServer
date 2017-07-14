@@ -10,6 +10,7 @@ class UdpClientAgent {
     RakNet::RakNetGUID      m_guid;
     UdpServer* const        m_pMgr;
     void*                   m_player = NULL; //收到玩家第一条消息(登录)，从角色内存池(有上限5000)中取个，与Link绑定
+    RakNet::RakPeerInterface* const m_rakPeer;
 
 public:
     UdpClientAgent(UdpServer* p);

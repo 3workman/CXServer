@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "UdpClientAgent.h"
 #include "UdpServer.h"
+#include "RakPeerInterface.h"
 
 UdpClientAgent::UdpClientAgent(UdpServer* p)
     : m_pMgr(p)
+    , m_rakPeer(p->m_rakPeer)
 {
 
 }
@@ -25,5 +27,5 @@ void UdpClientAgent::RecvMsg(const void* pMsg, int size)
 }
 void UdpClientAgent::SendMsg(const void* pMsg, int size)
 {
-    m_pMgr->SendMsg(m_addr, pMsg, size);
+    m_rakPeer->Send((const char*)pMsg, size, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_addr, false);
 }

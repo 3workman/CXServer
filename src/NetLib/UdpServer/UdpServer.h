@@ -4,6 +4,7 @@
 struct NetCfgServer;
 class UdpClientAgent;
 class UdpServer {
+public:
     RakNet::RakPeerInterface* m_rakPeer;
     std::map<RakNet::RakNetGUID, UdpClientAgent*> m_clientList;
 public:
@@ -20,7 +21,6 @@ public:
     void Stop();
     void Update();
     void CloseLink(const RakNet::SystemAddress& addr);
-    bool SendMsg(const RakNet::SystemAddress& clientAddr, const void* pMsg, int size);
 
     UdpClientAgent* FindClientAgent(const RakNet::RakNetGUID& guid);
     UdpClientAgent* AddClientAgent(const RakNet::RakNetGUID& guid);
