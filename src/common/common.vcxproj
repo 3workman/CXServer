@@ -35,6 +35,7 @@
     <ClInclude Include="tool\Floyd.h" />
     <ClInclude Include="tool\GameApi.h" />
     <ClInclude Include="tool\global.h" />
+    <ClInclude Include="tool\Input.h" />
     <ClInclude Include="tool\Mempool.h" />
     <ClInclude Include="tool\mkdir.h" />
     <ClInclude Include="tool\noncopyable.h" />
@@ -60,6 +61,7 @@
     <ClCompile Include="Timer\TimerWheel.cpp" />
     <ClCompile Include="tool\DebugFile.cpp" />
     <ClCompile Include="tool\GameApi.cpp" />
+    <ClCompile Include="tool\Input.cpp" />
     <ClCompile Include="tool\UnitTest.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

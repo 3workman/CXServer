@@ -13,11 +13,10 @@
 ************************************************************************/
 #pragma once
 
-struct lua_State;
-class NetPack;
 class Player;
-class LuaCall
-{
+class NetPack;
+struct lua_State;
+class LuaCall {
 public:
     enum ELuaCall
     {
@@ -35,22 +34,22 @@ public:
         eTPath,
         eTMax
     };
-
 private:
     lua_State*	m_pL;
     int			m_FuncIdx[eMax];
     int			m_TableIdx[eTMax];
+    const char* m_szFile;
 
 public:
-    LuaCall();
     ~LuaCall();
+    LuaCall(const char* szFile);
     lua_State*	L() { return m_pL; }
     void		GC();
     bool		Call(const char* szFunc, const char *sig, ...);
     bool		_Call(const char* szFunc, const char *sig, va_list vl);
     bool		DoFile(const char* szFile) { return DoLuaFile(szFile, m_pL); } //各模块初始化时载入一次脚本即可
     static bool DoLuaFile(const char* szFile, lua_State* L);
-    void        ReloadFile(const char* szFile);
+    void        ReloadFile(const char* szFile = NULL);
     void		PrintStack();
 
 // for lua logic
@@ -69,7 +68,10 @@ public:
     bool		CallPathUpdate();
     bool		CallRecv(NetPack* buf);
     bool		CallSend();
-    bool        CallPlayer(Player* player, const char* szFunc);
 };
-
+/*
+    Notice：有需要的话，可分为几大业务单元，每单元一个lua_State
+    extern LuaCall* G_LuaPlayer;
+    extern LuaCall* G_LuaActivity;
+*/
 extern LuaCall* G_Lua;

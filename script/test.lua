@@ -29,12 +29,7 @@ function rpc_client_test(idx)
     data:WriteString("lua_test")
     data.OpCode = 15001
     ptr:SendMsg(data)
-    print("--- CallRpc3 Success ---")
+    print("--- rpc_client_test Success ---")
 end
-function rpc_client_test2(player)
-    local data = NetPack(64)
-    data:WriteString("lua_test")
-    data.OpCode = 15001
-    player:SendMsg(data)
-    print("--- CallRpc3 Success ---")
-end
+
+DoLuaFile("../lua/test_player.lua")

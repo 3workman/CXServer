@@ -15,6 +15,7 @@
 #include "Log/LogFile.h"
 #include "Cross/CrossAgent.h"
 #include "tool/UnitTest.h"
+#include "tool/Input.h"
 
 bool BindPlayerLink(void*& refPlayer, NetLink* p, const void* pMsg, int size)
 {
@@ -103,6 +104,8 @@ int main(int argc, char* argv[])
         sRpcClient.Update();
 #endif
         RakSleep(30);
+
+        Input::CheckKeyboardInput();
     }
 	return 0;
 }

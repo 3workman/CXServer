@@ -2,10 +2,13 @@
 #include "LuaCall.h"
 #include "tolua.h"
 
-LuaCall* G_Lua = NULL;
+LuaCall* G_Lua = new LuaCall("../script/test.lua");
 
-LuaCall::LuaCall()
+LuaCall::LuaCall(const char* szFile) : m_szFile(szFile)
 {
+    ZeroMemoryArray(m_FuncIdx);
+    ZeroMemoryArray(m_TableIdx);
+
     m_pL = luaL_newstate();
     if (!m_pL) {
         LOG_ERROR("create lua state error.");
@@ -13,11 +16,12 @@ LuaCall::LuaCall()
     }
     luaL_openlibs(m_pL); //载入Lua基本库，否则脚本里的print内置函数会报错
 
-    ZeroMemoryArray(m_FuncIdx);
-    ZeroMemoryArray(m_TableIdx);
+    tolua::InitLuaReg(m_pL); //载入c++接口
 
     //DoLuaFile("common.lua") -- in lua
     luabridge::getGlobalNamespace(m_pL).addFunction("DoLuaFile", &LuaCall::DoLuaFile);
+
+    if (m_szFile) DoFile(m_szFile); //载入入口脚本，此脚本内可加载其它所需脚本
 }
 LuaCall::~LuaCall()
 {
@@ -71,6 +75,9 @@ bool LuaCall::_Call(const char* szFunc, const char *sig, va_list vl)
 			case 's':
 				lua_pushstring(m_pL, va_arg(vl, char*));
 				break;
+            case 'p':
+                luabridge::push(m_pL, va_arg(vl, Player*));
+                break;
 			case '>':
 				goto endwhile;
 			default:
@@ -78,7 +85,7 @@ bool LuaCall::_Call(const char* szFunc, const char *sig, va_list vl)
 				bError = true;
 				break;
 			}
-			narg++;
+			++narg;
 			luaL_checkstack(m_pL, 1, "too many arguments");
 		}
 endwhile:
@@ -204,8 +211,10 @@ bool LuaCall::DoLuaFile(const char* szFile, lua_State* L)
 	return true;	
 }
 
-void LuaCall::ReloadFile(const char* szFile)
+void LuaCall::ReloadFile(const char* szFile /* = NULL */)
 {
+    if (szFile == NULL) szFile = m_szFile;
+
     CallReload(1);      //ReloadBegin，清旧脚本数据等
     UnRegLuaCall();
 
@@ -395,19 +404,4 @@ bool LuaCall::CallSend()
 		return false;
 	}
 	return true;
-}
-
-bool LuaCall::CallPlayer(Player* player, const char* szFunc)
-{
-    lua_getglobal(m_pL, szFunc);
-    luabridge::push(m_pL, player);
-
-    if (lua_pcall(m_pL, 1, 0, 0))
-    {
-        LOG_ERROR("Server error running function `%s': %s", "CallPlayer", lua_tostring(m_pL, -1));
-        lua_pop(m_pL, 1);
-        lua_settop(m_pL, 0);
-        return false;
-    }
-    return true;
 }

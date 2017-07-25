@@ -69,9 +69,8 @@ Rpc_Realize(rpc_battle_login)
 
     ack << m_index;
 
-    G_Lua->DoFile("../script/test.lua"); //TODO:zhoumf:只需载入一次就够了
     G_Lua->Call("rpc_client_test", "i", m_index);
-    G_Lua->CallPlayer(this, "rpc_client_test2");
+    G_Lua->Call("rpc_client_test2", "p", this);
 }
 Rpc_Realize(rpc_battle_logout)
 {

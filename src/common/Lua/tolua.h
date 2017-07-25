@@ -14,13 +14,13 @@ extern "C"
     ToLua(Player)\
 
 #undef ToLua
-#define ToLua(typ) extern void tolua_##typ(lua_State* L);
+#define ToLua(typ) void tolua_##typ(lua_State* L);
 
 namespace tolua {
 using namespace std;
 using namespace luabridge;
 ToLua_Class
-inline void InitLuaRegist(lua_State* L) {
+inline void InitLuaReg(lua_State* L) {
 #undef ToLua
 #define ToLua(typ) tolua_##typ(L);
     ToLua_Class

@@ -132,6 +132,9 @@
     <ClInclude Include="Lua\tolua.h">
       <Filter>Lua</Filter>
     </ClInclude>
+    <ClInclude Include="tool\Input.h">
+      <Filter>tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">
@@ -169,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="Lua\LuaCall.cpp">
       <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\Input.cpp">
+      <Filter>tool</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
