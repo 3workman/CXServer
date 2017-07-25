@@ -32,8 +32,6 @@ public:
     NetPack(int size = 128 - HEADER_SIZE)
         :m_buf(size + HEADER_SIZE) {
         m_buf.resize(HEADER_SIZE);
-        m_buf.wpos(HEADER_SIZE);
-        m_buf.rpos(HEADER_SIZE);
         Type(Udp_Flag);
     }
     NetPack(const void* pData, int size)
@@ -58,8 +56,8 @@ public: // header
     void    ReqIdx(uint32 idx) { m_buf.put(REQ_IDX_INDEX, idx); }
     uint32  ReqIdx() const { return m_buf.show<uint32>(REQ_IDX_INDEX); }
 public:
-    uint16 Size() const { return m_buf.size(); }
-    uint16 BodySize() const { return m_buf.size() - HEADER_SIZE; }
+    uint16 Size() const { return (uint16)m_buf.size(); }
+    uint16 BodySize() const { return (uint16)(m_buf.size() - HEADER_SIZE); }
     const uint8* Buffer() const { return m_buf.contents(); }
     uint64 GetReqKey() { return (uint64(OpCode()) << 32) | ReqIdx(); }
 
@@ -109,10 +107,10 @@ public:
     float   ReadFloat() { return m_buf.read<float>(); }
     double  ReadDouble() { return m_buf.read<double>(); }
     std::string  ReadString() { 
-        std::string str;
-        m_buf.read(str);
+        //std::string str;
+        return m_buf.read<std::string>();
         //return std::move(str);
-        return str; // c++11 右值引用，移动构造
+        //return str; // c++11 右值引用，移动构造
     }
 
     void   SetPos(int pos, uint32 v){ m_buf.put(HEADER_SIZE + pos, v); }

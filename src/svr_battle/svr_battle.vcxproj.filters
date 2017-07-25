@@ -21,6 +21,12 @@
     <ClCompile Include="Player\PlayerDataSend.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="LuaBridge\LuaBuffer.cpp">
+      <Filter>LuaBridge</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaBridge\LuaPlayer.cpp">
+      <Filter>LuaBridge</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Player">
@@ -34,6 +40,9 @@
     </Filter>
     <Filter Include="Cross">
       <UniqueIdentifier>{2a28db04-a257-4a2b-b7b1-c47478d4f1ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaBridge">
+      <UniqueIdentifier>{aad58536-1e64-41e7-ace2-379b09bb159b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +66,9 @@
     </ClInclude>
     <ClInclude Include="Player\PlayerDataSend.h">
       <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaBridge\Test_Lua.h">
+      <Filter>LuaBridge</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

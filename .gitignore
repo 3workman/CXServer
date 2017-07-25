@@ -33,6 +33,7 @@
 *.log
 *.tlog
 
+/.vs
 /build
 /ThirdParty
 /proto_file/output_cpp

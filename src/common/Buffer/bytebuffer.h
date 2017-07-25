@@ -43,6 +43,7 @@ public:
     // one should never use resize probably
     void resize(size_t newsize) {//tolua_export
         _storage.resize(newsize);
+        _rpos = _wpos = _storage.size();
     }//tolua_export
     void reserve(size_t ressize) { if (ressize > size()) _storage.reserve(ressize); }//tolua_export
 
@@ -69,6 +70,13 @@ public:
         _rpos += sizeof(T);
         return r;
     }
+    template<> std::string read<std::string>() {
+        std::string str;
+        uint16 len = read<uint16>();
+        str.assign((const char*)contentsRpos(), len);
+        _rpos += len;
+        return str; //c++11 move
+    }
     void read(void* dest, size_t len) {//tolua_export
         if (_rpos + len <= _wpos) {
             memcpy(dest, &_storage[_rpos], len);
@@ -78,11 +86,6 @@ public:
         }
         _rpos += len;
     }//tolua_export
-    void read(std::string& value) {
-        uint16 len = read<uint16>();
-        value.assign((const char*)contentsRpos(), len);
-        _rpos += len;
-    }
     //void read(std::string& value, size_t len) {
     //	value.clear();
     //	while (--len >= 0) {
@@ -97,7 +100,7 @@ public:
 
     // appending to the end of buffer
     void append(const std::string& str) {//tolua_export
-        uint16 len = str.size();
+        uint16 len = (uint16)str.size();
         append(len);
         append(str.c_str(), len);
     }//tolua_export
@@ -105,12 +108,12 @@ public:
     // NOTICE：常量字符串不会隐式转换为string
     // NOTICE：若无const char* 重载，会匹配进template函数
     void append(const char* str) {
-        uint16 len = strlen(str);
+        uint16 len = (uint16)strlen(str);
         append(len);
         append(str, len);
     }
     void append(char* str) {
-        uint16 len = strlen(str);
+        uint16 len = (uint16)strlen(str);
         append(len);
         append(str, len);
     }
@@ -262,7 +265,7 @@ public:
 		return *this;
 	}//tolua_export
 	ByteBuffer &operator>>(std::string& value) {//tolua_export
-		read(value);
+        value = read<std::string>();
 		return *this;
 	}//tolua_export
 

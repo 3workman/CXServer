@@ -124,7 +124,7 @@ private:
     std::map<std::string, int> _rpc_table;
     void LoadRpcCsv()
     {
-        csv::Parser file = csv::Parser("../data/csv/rpc.csv");
+        csv::Parser file = csv::Parser("../conf/csv/rpc.csv");
         uint cnt = file.rowCount();
         for (uint i = 0; i < cnt; ++i) {
             csv::Row& row = file[i];

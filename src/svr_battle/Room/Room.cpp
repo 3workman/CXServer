@@ -183,7 +183,7 @@ void CRoom::SyncPlayerPosition()
 {
     for (auto& it : m_players) {
         it.second->CallRpc("rpc_client_sync_position", [&](NetPack& buf){
-            buf.WriteUInt8(m_players.size());
+            buf.WriteUInt8((uint8)m_players.size());
             for (auto& itr : m_players) {
                 Player* ptr = itr.second;
                 buf.WriteUInt32(ptr->m_index);

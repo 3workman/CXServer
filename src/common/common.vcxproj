@@ -21,6 +21,8 @@
     <ClInclude Include="def\ConstDef.h" />
     <ClInclude Include="Log\AsyncLog.h" />
     <ClInclude Include="Log\LogFile.h" />
+    <ClInclude Include="Lua\LuaCall.h" />
+    <ClInclude Include="Lua\tolua.h" />
     <ClInclude Include="Rand\rand.h" />
     <ClInclude Include="Rand\RandWeight.h" />
     <ClInclude Include="Rank\rank.h" />
@@ -50,6 +52,9 @@
     <ClCompile Include="Csv\CSVparser.cpp" />
     <ClCompile Include="Log\AsyncLog.cpp" />
     <ClCompile Include="Log\LogFile.cpp" />
+    <ClCompile Include="Lua\LuaCall.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Rand\rand.cpp" />
     <ClCompile Include="Service\ServiceMgr.cpp" />
     <ClCompile Include="Timer\TimerWheel.cpp" />
@@ -61,12 +66,13 @@
     <ProjectGuid>{9C6CC09E-4EC5-4953-8525-F7ABEC7E81B9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>common</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -102,7 +108,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,6 +116,8 @@
     </Link>
     <Lib>
       <OutputFile>$(SolutionDir)build\$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\ThirdParty;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

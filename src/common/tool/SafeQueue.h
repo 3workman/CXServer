@@ -10,17 +10,17 @@ public:
     void push(T&& v)
     {
         cLock lock(m_csLock);
-        return m_queue.push(v);
+        m_queue.push(v);
     }
     void push(const T& v)
     {
         cLock lock(m_csLock);
-        return m_queue.push(v);
+        m_queue.push(v);
     }
     void pop()
     {
         cLock lock(m_csLock);
-        return m_queue.pop();
+        m_queue.pop();
     }
     bool pop(T& v)
     {

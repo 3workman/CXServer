@@ -31,6 +31,9 @@
     <Filter Include="Csv">
       <UniqueIdentifier>{44527399-bd59-4789-9878-c159169aa80f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua">
+      <UniqueIdentifier>{3fc82617-f9db-4627-93c2-d5c3d38845ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tool\cLock.h">
@@ -123,6 +126,12 @@
     <ClInclude Include="Csv\CSVparser.hpp">
       <Filter>Csv</Filter>
     </ClInclude>
+    <ClInclude Include="Lua\LuaCall.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\tolua.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">
@@ -157,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="Csv\CSVparser.cpp">
       <Filter>Csv</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaCall.cpp">
+      <Filter>Lua</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

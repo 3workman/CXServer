@@ -5,6 +5,7 @@
 #include "Buffer/NetPack.h"
 #include "../svr_battle/Room/PlayerRoomData.h"
 #include "room_generated.h"
+#include "Lua/LuaCall.h"
 
 std::map<int, Player::_RpcFunc> Player::_rpc;
 std::map<uint32, Player*> Player::G_PlayerList;
@@ -67,6 +68,10 @@ Rpc_Realize(rpc_battle_login)
     if (m_Room.m_canJoinRoom) m_Room.NotifyClientJoinRoom();
 
     ack << m_index;
+
+    G_Lua->DoFile("../script/test.lua"); //TODO:zhoumf:只需载入一次就够了
+    G_Lua->Call("rpc_client_test", "i", m_index);
+    G_Lua->CallPlayer(this, "rpc_client_test2");
 }
 Rpc_Realize(rpc_battle_logout)
 {

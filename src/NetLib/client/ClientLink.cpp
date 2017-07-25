@@ -169,7 +169,7 @@ void ClientLink::OnConnect()
     _bCanWrite = true;
     PostRecv();
 
-    if (!_OnConnect._Empty()){ _OnConnect(); }
+    _OnConnect();
 }
 void ClientLink::CloseLink(int nErrorCode)
 {
