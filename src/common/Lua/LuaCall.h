@@ -6,7 +6,7 @@
     2、传递对象指针给脚本 ---- luabridge::push(m_pL, pChar)
 
     3、获取脚本返回的指针 ---- NetPack* buf = luabridge::Userdata::get<NetPack>(L, 1, false);
-        * 从 Lua 里那指针风险很高，若是 Lua 生成的，生命周期由后者处理，C++ 调用时保不准被gc或是什么的
+        * 从 Lua 拿指针风险很高，它是 Lua 生成的，生命周期由后者处理，C++ 调用时保不准被gc或是什么的
 
 * @ author zhoumf
 * @ date 2017-7-24
@@ -47,8 +47,7 @@ public:
     void		GC();
     bool		Call(const char* szFunc, const char *sig, ...);
     bool		_Call(const char* szFunc, const char *sig, va_list vl);
-    bool		DoFile(const char* szFile) { return DoLuaFile(szFile, m_pL); } //各模块初始化时载入一次脚本即可
-    static bool DoLuaFile(const char* szFile, lua_State* L);
+    bool		DoFile(const char* szFile); //各模块初始化时载入一次脚本即可
     void        ReloadFile(const char* szFile = NULL);
     void		PrintStack();
 

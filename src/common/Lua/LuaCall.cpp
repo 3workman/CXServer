@@ -2,7 +2,10 @@
 #include "LuaCall.h"
 #include "tolua.h"
 
-LuaCall* G_Lua = new LuaCall("../script/test.lua");
+#define LUA_PATH  "../script/"
+#define LUA_PATH2 "package.path = '../script/?.lua;'..package.path"
+
+LuaCall* G_Lua = new LuaCall("test.lua");
 
 LuaCall::LuaCall(const char* szFile) : m_szFile(szFile)
 {
@@ -15,11 +18,9 @@ LuaCall::LuaCall(const char* szFile) : m_szFile(szFile)
         return;
     }
     luaL_openlibs(m_pL); //载入Lua基本库，否则脚本里的print内置函数会报错
+    luaL_dostring(m_pL, LUA_PATH2);
 
     tolua::InitLuaReg(m_pL); //载入c++接口
-
-    //DoLuaFile("common.lua") -- in lua
-    luabridge::getGlobalNamespace(m_pL).addFunction("DoLuaFile", &LuaCall::DoLuaFile);
 
     if (m_szFile) DoFile(m_szFile); //载入入口脚本，此脚本内可加载其它所需脚本
 }
@@ -181,33 +182,17 @@ endwhile:
 	return bError == false;
 }
 
-bool LuaCall::DoLuaFile(const char* szFile, lua_State* L)
+bool LuaCall::DoFile(const char* szFile)
 {
-/*
-#if (!defined(WIN32) || !defined(_DEBUG))
-	int nLen = 0;
-	if (const char* pBuffer = g_pServerManager->GetLuaBuffer(szFile, nLen))
-	{
-		if (luaL_loadbuffer(m_pL, pBuffer, nLen, szFile) || lua_pcall(m_pL, 0, 1, 0)) //编译buff中的Lua代码
-		{
-			LOG_ERROR("do lua file error. `%s': %s", szFile, lua_tostring(m_pL, -1));
-			lua_pop(m_pL, 1);
-			lua_settop(m_pL, 0);
-			return false;
-		}
-	}
-	else
-#endif // _DEBUG
-*/
-	{
-		if (luaL_dofile(L, szFile))
-		{
-			LOG_ERROR("do lua file error. `%s': %s", szFile, lua_tostring(L, -1));
-			lua_pop(L, 1);
-			lua_settop(L, 0);
-			return false;
-		}
-	}
+    string name(LUA_PATH); name.append(szFile);
+
+    if (luaL_dofile(m_pL, name.c_str()))
+    {
+        LOG_ERROR("do lua file error. `%s': %s", szFile, lua_tostring(L, -1));
+        lua_pop(L, 1);
+        lua_settop(L, 0);
+        return false;
+    }
 	return true;	
 }
 

@@ -1,4 +1,4 @@
-print("test_player")
+print("--- test_player ---")
 
 function rpc_client_test2(player)
     local data = NetPack(64)

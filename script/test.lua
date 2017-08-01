@@ -1,4 +1,4 @@
-print("hello world")
+print("--- hello world ---")
 
 str = "I am so cool"
 tbl = {name = "shun", id = 20114442}
@@ -32,4 +32,4 @@ function rpc_client_test(idx)
     print("--- rpc_client_test Success ---")
 end
 
-DoLuaFile("../lua/test_player.lua")
+require("test_player")
