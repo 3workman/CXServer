@@ -57,7 +57,7 @@ void CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun, const P
 }
 void CrossAgent::SendMsg(const NetPack& pack)
 {
-    _netLink->SendMsg(pack.Buffer(), pack.Size());
+    _netLink->SendMsg(pack.contents(), (uint16)pack.size());
 }
 
 //////////////////////////////////////////////////////////////////////////

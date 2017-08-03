@@ -10,109 +10,81 @@
 #include "bytebuffer.h"
 #include "../tool/Mempool.h"
 
-enum PacketFromEnum
+class NetPack : public ByteBuffer
 {
-    Packet_From_Client  = 0,
-    Packet_From_Game    = 1,
-    Packet_From_Battle  = 2,
-    Packet_From_Cross   = 3,
-};
-
-class NetPack {
     Pool_Obj_Define(NetPack, 4096)
-private:
-    ByteBuffer  m_buf;
-    const uint8 Udp_Flag = 135;
 public:
-    static const size_t HEADER_SIZE     = sizeof(uint8)+sizeof(uint16)+sizeof(uint32); // packetType & Opcode & reqIdx
+    static const size_t HEADER_SIZE     = sizeof(uint8) + sizeof(uint16) + sizeof(uint32); // packetType & Opcode & reqIdx
     static const size_t TYPE_INDEX      = 0;
     static const size_t OPCODE_INDEX    = 1;
     static const size_t REQ_IDX_INDEX   = 3;
 
-    NetPack(int size = 128 - HEADER_SIZE)
-        :m_buf(size + HEADER_SIZE) {
-        m_buf.resize(HEADER_SIZE);
-        Type(Udp_Flag);
+    static const uint8 TYPE_TCP = 135;
+    static const uint8 TYPE_UDP = 136;
+    static const uint8 TYPE_UNRELIABLE = 137;
+
+    NetPack(int size = 128 - HEADER_SIZE) : ByteBuffer(size + HEADER_SIZE) {
+        resize(HEADER_SIZE);
+        Type(TYPE_TCP);
     }
-    NetPack(const void* pData, int size)
-        :m_buf(size) {
-        m_buf.append(pData, size);
-        m_buf.rpos(HEADER_SIZE);
+    NetPack(const void* pData, int size) : ByteBuffer(size) {
+        append(pData, size);
+        rpos(HEADER_SIZE);
     }
-    NetPack(const NetPack& other)
-        :m_buf(other.m_buf) {
-    }
-    void Clear() { m_buf.clear(HEADER_SIZE); OpCode(0); Type(Udp_Flag); }
+    NetPack(const NetPack& other) : ByteBuffer(other) {}
+
+    void Clear() { clear(HEADER_SIZE); OpCode(0); Type(TYPE_TCP); }
     void ResetHead(const NetPack& other) {
-        m_buf.clear();
-        m_buf.append(other.m_buf.contents(), HEADER_SIZE);
-        m_buf.rpos(HEADER_SIZE);
+        clear();
+        append(other.contents(), HEADER_SIZE);
+        rpos(HEADER_SIZE);
     }
 public: // header
-    void    OpCode(uint16 opCode) { m_buf.put(OPCODE_INDEX, opCode); }
-    uint16  OpCode() const { return m_buf.show<uint16>(OPCODE_INDEX); }
-    void    Type(uint8 packType) { m_buf.put(TYPE_INDEX, packType); }
-    uint8   Type() const { return m_buf.show<uint8>(TYPE_INDEX); }
-    void    ReqIdx(uint32 idx) { m_buf.put(REQ_IDX_INDEX, idx); }
-    uint32  ReqIdx() const { return m_buf.show<uint32>(REQ_IDX_INDEX); }
+    void    OpCode(uint16 opCode) { put(OPCODE_INDEX, opCode); }
+    uint16  OpCode() const { return show<uint16>(OPCODE_INDEX); }
+    void    Type(uint8 packType) { put(TYPE_INDEX, packType); }
+    uint8   Type() const { return show<uint8>(TYPE_INDEX); }
+    void    ReqIdx(uint32 idx) { put(REQ_IDX_INDEX, idx); }
+    uint32  ReqIdx() const { return show<uint32>(REQ_IDX_INDEX); }
 public:
-    uint16 Size() const { return (uint16)m_buf.size(); }
-    uint16 BodySize() const { return (uint16)(m_buf.size() - HEADER_SIZE); }
-    const uint8* Buffer() const { return m_buf.contents(); }
+    uint16 BodySize() const { return (uint16)(size() - HEADER_SIZE); }
+    const uint8* Body() const { return contents() + HEADER_SIZE; }
     uint64 GetReqKey() { return (uint64(OpCode()) << 32) | ReqIdx(); }
 
-	template<class T> NetPack& operator << (const T& data) {
-		m_buf << data;
-		return *this;
-	}
-	template<class T> NetPack& operator >> (T& data) {
-		m_buf >> data;
-		return *this;
-	}
-	template<class T> NetPack& WriteStruct(const T& data) {
-        m_buf.append(reinterpret_cast<const void*>(&data), sizeof(data));
-        return *this;
-	}
-	template<class T> NetPack& ReadStruct(T& data) {
-        m_buf.read(reinterpret_cast<void*>(&data), sizeof(data));
-        return *this;
-	}
-
-// for logic
+    // for logic
 public:
-    void    WriteBool(bool val) { m_buf.append(val); }
-    void    WriteInt8(int8 val) { m_buf.append(val); }
-    void    WriteInt16(int16 val) { m_buf.append(val); }
-    void    WriteInt32(int32 val) { m_buf.append(val); }
-    void    WriteInt64(int64 val) { m_buf.append(val); }
-    void    WriteUInt8(uint8 val) { m_buf.append(val); }
-    void    WriteUInt16(uint16 val) { m_buf.append(val); }
-    void    WriteUInt32(uint32 val) { m_buf.append(val); }
-    void    WriteUInt64(uint64 val) { m_buf.append(val); }
-    void    WriteFloat(float val) { m_buf.append(val); }
-    void    WriteDouble(double val) { m_buf.append(val); }
-    void    WriteString(const std::string& val) { m_buf.append(val); }
-    void    WriteString(const char* val) { m_buf.append(val); }
-    void    WriteBuf(const void* buf, size_t len) { m_buf.append(buf, len); }
+    void    WriteBool(bool val) { append(val); }
+    void    WriteInt8(int8 val) { append(val); }
+    void    WriteInt16(int16 val) { append(val); }
+    void    WriteInt32(int32 val) { append(val); }
+    void    WriteInt64(int64 val) { append(val); }
+    void    WriteUInt8(uint8 val) { append(val); }
+    void    WriteUInt16(uint16 val) { append(val); }
+    void    WriteUInt32(uint32 val) { append(val); }
+    void    WriteUInt64(uint64 val) { append(val); }
+    void    WriteFloat(float val) { append(val); }
+    void    WriteDouble(double val) { append(val); }
+    void    WriteString(const std::string& val) { append(val); }
+    void    WriteString(const char* val) { append(val); }
+    void    WriteBuf(const void* buf, size_t len) { append(buf, len); }
 
-    bool    ReadBool() { return m_buf.read<bool>(); }
-    int8    ReadInt8() { return m_buf.read<int8>(); }
-    int16   ReadInt16() { return m_buf.read<int16>(); }
-    int32   ReadInt32() { return m_buf.read<int32>(); }
-    int64   ReadInt64() { return m_buf.read<int64>(); }
-    uint8   ReadUInt8() { return m_buf.read<uint8>(); }
-    uint16  ReadUInt16() { return m_buf.read<uint16>(); }
-    uint32  ReadUInt32() { return m_buf.read<uint32>(); }
-    uint64  ReadUInt64() { return m_buf.read<uint64>(); }
-    float   ReadFloat() { return m_buf.read<float>(); }
-    double  ReadDouble() { return m_buf.read<double>(); }
-    std::string  ReadString() { 
-        //std::string str;
-        return m_buf.read<std::string>();
+    bool    ReadBool() { return read<bool>(); }
+    int8    ReadInt8() { return read<int8>(); }
+    int16   ReadInt16() { return read<int16>(); }
+    int32   ReadInt32() { return read<int32>(); }
+    int64   ReadInt64() { return read<int64>(); }
+    uint8   ReadUInt8() { return read<uint8>(); }
+    uint16  ReadUInt16() { return read<uint16>(); }
+    uint32  ReadUInt32() { return read<uint32>(); }
+    uint64  ReadUInt64() { return read<uint64>(); }
+    float   ReadFloat() { return read<float>(); }
+    double  ReadDouble() { return read<double>(); }
+    std::string  ReadString() {
+        return read<std::string>();
         //return std::move(str);
         //return str; // c++11 右值引用，移动构造
     }
 
-    void   SetPos(int pos, uint32 v){ m_buf.put(HEADER_SIZE + pos, v); }
-    uint32 GetPos(int pos) { return m_buf.show<uint32>(HEADER_SIZE + pos); }
+    void   SetPos(int pos, uint32 v) { put(HEADER_SIZE + pos, v); }
+    uint32 GetPos(int pos) { return show<uint32>(HEADER_SIZE + pos); }
 };

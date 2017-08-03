@@ -8,6 +8,11 @@
     3、获取脚本返回的指针 ---- NetPack* buf = luabridge::Userdata::get<NetPack>(L, 1, false);
         * 从 Lua 拿指针风险很高，它是 Lua 生成的，生命周期由后者处理，C++ 调用时保不准被gc或是什么的
 
+* @ Notice
+    1、像lua、erlang这类动态语言，函数地址不固定的，重载后就变了
+
+    2、若缓存过函数地址(如 luaTable['name'] = this.function)，脚本重载时须清空、重新生成
+
 * @ author zhoumf
 * @ date 2017-7-24
 ************************************************************************/

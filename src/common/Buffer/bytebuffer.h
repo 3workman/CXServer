@@ -13,7 +13,7 @@
 		3、话说，位域变量进如何进行函数匹配的呢？ int64  a:2; b62;  ByteBuffer::read(a) 匹配进哪个？ read<int8>、read<int64>？
 */
 
-class ByteBuffer final {//tolua_export
+class ByteBuffer {//tolua_export
     // read and write positions
     size_t _rpos, _wpos;
     std::vector<uint8> _storage;
@@ -159,10 +159,14 @@ public:
 
 
 	// stream like operators for storing data
-	ByteBuffer &operator<<(bool value) {//tolua_export
+	ByteBuffer &operator<<(bool value) {
 		append<char>((char)value);
 		return *this;
-	}//tolua_export
+	}
+    ByteBuffer &operator<<(char value) {
+        append<char>(value);
+        return *this;
+    }
 	// unsigned
 	ByteBuffer &operator<<(uint8 value) {//tolua_export
 		append<uint8>(value);

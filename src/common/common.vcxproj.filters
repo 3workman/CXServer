@@ -135,6 +135,9 @@
     <ClInclude Include="tool\Input.h">
       <Filter>tool</Filter>
     </ClInclude>
+    <ClInclude Include="Buffer\DataDiff.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">
@@ -175,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="tool\Input.cpp">
       <Filter>tool</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer\DataDiff.cpp">
+      <Filter>Buffer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

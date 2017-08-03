@@ -15,6 +15,7 @@
     <ClInclude Include="..\include\stdafx.h" />
     <ClInclude Include="Buffer\buffer.h" />
     <ClInclude Include="Buffer\bytebuffer.h" />
+    <ClInclude Include="Buffer\DataDiff.h" />
     <ClInclude Include="Buffer\DataSend.h" />
     <ClInclude Include="Buffer\NetPack.h" />
     <ClInclude Include="Csv\CSVparser.hpp" />
@@ -49,6 +50,7 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Buffer\DataDiff.cpp" />
     <ClCompile Include="Buffer\DataSend.cpp" />
     <ClCompile Include="Csv\CSVparser.cpp" />
     <ClCompile Include="Log\AsyncLog.cpp" />
