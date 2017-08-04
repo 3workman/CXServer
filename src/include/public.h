@@ -55,13 +55,15 @@ typedef std::vector< std::pair<int, int> > IntPairVec;
 inline int random() { return Rand::rand(); }
 
 #else
-inline long GetTickCount()
-{
-    struct timespec spec;
-    clock_gettime(CLOCK_REALTIME, &spec);
-
-    time_t s = spec.tv_sec;
-    long ms = std::round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
-    return s * 1000 + ms;
-}
+//【溢出Bug】uint timenow = GetTickCount();
+// uint32的毫秒计数，最多到49.7天，系统长期运行后，计时器归0，许多逻辑就错乱了
+//inline long GetTickCount()
+//{
+//    struct timespec spec;
+//    clock_gettime(CLOCK_REALTIME, &spec);
+//
+//    time_t s = spec.tv_sec;
+//    long ms = std::round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
+//    return s * 1000 + ms;
+//}
 #endif

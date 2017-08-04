@@ -17,7 +17,7 @@ static iService* g_aService[_Service_Max] = {
 
     new cServiceList(_Service_Sync_Position),
 };
-void ServiceMgr::RunAllService(uint time_elapse, uint timenow)
+void ServiceMgr::RunAllService(uint time_elapse, time_t timenow)
 {
     for (auto& it : g_aService) it->RunSevice(time_elapse, timenow);
 }

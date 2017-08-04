@@ -11,7 +11,7 @@ enum ServiceEnum {
     _Service_Max
 };
 namespace ServiceMgr {
-    void RunAllService(uint time_elapse, uint timenow);
+    void RunAllService(uint time_elapse, time_t timenow);
     void UnRegister(ServiceEnum typ, void* pObj);
     bool Register(ServiceEnum typ, void* pObj);
 };

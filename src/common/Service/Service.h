@@ -26,13 +26,13 @@ public:
     typedef uint(*RefreshFun)(void*);
     virtual void UnRegister(void* pObj) = 0;
     virtual bool Register(void* pObj, uint exeTime = 0) = 0; //哪个时刻执行
-    virtual void RunSevice(uint time_elapse, uint timenow) = 0; //循环内的回调函数(m_func)可能调到Register、UnRegister
+    virtual void RunSevice(uint time_elapse, time_t timenow) = 0; //循环内的回调函数(m_func)可能调到Register、UnRegister
 protected:
-    typedef std::multimap<uint, void*>  mapTimer;
-    typedef std::pair<uint, void*>      TimerPair;
-    typedef std::list<TimerPair>        listTimer;
-    typedef listTimer::iterator         itListTimer;
-    typedef std::set<void*>::iterator   ItSet;
+    typedef std::multimap<time_t, void*>    mapTimer;
+    typedef std::pair<time_t, void*>        TimerPair;
+    typedef std::list<TimerPair>            listTimer;
+    typedef listTimer::iterator             itListTimer;
+    typedef std::set<void*>::iterator       ItSet;
 
 	bool m_bRun;
 	RefreshFun m_func;	//回调函数
@@ -61,7 +61,7 @@ public:
         m_aObj.push_back(pObj);
         return true;
     }
-    void RunSevice(uint time_elapse, uint /*timenow*/)
+    void RunSevice(uint time_elapse, time_t /*timenow*/)
     {
         if (m_aObj.size() <= 0) return;
 
@@ -110,7 +110,7 @@ public:
             }
         }
     }
-	void RunSevice(uint /*time_elapse*/, uint timenow){
+	void RunSevice(uint /*time_elapse*/, time_t timenow){
         if (m_runIt == m_list.end()) m_runIt = ++m_list.begin(); //【跳过头结点】
         m_bRun = true;
         while (m_runIt != m_list.end()) {
@@ -144,7 +144,7 @@ public:
             }
         }
     }
-    void RunSevice(uint /*time_elapse*/, uint timenow) {
+    void RunSevice(uint /*time_elapse*/, time_t timenow) {
         m_bRun = true;
         while (m_runPos != m_vec.size()) {
             TimerPair& it = m_vec[m_runPos];
@@ -177,7 +177,7 @@ public:
             if (it->second == pObj) m_setDel.insert(pObj);
 		}
 	}
-	void RunSevice(uint /*time_elapse*/, uint timenow){
+	void RunSevice(uint /*time_elapse*/, time_t timenow){
         ItSet itSet;
         for (auto it = m_map.begin(); it != m_map.end() && !m_setDel.empty();){
             itSet = m_setDel.find(it->second);

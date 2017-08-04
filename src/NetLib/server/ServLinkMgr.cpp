@@ -150,13 +150,13 @@ bool ServLinkMgr::_AssistLoop()
 	if (!_pThread) return false;
 
 	time(&_timeNow);
-	DWORD dwInitTime = GetTickCount();
-	DWORD dwElapsedTime = 0;
+    int elapsedTime = 0;
+    time_t initTime = GameApi::TimeMS();
     while (cv_status::timeout == _pThread->WaitKillEvent(_config.dwAssistLoopMs))
 	{
-		DWORD tempNow = GetTickCount();
-		DWORD tempElapse = tempNow - dwInitTime;
-		dwInitTime = tempNow;
+        time_t tempNow = GameApi::TimeMS();
+		int tempElapse = int(tempNow - initTime);
+		initTime = tempNow;
 
 		time(&_timeNow);
 
@@ -165,10 +165,10 @@ bool ServLinkMgr::_AssistLoop()
 			if (it->IsConnected()) it->ServerRun_SendIO(); //【brief.7】另辟线程定期发送所有buffer
 		}
 
-		dwElapsedTime += tempElapse;
+		elapsedTime += tempElapse;
 
-		if (dwElapsedTime > CHECK_INTERVAL) { // 多少毫秒检查一次
-			dwElapsedTime = 0;
+		if (elapsedTime > CHECK_INTERVAL) { // 多少毫秒检查一次
+			elapsedTime = 0;
 			Maintain(_timeNow); //检查维护serverLink
 		}
 	}

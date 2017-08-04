@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GameApi.h"
+#include <sys/timeb.h>
 #include <time.h>
 
 namespace GameApi {
@@ -87,6 +88,18 @@ void SplitStr2(const std::string& str, IntPairVec& retVec) // "2|3,7|4,9|6"
 static time_t g_time_now = 0;
 time_t TimeNow() { return g_time_now; }
 void RefreshTimeNow() { g_time_now = ::time(NULL); }
+
+time_t TimeMS() {
+#ifdef WIN32
+    struct _timeb tp;
+    ::_ftime(&tp);
+    return tp.time * 1000 + tp.millitm;
+#else
+    struct timeb tp;
+    ftime(&tp);
+    return tp.time * 1000 + tp.millitm;
+#endif
+}
 
 int TimeHour() {
     time_t timep;

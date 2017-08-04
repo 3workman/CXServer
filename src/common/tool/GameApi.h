@@ -13,6 +13,7 @@ namespace GameApi {
     void SplitStr2(const std::string& str, IntPairVec& retVec);
 
     //每帧一次Refresh，业务去缓存数据，避免多次调用底层api
+    time_t TimeMS();
     time_t TimeNow(); //second
     void RefreshTimeNow();
 

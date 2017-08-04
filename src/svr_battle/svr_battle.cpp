@@ -87,11 +87,11 @@ int main(int argc, char* argv[])
 #endif
 
     // main loop
-    uint time_elapse(0), timeOld(0), timeNow = GetTickCount();
+    uint64 timeOld(0), timeNow = GameApi::TimeMS();
     while (true) {
         timeOld = timeNow;
-        timeNow = GetTickCount();
-        time_elapse = timeNow - timeOld;
+        timeNow = GameApi::TimeMS();
+        uint time_elapse = uint(timeNow - timeOld);
 
         GameApi::RefreshTimeNow();
         ServiceMgr::RunAllService(time_elapse, timeNow);

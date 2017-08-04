@@ -44,7 +44,7 @@ Realize(UpLevel)
 }
 Realize(DuringTime)
 {
-    int64 timeNow = GameApi::TimeNowSec();
+    int64 timeNow = GameApi::TimeNow();
 
     return timeNow >= GameApi::ParseTime(val1) && timeNow < GameApi::ParseTime(val2);
 }

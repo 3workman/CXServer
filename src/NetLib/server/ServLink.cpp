@@ -330,21 +330,12 @@ void ServLink::Maintain(time_t timenow)
 	}
 	else if (_eState == STATE_CONNECTED)
 	{
-/*
-		if (false == GetDecodeFlag()
-			&& Config().DecodeWaitTime
-			&& GetConnectT() + Config().DecodeWaitTime < GetTickCount())
-		{
-			printf("Not Decode TimeOut%d - %d \n", GetConnectT(), _nLinkID);
-			OnInvalidMessage(Net_IdleTooLong, 0, true);
-		}
-		else*/ if (Config().nDeadTime && RecvIOElapsed(timenow) > Config().nDeadTime)
+        if (Config().nDeadTime && RecvIOElapsed(timenow) > Config().nDeadTime)
 		{
 			printf("DeadTime%d - %d \n", RecvIOElapsed(timenow), _nLinkID);
 			OnInvalidMessage(Net_IdleTooLong, 0, true);
 		}
-/*
-		//【见DoneIOCallback中的优化】
+		/*【见DoneIOCallback中的优化】
 		else if (RecvIOElapsed(timenow) > MAX_Silent_Seconds && _hEventClose)
 		{
 			// 目前是DoneIO“dwNumberOfBytesTransferred = 0”则shutdown成无效的，等待后CloseLink

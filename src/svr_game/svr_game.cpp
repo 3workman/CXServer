@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "../NetLib/server/ServLinkMgr.h"
-#include "../NetLib/server/define.h"
+#include "../NetLib/config_net.h"
 #include "../rpc/RpcQueue.h"
 #include "Service/ServiceMgr.h"
 #include "Timer/TimerWheel.h"
@@ -58,19 +58,20 @@ int main(int argc, char* argv[])
     LogFile log("log\\game", LogFile::TRACK, true);
     _LOG_MAIN_(log);
 
-    ServerConfig config;
+    NetCfgServer config;
     ServLinkMgr mgr(config);
     ServLinkMgr::InitWinsock();
     mgr.CreateServer(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 
-    uint timeOld(0), timeNow = GetTickCount();
+    uint64 timeOld(0), timeNow = GameApi::TimeMS();
     while (true) {
         timeOld = timeNow;
-        timeNow = GetTickCount();
+        timeNow = GameApi::TimeMS();
+        uint time_elapse = uint(timeNow - timeOld);
 
         GameApi::RefreshTimeNow();
-        ServiceMgr::RunAllService(timeNow - timeOld, timeNow);
-        sTimerMgr.Refresh(timeNow - timeOld, timeNow);
+        ServiceMgr::RunAllService(time_elapse, timeNow);
+        sTimerMgr.Refresh(time_elapse, timeNow);
         sRpcClient.Update();
 
         Sleep(33);

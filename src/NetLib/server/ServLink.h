@@ -53,7 +53,7 @@
 #include <Mswsock.h> // AcceptEx
 #include "Buffer/buffer.h"
 #include "tool/cLock.h"
-#include <time.h>
+#include "tool/GameApi.h"
 
 enum InvalidMessageEnum{
     Message_NoError,
@@ -167,11 +167,11 @@ public:
 	__forceinline int RecvIOElapsed(time_t timenow){ return (int)(timenow - _recvIOTime); }
 
 	//ÐÄÌøÑéÖ¤
-	DWORD m_dwLastHeart;
-	void OnHeartMsg(){ m_dwLastHeart = GetTickCount(); }
+	time_t m_dwLastHeart;
+	void OnHeartMsg(){ m_dwLastHeart = GameApi::TimeMS(); }
 	void CheckHeart()
 	{
-		DWORD now = GetTickCount();
+        time_t now = GameApi::TimeMS();
 		if (now - m_dwLastHeart > 60000)
 		{
 			OnInvalidMessage(Net_HeartKick, 0, true);

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TimerWheel.h"
-#include "../Log/LogFile.h"
+#include "tool/GameApi.h"
+#include "Log/LogFile.h"
 
 uint32 CTimerMgr::WHEEL_SIZE[] = {};
 uint32 CTimerMgr::WHEEL_CAP[] = {};
@@ -23,7 +24,7 @@ void TimerNode::_Callback(){
     //LOG_TRACK("node[%p]", this);
     loop -= interval;
     if (loop > 0) {
-        //timeDead = GetTickCount() + interval;
+        //timeDead = TimeNow() + interval;
         timeDead += interval; //Notice：周期执行的函数，服务器卡顿应该追帧，再取系统当前时间是错的
         CTimerMgr::Instance()._AddTimerNode(interval, this);
         func(); //must at the last line; timer may be deleted in _func();
@@ -34,7 +35,7 @@ void TimerNode::_Callback(){
 }
 TimerNode* CTimerMgr::AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec /* = 0 */, int totalSec /* = 0 */) {
     TimerNode* node = new TimerNode(f, cdSec * 1000, totalSec * 1000);
-    node->timeDead = GetTickCount() + delaySec * 1000;
+    node->timeDead = (uint32)GameApi::TimeMS() + delaySec * 1000;
     _AddTimerNode(delaySec * 1000, node);
     return node;
 }
@@ -74,7 +75,7 @@ void CTimerMgr::RemoveTimer(TimerNode* node) {
 
     delete node;
 }
-void CTimerMgr::Refresh(uint32 time_elapse, uint32 timenow) {
+void CTimerMgr::Refresh(uint32 time_elapse, const time_t timenow) {
     uint32 tickCnt = time_elapse / TIME_TICK_LEN;
     for (uint32 i = 0; i < tickCnt; ++i) { //扫过的slot均超时
         bool isCascade = false;
@@ -111,7 +112,7 @@ void CTimerMgr::DoTimeOutCallBack() {
     }
     _readyNode.next = _readyNode.prev = &_readyNode;
 }
-void CTimerMgr::Cascade(uint32 wheelIdx, const uint32 timenow) {
+void CTimerMgr::Cascade(uint32 wheelIdx, const time_t timenow) {
     if (wheelIdx < 1 || wheelIdx >= WHEEL_NUM) return;
 
     bool isCascade = false;
@@ -132,7 +133,7 @@ void CTimerMgr::Cascade(uint32 wheelIdx, const uint32 timenow) {
         } else {
             //LOG_TRACK("wheel[%u], curSlot[%u], node[%p], msec[%u]", wheelIdx, wheel->slotIdx, node, node->timeDead - timenow);
             //【Bug】加新Node，须加到其它槽位，本槽位已扫过(失效，等一整轮才会再扫到)
-            _AddTimerNode(node->timeDead - timenow, node);
+            _AddTimerNode(uint32(node->timeDead - timenow), node);
         }
     }
     if (isCascade) Cascade(++wheelIdx, timenow);
