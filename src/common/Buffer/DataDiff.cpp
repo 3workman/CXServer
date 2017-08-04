@@ -30,3 +30,13 @@ void DataDiff::diff(NetPack& buf)
     }
     buf.put(bitPosInPack, _bit);//重设位标记
 }
+
+//void DataDiff::diff(NetPack& buf, GameObject::Ptr obj)
+//{
+//    buf.WriteUuid(obj->Get<NetID>()->uid);
+//
+//    if (auto ptr = obj->Get<DataDiff>())
+//    {
+//        ptr->diff(buf);
+//    }
+//}

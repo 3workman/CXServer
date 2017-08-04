@@ -44,6 +44,12 @@
             }
         }
 
+    4、每帧批量收集待同步对象的 diff
+        *、遍历对象列表，检查有无 DataDiff 组件，没有的跳过
+        *、单个对象的 diff 格式如下：先写入自己的 NetID，再调用组件的 diff() 函数
+        *、前台先读 NetID，再读 bit，根据 bit 位分布可知要读 buf 里的多少字节
+        *、bit 读完，即解析下一对象的 Diff
+
 * @ author zhoumf
 * @ date 2017-8-3
 ************************************************************************/
@@ -78,4 +84,6 @@ public:
     }
 
     void diff(NetPack& buf);
+
+    //static void diff(NetPack& buf, GameObject::Ptr obj);
 };
