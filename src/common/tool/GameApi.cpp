@@ -59,8 +59,33 @@ void SplitStr(const std::string& str, IntPairVec& retVec) // "(2|3)(7|4)(9|6)"
         retIdx = str.find_first_of('(', beginIdx);
     }
 }
+void SplitStr2(const std::string& str, IntPairVec& retVec) // "2|3,7|4,9|6"
+{
+    std::pair<int, int> tmp;
+    int beginIdx = 0;
+    int retIdx = str.find_first_of('|', beginIdx);
+    while (retIdx != -1)
+    {
+        tmp.first = atoi(str.substr(beginIdx, retIdx - beginIdx).c_str());
+
+        beginIdx = retIdx + 1;
+        retIdx = str.find_first_of(',', beginIdx);
+        if (retIdx == -1)
+        {
+            tmp.second = atoi(str.substr(beginIdx).c_str());
+            retVec.push_back(tmp);
+            break;
+        }
+        tmp.second = atoi(str.substr(beginIdx, retIdx - beginIdx).c_str());
+        retVec.push_back(tmp);
+
+        beginIdx = retIdx + 1;
+        retIdx = str.find_first_of('|', beginIdx);
+    }
+}
+
 static time_t g_time_now = 0;
-time_t TimeNowSec() { return g_time_now; }
+time_t TimeNow() { return g_time_now; }
 void RefreshTimeNow() { g_time_now = ::time(NULL); }
 
 int TimeHour() {
