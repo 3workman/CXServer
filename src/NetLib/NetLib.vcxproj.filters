@@ -1,59 +1,71 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="server">
-      <UniqueIdentifier>{79818548-4cd9-469e-883a-6ddf4d5dbd70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="client">
-      <UniqueIdentifier>{17d9d422-ceda-4ea0-8611-674b620412d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UdpServer">
-      <UniqueIdentifier>{a6b4c143-1863-4094-9553-f5b01bfafe98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UdpClient">
-      <UniqueIdentifier>{68ff6144-86b6-4acf-9f94-f6c212415555}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="client\ClientLink.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="server\ServLink.cpp">
-      <Filter>server</Filter>
-    </ClCompile>
-    <ClCompile Include="server\ServLinkMgr.cpp">
-      <Filter>server</Filter>
-    </ClCompile>
     <ClCompile Include="..\include\stdafx.cpp" />
-    <ClCompile Include="UdpClient\UdpClient.cpp">
-      <Filter>UdpClient</Filter>
+    <ClCompile Include="raknet\client\UdpClient.cpp">
+      <Filter>raknet\client</Filter>
     </ClCompile>
-    <ClCompile Include="UdpServer\UdpClientAgent.cpp">
-      <Filter>UdpServer</Filter>
+    <ClCompile Include="raknet\server\UdpClientAgent.cpp">
+      <Filter>raknet\server</Filter>
     </ClCompile>
-    <ClCompile Include="UdpServer\UdpServer.cpp">
-      <Filter>UdpServer</Filter>
+    <ClCompile Include="raknet\server\UdpServer.cpp">
+      <Filter>raknet\server</Filter>
+    </ClCompile>
+    <ClCompile Include="iocp\client\ClientLink.cpp">
+      <Filter>iocp\client</Filter>
+    </ClCompile>
+    <ClCompile Include="iocp\server\ServLink.cpp">
+      <Filter>iocp\server</Filter>
+    </ClCompile>
+    <ClCompile Include="iocp\server\ServLinkMgr.cpp">
+      <Filter>iocp\server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="client\ClientLink.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="server\ServLink.h">
-      <Filter>server</Filter>
-    </ClInclude>
-    <ClInclude Include="server\ServLinkMgr.h">
-      <Filter>server</Filter>
-    </ClInclude>
-    <ClInclude Include="UdpClient\UdpClient.h">
-      <Filter>UdpClient</Filter>
-    </ClInclude>
-    <ClInclude Include="UdpServer\UdpClientAgent.h">
-      <Filter>UdpServer</Filter>
-    </ClInclude>
-    <ClInclude Include="UdpServer\UdpServer.h">
-      <Filter>UdpServer</Filter>
-    </ClInclude>
     <ClInclude Include="config_net.h" />
+    <ClInclude Include="raknet\client\UdpClient.h">
+      <Filter>raknet\client</Filter>
+    </ClInclude>
+    <ClInclude Include="raknet\server\UdpClientAgent.h">
+      <Filter>raknet\server</Filter>
+    </ClInclude>
+    <ClInclude Include="raknet\server\UdpServer.h">
+      <Filter>raknet\server</Filter>
+    </ClInclude>
+    <ClInclude Include="iocp\client\ClientLink.h">
+      <Filter>iocp\client</Filter>
+    </ClInclude>
+    <ClInclude Include="iocp\server\ServLink.h">
+      <Filter>iocp\server</Filter>
+    </ClInclude>
+    <ClInclude Include="iocp\server\ServLinkMgr.h">
+      <Filter>iocp\server</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="raknet">
+      <UniqueIdentifier>{9991ddf0-6d6e-439c-a6f9-368e493e883f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="raknet\server">
+      <UniqueIdentifier>{4ade8708-7a09-4e71-9a83-e32d89fb6dba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="raknet\client">
+      <UniqueIdentifier>{cb79a878-d7d9-48dd-bd82-263d84f9396a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="iocp">
+      <UniqueIdentifier>{c128b27c-2ecc-4ed2-bbe3-8fa26a88e520}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="iocp\server">
+      <UniqueIdentifier>{28382f90-5c87-4612-9f0c-eccd304948b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="iocp\client">
+      <UniqueIdentifier>{a60327fe-4049-4296-a58f-b81e1347023d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="handy">
+      <UniqueIdentifier>{f4a07c07-7181-4157-b4ff-e2ba4755b6c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="handy\server">
+      <UniqueIdentifier>{0b4dd08f-8176-4bad-ba95-2619f5a17f4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

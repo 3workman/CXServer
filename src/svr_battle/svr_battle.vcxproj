@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_USE_UDP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\include;$(SolutionDir)ThirdParty\raknet\Source;$(ProjectDir);$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)proto_file\output_cpp;$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\include;$(SolutionDir)ThirdParty\raknet\Source;$(ProjectDir);$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)proto_file\output_cpp;$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)src\NetLib;$(SolutionDir)ThirdParty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

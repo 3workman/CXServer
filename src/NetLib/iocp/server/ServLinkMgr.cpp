@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ServLinkMgr.h"
-#include "../config_net.h"
+#include "config_net.h"
 #include "ServLink.h"
 #include "tool/thread.h"
 
@@ -37,7 +37,7 @@ bool ServLinkMgr::CleanWinsock()
 	int nError = WSACleanup();
 	return nError == 0;
 }
-bool ServLinkMgr::CreateServer(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg)
+bool ServLinkMgr::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg)
 {
     _BindLinkAndPlayer = bindPlayer;
     _HandleClientMsg = handleClientMsg;

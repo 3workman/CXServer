@@ -3,12 +3,14 @@
 #include "../rpc/RpcQueue.h"
 #include "def/ConstDef.h"
 
-#ifdef _USE_UDP // 在"项目属性->预处理器->预处理器定义"中设置
-class UdpClientAgent;
-typedef UdpClientAgent  NetLink;
-#else
-class ServLink;
-typedef ServLink  NetLink;
+#define _USE_RAKNET 1
+
+#ifdef _USE_RAKNET
+class UdpClientAgent;   typedef UdpClientAgent*     NetLinkPtr;
+#elif defined(_USE_IOCP)
+class ServLink;         typedef ServLink*           NetLinkPtr;
+#elif defined(_USE_HANDY)
+class TcpConnPtr;       typedef handy::TcpConnPtr   NetLinkPtr;
 #endif
 
 #undef Rpc_Declare
@@ -24,7 +26,7 @@ class Player {
 private:
     static std::map<uint32, Player*> G_PlayerList;
 
-    NetLink*        _clientNetLink = NULL;
+    NetLinkPtr      _clientNetLink = NULL;
 public:
     uint32          m_pid = 0;
     string          m_name;
@@ -34,16 +36,25 @@ public:
 public:
     Player(uint32 pid);
     ~Player();
-    void SetNetLink(NetLink* p);
-    void SendMsg(const NetPack& pack);
-    uint64 CallRpc(const char* name, const ParseRpcParam& sendFun);
-    void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
+    void    SetNetLink(NetLinkPtr p);
+    void    SendMsg(const NetPack& pack);
+
+    uint64  CallRpc(const char* name, const ParseRpcParam& sendFun);
+    void    CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
+    void    SendRpcAckImmediately();
+
+    static uint GetPlayerCnt() { return G_PlayerList.size(); }
+    static Player* FindByPid(uint32 pid);
+
+    //【Notice】单线程业务逻辑的架构，同一时刻仅有一名玩家CallRpc，所以Builder才能是静态的
+    static flatbuffers::FlatBufferBuilder& SendBuild() { return sRpcClient.SendBuilder; }
+    static flatbuffers::FlatBufferBuilder& BackBuild() { return sRpcClient.BackBuilder; }
+
 public:
     typedef void(Player::*_RpcFunc)(NetPack&, NetPack&);
     static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc
     Rpc_For_Player;
+
 public:
-    static Player* FindByPid(uint32 pid);
-    static flatbuffers::FlatBufferBuilder& SendBuild() { return sRpcClient.SendBuilder; }
-    static flatbuffers::FlatBufferBuilder& BackBuild() { return sRpcClient.BackBuilder; }
+
 };

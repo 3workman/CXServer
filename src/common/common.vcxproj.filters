@@ -138,6 +138,12 @@
     <ClInclude Include="Buffer\DataDiff.h">
       <Filter>Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="Log\RuntimeCast.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\compress.h">
+      <Filter>tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">
@@ -181,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="Buffer\DataDiff.cpp">
       <Filter>Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\RuntimeCast.cpp">
+      <Filter>Log</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

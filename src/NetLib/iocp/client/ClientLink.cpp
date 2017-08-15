@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ClientLink.h"
-#include "../config_net.h"
+#include "config_net.h"
 
 #pragma comment(lib,"Ws2_32.lib")
 

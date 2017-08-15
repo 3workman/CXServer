@@ -188,9 +188,9 @@ bool LuaCall::DoFile(const char* szFile)
 
     if (luaL_dofile(m_pL, name.c_str()))
     {
-        LOG_ERROR("do lua file error. `%s': %s", szFile, lua_tostring(L, -1));
-        lua_pop(L, 1);
-        lua_settop(L, 0);
+        LOG_ERROR("do lua file error. `%s': %s", szFile, lua_tostring(m_pL, -1));
+        lua_pop(m_pL, 1);
+        lua_settop(m_pL, 0);
         return false;
     }
 	return true;	

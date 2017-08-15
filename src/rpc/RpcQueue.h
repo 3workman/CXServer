@@ -19,7 +19,6 @@
 #include "tool/SafeQueue.h"
 #include "Buffer/NetPack.h"
 #include "Csv/CSVparser.hpp"
-#include "flatbuffers/flatbuffers.h"
 
 typedef std::function<void(NetPack&)> ParseRpcParam;
 typedef std::function<void(const NetPack&)> SendMsgFunc;
@@ -58,12 +57,7 @@ public:
         if (it != Typ::_rpc.end()) {
             m_BackBuffer.ResetHead(buf);
             (pObj->*(it->second))(buf, m_BackBuffer);
-
-            if (BackBuilder.GetSize()) {
-                m_BackBuffer.WriteBuf(BackBuilder.GetBufferPointer(), BackBuilder.GetSize());
-                BackBuilder.Clear();
-            }
-            if (m_BackBuffer.BodySize()) pObj->SendMsg(m_BackBuffer);
+            if (m_BackBuffer.OpCode()) SendBackBuffer(pObj);
 #ifdef _DEBUG
             std::cout << "Recv Msg: " << DebugRpcIdToName(opCode) << " id:" << opCode << endl;
 #endif
@@ -75,6 +69,13 @@ public:
                 m_response.erase(it);
             }
         }
+    }
+    void SendBackBuffer(Typ* pObj)
+    {
+        assert(m_BackBuffer.OpCode() && "send rpc back buffer repeatedly");
+        m_BackBuffer.MoveToBuf(BackBuilder);
+        if (m_BackBuffer.BodySize()) pObj->SendMsg(m_BackBuffer);
+        m_BackBuffer.Clear();
     }
     void RegistResponse(uint64 reqKey, const ParseRpcParam& func)
     {
@@ -111,10 +112,7 @@ public:
         auto ret = m_SendBuffer.GetReqKey();
 
         func(m_SendBuffer);
-        if (SendBuilder.GetSize()) {
-            m_SendBuffer.WriteBuf(SendBuilder.GetBufferPointer(), SendBuilder.GetSize());
-            SendBuilder.Clear();
-        }
+        m_SendBuffer.MoveToBuf(SendBuilder);
         doSend(m_SendBuffer);
         m_SendBuffer.Clear();
         return ret;

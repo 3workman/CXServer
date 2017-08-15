@@ -54,7 +54,7 @@ public:
 	static bool IsValidIP(LPCSTR szIP){ return true; }
 
 	// 创建监听socket，并先投递几个AcceptEx
-    bool CreateServer(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg); //Notice：错消息时，player指针可能为NULL
+    bool Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg); //Notice：错消息时，player指针可能为NULL
 	bool Close();
 
 	bool AssistThreadLoop();

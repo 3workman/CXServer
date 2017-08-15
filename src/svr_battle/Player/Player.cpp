@@ -1,11 +1,20 @@
 #include "stdafx.h"
-#include "../NetLib/server/ServLink.h"
-#include "../NetLib/UdpServer/UdpClientAgent.h"
 #include "Player.h"
+#ifdef _USE_RAKNET
+#include "raknet/server/UdpClientAgent.h"
+#elif defined(_USE_IOCP)
+#include "iocp/server/ServLink.h"
+#elif defined(_USE_HANDY)
+#include "handy/server/TcpServer.h"
+#endif
 #include "Buffer/NetPack.h"
-#include "../svr_battle/Room/PlayerRoomData.h"
-#include "room_generated.h"
+#include "Room/PlayerRoomData.h"
 #include "Lua/LuaCall.h"
+#include "tool/compress.h"
+
+static Byte g_compress_buf[1024] = { 0 };
+static const uint G_Compress_Limit_Size = 128;
+static const uint G_Compress_Flag = 0x80000000;
 
 std::map<int, Player::_RpcFunc> Player::_rpc;
 std::map<uint32, Player*> Player::G_PlayerList;
@@ -26,10 +35,10 @@ Player::Player(uint32 pid)
 Player::~Player()
 {
     delete &m_Room;
-
+    SetNetLink(NULL);
     G_PlayerList.erase(m_pid); m_pid = 0;
 }
-void Player::SetNetLink(NetLink* p)
+void Player::SetNetLink(NetLinkPtr p)
 {
     if (_clientNetLink)
     {
@@ -41,7 +50,35 @@ void Player::SendMsg(const NetPack& pack)
 {
     if (!_clientNetLink) return; //Notice：断线重连期间，连接无效
 
-    _clientNetLink->SendMsg(pack.contents(), pack.size());
+    const uint8 type = pack.Type();
+    const void* buf = NULL; int bufLen = 0;
+
+    if (pack.size() < G_Compress_Limit_Size) {
+        buf = pack.contents();
+        bufLen = pack.size();
+    } else {
+        //前四个字节写压缩标记
+        //蛋疼啊，udp第一个字节得预留给RakNet
+        uLong size = sizeof(g_compress_buf) - 5;
+        *g_compress_buf = *pack.contents();
+        *(uint*)(g_compress_buf + 1) = G_Compress_Flag;
+        gzcompress((Bytef*)pack.contents(), pack.size(), g_compress_buf + 5, &size);
+        buf = g_compress_buf;
+        bufLen = size + 5;
+    }
+
+    assert(buf && bufLen && bufLen < 1024);
+    switch (type) {
+    case NetPack::TYPE_UDP:
+        //_clientNetLink->SendUdpMsg(buf, bufLen);
+        //break;
+    case NetPack::TYPE_UNRELIABLE:
+        //_clientNetLink->SendReliablyMsg(buf, bufLen);
+        //break;
+    default:
+        _clientNetLink->SendMsg(buf, bufLen);
+        break;
+    }
 }
 uint64 Player::CallRpc(const char* name, const ParseRpcParam& sendFun)
 {
@@ -52,6 +89,11 @@ void Player::CallRpc(const char* name, const ParseRpcParam& sendFun, const Parse
     uint64 reqKey = CallRpc(name, sendFun);
     sRpcClient.RegistResponse(reqKey, recvFun);
 }
+void Player::SendRpcAckImmediately()
+{
+    sRpcClient.SendBackBuffer(this);
+}
+
 Player* Player::FindByPid(uint32 pid)
 {
     auto it = G_PlayerList.find(pid);

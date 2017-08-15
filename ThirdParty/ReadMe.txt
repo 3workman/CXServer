@@ -6,3 +6,5 @@ googletest
 zlib
 lua-5.3.4
 luabridge
+zlib
+handy

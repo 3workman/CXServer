@@ -51,6 +51,7 @@ typedef std::vector< std::pair<int, int> > IntPairVec;
 #endif
 #include <windows.h>
 #undef min
+#undef max
 
 inline int random() { return Rand::rand(); }
 

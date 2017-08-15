@@ -44,10 +44,8 @@
 * @ date 2016-8-17
 ************************************************************************/
 #pragma once
-#include <thread>
-#include <condition_variable>
-#include "../tool/cLock.h"
-#include "../Buffer/buffer.h"
+#include "tool/cLock.h"
+#include "Buffer/buffer.h"
 
 class AsyncLog{
 public:

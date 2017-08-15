@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CPlayer.h"
-#include "../NetLib/UdpClient/UdpClient.h"
+#include "raknet/client/UdpClient.h"
 
 std::map<int, CPlayer::_RpcFunc> CPlayer::_rpc;
 NetCfgClient CPlayer::_netCfg;
@@ -48,7 +48,7 @@ void CPlayer::CallRpc(const char* name, const ParseRpcParam& sendFun, const Pars
 }
 void CPlayer::SendMsg(const NetPack& pack)
 {
-    _netLink->SendMsg(pack.Buffer(), pack.Size());
+    _netLink->SendMsg(pack.contents(), pack.size());
 }
 
 //////////////////////////////////////////////////////////////////////////

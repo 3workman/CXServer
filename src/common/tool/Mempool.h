@@ -149,10 +149,11 @@ private:
     {
         if (m_queue[lv].empty())
         {
-            if (lv == MaxLevel)
+            if (lv == MaxLevel) { //【Notice】不加大括号，if else匹配歧义
                 if (!_Double(lv)) return false;
-            else
-                if (!_Split(lv+1)) return false;
+            } else {
+                if (!_Split(lv + 1)) return false;
+            }
         }
 
         size_t size = m_queue[lv].size()/2+1;

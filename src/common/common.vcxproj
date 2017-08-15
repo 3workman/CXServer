@@ -22,6 +22,7 @@
     <ClInclude Include="def\ConstDef.h" />
     <ClInclude Include="Log\AsyncLog.h" />
     <ClInclude Include="Log\LogFile.h" />
+    <ClInclude Include="Log\RuntimeCast.h" />
     <ClInclude Include="Lua\LuaCall.h" />
     <ClInclude Include="Lua\tolua.h" />
     <ClInclude Include="Rand\rand.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="Service\ServiceMgr.h" />
     <ClInclude Include="Timer\TimerWheel.h" />
     <ClInclude Include="tool\cLock.h" />
+    <ClInclude Include="tool\compress.h" />
     <ClInclude Include="tool\DebugFile.h" />
     <ClInclude Include="tool\delegate.h" />
     <ClInclude Include="tool\Floyd.h" />
@@ -55,6 +57,7 @@
     <ClCompile Include="Csv\CSVparser.cpp" />
     <ClCompile Include="Log\AsyncLog.cpp" />
     <ClCompile Include="Log\LogFile.cpp" />
+    <ClCompile Include="Log\RuntimeCast.cpp" />
     <ClCompile Include="Lua\LuaCall.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -112,7 +115,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)ThirdParty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,7 +123,7 @@
     </Link>
     <Lib>
       <OutputFile>$(SolutionDir)build\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\ThirdParty;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>

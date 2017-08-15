@@ -1,7 +1,7 @@
 #pragma once
 #include "../rpc/RpcEnum.h"
 #include "../rpc/RpcQueue.h"
-#include "../NetLib/config_net.h"
+#include "config_net.h"
 
 #undef Rpc_Declare
 #undef Rpc_Realize

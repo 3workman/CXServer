@@ -9,6 +9,9 @@
 #pragma once
 #include "bytebuffer.h"
 #include "../tool/Mempool.h"
+#include "flatbuffers/flatbuffers.h"
+
+template<typename T> using FlatVector = std::vector<flatbuffers::Offset<T>>; //c++11的模板别名，好用
 
 class NetPack : public ByteBuffer
 {
@@ -83,6 +86,12 @@ public:
         return read<std::string>();
         //return std::move(str);
         //return str; // c++11 右值引用，移动构造
+    }
+    void MoveToBuf(flatbuffers::FlatBufferBuilder& builder) {
+        if (builder.GetSize()) {
+            WriteBuf(builder.GetBufferPointer(), builder.GetSize());
+            builder.Clear();
+        }
     }
 
     void   SetPos(int pos, uint32 v) { put(HEADER_SIZE + pos, v); }

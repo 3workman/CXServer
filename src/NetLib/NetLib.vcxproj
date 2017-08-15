@@ -14,21 +14,21 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="client\ClientLink.cpp" />
-    <ClCompile Include="server\ServLink.cpp" />
-    <ClCompile Include="server\ServLinkMgr.cpp" />
-    <ClCompile Include="UdpClient\UdpClient.cpp" />
-    <ClCompile Include="UdpServer\UdpClientAgent.cpp" />
-    <ClCompile Include="UdpServer\UdpServer.cpp" />
+    <ClCompile Include="iocp\client\ClientLink.cpp" />
+    <ClCompile Include="iocp\server\ServLink.cpp" />
+    <ClCompile Include="iocp\server\ServLinkMgr.cpp" />
+    <ClCompile Include="raknet\client\UdpClient.cpp" />
+    <ClCompile Include="raknet\server\UdpClientAgent.cpp" />
+    <ClCompile Include="raknet\server\UdpServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="client\ClientLink.h" />
     <ClInclude Include="config_net.h" />
-    <ClInclude Include="server\ServLink.h" />
-    <ClInclude Include="server\ServLinkMgr.h" />
-    <ClInclude Include="UdpClient\UdpClient.h" />
-    <ClInclude Include="UdpServer\UdpClientAgent.h" />
-    <ClInclude Include="UdpServer\UdpServer.h" />
+    <ClInclude Include="iocp\client\ClientLink.h" />
+    <ClInclude Include="iocp\server\ServLink.h" />
+    <ClInclude Include="iocp\server\ServLinkMgr.h" />
+    <ClInclude Include="raknet\client\UdpClient.h" />
+    <ClInclude Include="raknet\server\UdpClientAgent.h" />
+    <ClInclude Include="raknet\server\UdpServer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7F99F323-4B17-4DBA-8AD1-D9EA71978561}</ProjectGuid>

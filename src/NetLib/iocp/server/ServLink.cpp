@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ServLink.h"
 #include "ServLinkMgr.h"
-#include "../config_net.h"
+#include "config_net.h"
 
 #pragma comment(lib,"Mswsock.lib")
 

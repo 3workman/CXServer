@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Player/CPlayer.h"
 #include "RakSleep.h"
-#include "../NetLib/UdpClient/UdpClient.h"
+#include "raknet/client/UdpClient.h"
 
 void test_svr_battle(int playerCnt);
 
