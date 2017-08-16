@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "TcpServer.h"
 #include "config_net.h"
-#include "handy/handy.h"
-#include <thread>
 
 TcpServer::TcpServer(const NetCfgServer& info)
     : _config(info)

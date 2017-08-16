@@ -200,10 +200,10 @@ public:
         }
 	}
 	bool Double(){
-		T** temp = (T**)malloc(m_cnt * 2 * sizeof(T*));
+		T** temp = (T**)malloc(m_cnt * 2 * sizeof(T*)); //存指针的数组，须连续
 		if (!temp) return false;
 
-        T* pObj = (T*)malloc(m_cnt * sizeof(T)); // 开辟新内存块
+        T* pObj = (T*)malloc(m_cnt * sizeof(T)); //开辟新内存块，存对象，可散列
         if (!pObj) return false;
 
 		memcpy(temp, m_arrPtr, m_cnt * sizeof(T*));

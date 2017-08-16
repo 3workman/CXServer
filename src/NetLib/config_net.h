@@ -6,7 +6,7 @@ struct NetCfgServer
     uint16 wPort = 7030;
     uint32 nRecvPacketCheckTime = 10;
     uint32 nRecvPacketLimit = 1200;
-    uint32 dwAssistLoopMs = 20;
+    uint32 dwAssistLoopMs = 10;
     uint32 nMaxPackage = 1024;
     int    nDeadTime = 300;      //多少秒没收到client消息，断开
     uint32 nTimeLoop = 10;		//多线程的情况下，多少时间遍历所有的socket,必须跟Send_Group一起使用

@@ -101,7 +101,7 @@ void ServLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 		{
 			UpdateAcceptAddr();
 			if (ServLinkMgr::IsValidIP(_szIP)){
-				OnConnect();            // 【2、AcceptEx完成后，绑定客户socket到完成端口，状态更新为连接】
+				OnAccept();             // 【2、AcceptEx完成后，绑定客户socket到完成端口，状态更新为连接】
 			} else {
 				OnInvalidMessage(Net_InvalidIP, 0, true);
 				return;
@@ -208,7 +208,7 @@ void ServLink::UpdateAcceptAddr()
 	strcpy_s(_szIP, inet_ntoa(_peer.sin_addr));
 	//_port = _peer.sin_port;
 }
-void ServLink::OnConnect()	// state Move from ACCEPTING to CONNECTED
+void ServLink::OnAccept()	// state Move from ACCEPTING to CONNECTED
 {
 	assert(_eState == STATE_ACCEPTING);
 	m_dwLastHeart = -1;
@@ -554,6 +554,12 @@ void ServLink::HandleClientMessage(void* pMsg, int size)
 
 bool ServLink::SendMsg(const void* pMsg, uint16 msgSize)
 {
+    /*【优化】
+    1、当前实现：若连接断开，业务层仍调用send，这份数据就抛弃了
+    2、能否更优雅的处理：先缓存到_sendBuf，待连接回复再继续发……golang是这样做的
+    3、目前ServLink同它内部的socket关联太紧密，难以拆分，否则便能学go：断线重连ServLink不变，自动替换内部socket
+    4、不过proactor模式，异步接口，想要拆分单独的socket，很不好整啊~囧
+    5、golang的tcp_conn.go、tcp_server.go配合起来，能做到协议层面的自动重连，比c++便捷多了 */
 	if (_bInvalid) return false;
 
 	if (msgSize >= IN_BUFFER_SIZE)

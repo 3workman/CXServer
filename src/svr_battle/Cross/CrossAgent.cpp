@@ -13,7 +13,7 @@ void CrossAgent::RunClientIOCP()
 {
     _netLink->SetOnConnect([&](){
         //Notice: 这里不能用CallRpc，多线程呐~
-        SendMsg(_first_buf);
+        SendMsg(_first_buf); //Notice: 用于Go那边底层协议的自动重连功能，须是连接建立的第一个包
         NetPack regMsg(16);
         regMsg.OpCode(sRpcCross.RpcNameToId("rpc_regist"));
         regMsg << "battle" << (uint32)1;

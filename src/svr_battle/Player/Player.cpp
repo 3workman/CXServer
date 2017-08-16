@@ -48,8 +48,6 @@ void Player::SetNetLink(NetLinkPtr p)
 }
 void Player::SendMsg(const NetPack& pack)
 {
-    if (!_clientNetLink) return; //Notice：断线重连期间，连接无效
-
     const uint8 type = pack.Type();
     const void* buf = NULL; int bufLen = 0;
 

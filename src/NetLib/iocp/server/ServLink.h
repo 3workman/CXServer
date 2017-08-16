@@ -109,7 +109,7 @@ public:
 	static uint16 s_nID;
 
 	EStatus _eState = STATE_DEAD;
-	void OnConnect();
+	void OnAccept();
 	bool CloseLink();
 	bool CreateLinkAndAccept();
 	void UpdateAcceptAddr();

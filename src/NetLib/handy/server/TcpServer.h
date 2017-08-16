@@ -1,12 +1,7 @@
 #pragma once
+#include "handy/handy.h"
+#include <thread>
 
-namespace handy { 
-    class EventBase;
-    class TcpConnPtr;
-}
-namespace std {
-    class thread;
-}
 struct NetCfgServer;
 class TcpServer {
 public:
@@ -19,7 +14,7 @@ public:
     BindLinkFunc        _BindLinkAndPlayer = NULL;
     HandleMsgFunc       _HandleClientMsg = NULL;
     ReportErrorFunc     _ReportErrorMsg = NULL;
-    handy::EventBase*   _EventLoop = NULL;
+    handy::EventBase    _EventLoop;
     std::thread*        _thread = NULL;
 
 public:
