@@ -10,6 +10,7 @@ class UdpClientAgent;   typedef UdpClientAgent*     NetLinkPtr;
 #elif defined(_USE_IOCP)
 class ServLink;         typedef ServLink*           NetLinkPtr;
 #elif defined(_USE_HANDY)
+#include "handy/handy.h"
 class TcpConnPtr;       typedef handy::TcpConnPtr   NetLinkPtr;
 #endif
 
@@ -29,7 +30,7 @@ private:
     NetLinkPtr      _clientNetLink = NULL;
 public:
     uint32          m_pid = 0;
-    string          m_name;
+    std::string     m_name;
     bool            m_isLogin = false;
 //////////////////////////////////////////////////////////////////////////
     PlayerRoomData& m_Room;

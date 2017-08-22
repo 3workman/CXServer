@@ -2,6 +2,8 @@
 #include "LuaCall.h"
 #include "tolua.h"
 
+using namespace std;
+
 #define LUA_PATH  "../script/"
 #define LUA_PATH2 "package.path = '../script/?.lua;'..package.path"
 

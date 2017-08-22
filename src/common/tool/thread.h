@@ -2,12 +2,10 @@
 #include <thread>
 #include <condition_variable>
 
-using namespace std;
-
 class Thread {
-    std::thread*        _thread;
-    cMutex              _mutex;
-    condition_variable  _cond;
+    std::thread*            _thread;
+    cMutex                  _mutex;
+    std::condition_variable _cond;
 public:
     Thread() { _thread = NULL; }
     ~Thread(){ EndThread(); }
@@ -25,7 +23,7 @@ public:
 		delete _thread;
 		_thread = NULL;
 	}
-    cv_status WaitKillEvent(uint dwMilliseconds = 0)
+    std::cv_status WaitKillEvent(uint dwMilliseconds = 0)
 	{
         std::unique_lock<std::mutex> lock(_mutex);
         return _cond.wait_for(lock, std::chrono::milliseconds(dwMilliseconds));

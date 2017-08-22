@@ -125,7 +125,7 @@ Rpc_Realize(rpc_battle_reconnect)
 }
 Rpc_Realize(rpc_echo)
 {
-    string str = req.ReadString();
+    std::string str = req.ReadString();
     const char* pstr = str.c_str();
     LOG_TRACK("Echo: %s\n", pstr);
 

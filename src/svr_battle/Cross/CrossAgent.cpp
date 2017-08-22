@@ -13,7 +13,7 @@ void CrossAgent::RunClientIOCP()
 {
     _netLink->SetOnConnect([&](){
         //Notice: 这里不能用CallRpc，多线程呐~
-        SendMsg(_first_buf); //Notice: 用于Go那边底层协议的自动重连功能，须是连接建立的第一个包
+        _netLink->SendMsg(&_connId, sizeof(_connId)); //第一条消息：上报connId
         NetPack regMsg(16);
         regMsg.OpCode(sRpcCross.RpcNameToId("rpc_regist"));
         regMsg << "battle" << (uint32)1;
@@ -36,8 +36,6 @@ CrossAgent::CrossAgent()
 #define Rpc_Declare(typ) _rpc[sRpcCross.RpcNameToId(#typ)] = &CrossAgent::HandleRpc_##typ;
         Rpc_For_Cross;
     }
-
-    _first_buf << uint32(0);
 }
 CrossAgent::~CrossAgent()
 {
@@ -64,7 +62,7 @@ void CrossAgent::SendMsg(const NetPack& pack)
 // rpc
 Rpc_Realize(rpc_echo)
 {
-    string str = req.ReadString();
+    std::string str = req.ReadString();
     printf("Echo: %s\n", str.c_str());
 
     //NetPack& backBuffer = BackBuffer();
@@ -72,14 +70,13 @@ Rpc_Realize(rpc_echo)
 }
 Rpc_Realize(rpc_svr_accept)
 {
-    auto connId = req.ReadUInt32();
-    _first_buf.SetPos(0, connId);
+    _connId = req.ReadUInt32();
 }
 Rpc_Realize(rpc_battle_handle_player_data) //回复<pid>列表
 {
     uint8 cnt = req.ReadUInt8();
     ack << cnt;
-    vector<Player*> lst; lst.reserve(cnt);
+    std::vector<Player*> lst; lst.reserve(cnt);
     for (uint i = 0; i < cnt; ++i) {
         uint32 pid = req.ReadUInt32();
         Player* player = Player::FindByPid(pid);

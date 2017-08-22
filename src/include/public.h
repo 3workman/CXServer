@@ -16,8 +16,6 @@
 #include "Log/LogFile.h"
 #include "Rand/rand.h"
 
-using namespace std;
-
 #define STATIC_ASSERT_ARRAY_LENGTH(arr, len) static_assert(sizeof(arr)/sizeof(arr[0])==(len), #arr)
 #define STATIC_ASSERT_ARRAY_ARRAY(arrA, arrB) static_assert(sizeof(arrA)/sizeof(arrA[0])==sizeof(arrB)/sizeof(arrB[0]), #arrA)
 

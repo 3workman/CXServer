@@ -152,7 +152,7 @@ bool ServLinkMgr::_AssistLoop()
 	time(&_timeNow);
     int elapsedTime = 0;
     time_t initTime = GameApi::TimeMS();
-    while (cv_status::timeout == _pThread->WaitKillEvent(_config.dwAssistLoopMs))
+    while (std::cv_status::timeout == _pThread->WaitKillEvent(_config.dwAssistLoopMs))
 	{
         time_t tempNow = GameApi::TimeMS();
 		int tempElapse = int(tempNow - initTime);

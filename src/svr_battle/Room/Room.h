@@ -8,7 +8,7 @@ class CRoom {
     static std::map<uint32, CRoom*>     RoomList;
 private:
     std::map<uint, Player*>             m_players;
-    std::map<uint8, vector<Player*>>    m_waitLst;//各战队的等待列表长度相差不大于1，才加入战斗
+    std::map<uint8, std::vector<Player*>> m_waitLst;//各战队的等待列表长度相差不大于1，才加入战斗
     const uint8                         m_kTeamCntMax;//本房间允许的战队数目
 
 public:

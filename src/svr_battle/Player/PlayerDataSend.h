@@ -33,7 +33,7 @@ class PlayerDataSend {
 
         stKeyInfo(ValueEnum typ) : type(typ){}
     };
-    vector<stKeyInfo> m_vecKey;
+    std::vector<stKeyInfo> m_vecKey;
 
 public:
     void ToBuf(NetPack& buf);

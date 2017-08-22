@@ -59,7 +59,7 @@ public:
             (pObj->*(it->second))(buf, m_BackBuffer);
             if (m_BackBuffer.OpCode()) SendBackBuffer(pObj);
 #ifdef _DEBUG
-            std::cout << "Recv Msg: " << DebugRpcIdToName(opCode) << " id:" << opCode << endl;
+            std::cout << "Recv Msg: " << RpcIdToName(opCode) << " id:" << opCode << std::endl;
 #endif
         } else {
             auto it = m_response.find(buf.GetReqKey());
@@ -91,7 +91,7 @@ public:
         }
         return (uint16)it->second;
     }
-    const char* DebugRpcIdToName(int id)
+    const char* RpcIdToName(int id)
     {
         for (auto& it : _rpc_table)
         {
