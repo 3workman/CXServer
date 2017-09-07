@@ -43,7 +43,7 @@ static const char* FindName(const char* file) {
     const int len = strlen(file);
     for (int i = len - 1; i >= 0; --i)
     {
-        if (file[i] == '\\')
+        if (file[i] == '\\' || file[i] == '/')
         {
             return &file[i + 1];
         }

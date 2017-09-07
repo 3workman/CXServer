@@ -1,34 +1,43 @@
 #include "stdafx.h"
 #include "Player/Player.h"
 #include "CrossAgent.h"
+#ifdef _WIN32
 #include "iocp/client/ClientLink.h"
+#else
+#include "handy/client/TcpClient.h"
+#endif
 #include "Timer/TimerWheel.h"
 #include "Room/Room.h"
-#include "Room/PlayerRoomData.h"
 #include "Log/LogFile.h"
+#include "Room/PlayerRoomData.h"
 
+using namespace std;
 std::map<int, CrossAgent::_RpcFunc> CrossAgent::_rpc;
 
-void CrossAgent::RunClientIOCP()
+void CrossAgent::RunClient()
 {
-    _netLink->SetOnConnect([&](){
-        //Notice: ’‚¿Ô≤ªƒ‹”√CallRpc£¨∂‡œﬂ≥Ãƒ≈~
-        _netLink->SendMsg(&_connId, sizeof(_connId)); //µ⁄“ªÃıœ˚œ¢£∫…œ±®connId
-        NetPack regMsg(16);
-        regMsg.OpCode(sRpcCross.RpcNameToId("rpc_regist"));
-        regMsg << "battle" << (uint32)1;
-        SendMsg(regMsg);
-    });
-    _netLink->CreateLinkAndConnect([&](void* p, int size){
+    _netLink->CreateLinkAndConnect([&]() {
+        _OnConnect();
+    }, [&](const void* p, int size) {
         sRpcCross.Insert(this, p, size);
     });
-    // µ»¥˝ConnectEx»˝¥ŒŒ’ ÷ÕÍ≥…µƒªÿµ˜£¨÷Æ∫Û≤≈ƒ‹∑¢ ˝æ›
-    while (!_netLink->IsClose() && !_netLink->IsConnect()) Sleep(200);
+
+    //// Á≠âÂæÖConnectEx‰∏âÊ¨°Êè°ÊâãÂÆåÊàêÁöÑÂõûË∞ÉÔºå‰πãÂêéÊâçËÉΩÂèëÊï∞ÊçÆ
+    //while (!_netLink->IsClose() && !_netLink->IsConnect()) Sleep(200);
 }
+void CrossAgent::_OnConnect()
+{
+    //Notice: ËøôÈáå‰∏çËÉΩÁî®CallRpcÔºåÂ§öÁ∫øÁ®ãÂëê~
+    _netLink->SendMsg(&_connId, sizeof(_connId)); //Á¨¨‰∏ÄÊù°Ê∂àÊÅØÔºö‰∏äÊä•connId
+    NetPack regMsg(16);
+    regMsg.OpCode(sRpcCross.RpcNameToId("rpc_regist"));
+    regMsg << "battle" << (uint32)1;
+    SendMsg(regMsg);
+}
+
 CrossAgent::CrossAgent()
 {
-    _config.svrPort = 7003; //TODO: svr_cross: ip & port
-    _netLink = new ClientLink(_config);
+    _netLink = new TcpClient(_config);
 
     if (_rpc.empty())
     {
@@ -39,8 +48,6 @@ CrossAgent::CrossAgent()
 }
 CrossAgent::~CrossAgent()
 {
-    _netLink->SetReConnect(false);
-    _netLink->CloseLink(0);
     delete _netLink;
 }
 uint64 CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun)
@@ -55,14 +62,14 @@ void CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun, const P
 }
 void CrossAgent::SendMsg(const NetPack& pack)
 {
-    _netLink->SendMsg(pack.contents(), (uint16)pack.size());
+    _netLink->SendMsg(pack.contents(), pack.size());
 }
 
 //////////////////////////////////////////////////////////////////////////
 // rpc
 Rpc_Realize(rpc_echo)
 {
-    std::string str = req.ReadString();
+    string str = req.ReadString();
     printf("Echo: %s\n", str.c_str());
 
     //NetPack& backBuffer = BackBuffer();
@@ -72,9 +79,10 @@ Rpc_Realize(rpc_svr_accept)
 {
     _connId = req.ReadUInt32();
 }
-Rpc_Realize(rpc_battle_handle_player_data) //ªÿ∏¥<pid>¡–±Ì
+Rpc_Realize(rpc_battle_handle_player_data)//ÂõûÂ§ç<pid>ÂàóË°®
 {
     uint8 cnt = req.ReadUInt8();
+    ack << Player::GetPlayerCnt() + cnt;
     ack << cnt;
     std::vector<Player*> lst; lst.reserve(cnt);
     for (uint i = 0; i < cnt; ++i) {
@@ -82,7 +90,7 @@ Rpc_Realize(rpc_battle_handle_player_data) //ªÿ∏¥<pid>¡–±Ì
         Player* player = Player::FindByPid(pid);
         if (player == NULL) player = new Player(pid);
 
-        //svr_game --- Rpc_Battle_Begin£¨∏¸–¬ÕÊº“’Ω∂∑ ˝æ›
+        //svr_game --- Rpc_Battle_BeginÔºåÊõ¥Êñ∞Áé©ÂÆ∂ÊàòÊñóÊï∞ÊçÆ
         player->m_name = req.ReadString();
 
         ack << pid;
@@ -92,14 +100,14 @@ Rpc_Realize(rpc_battle_handle_player_data) //ªÿ∏¥<pid>¡–±Ì
             continue;
         }
 
-        //“ª∂Œ ±º‰client√ª¡¨…œ¿¥£¨∑¿÷πµ»¥˝º”»Î÷–Õæ≥ˆ¥Ì(«ø…±Ω¯≥Ã)£¨ƒ⁄¥Ê–π¬∂
-        //°æBug°øø…ƒ‹‘⁄∂® ±∆˜∆⁄º‰£¨ÕÊº“µ«¬º”÷¿Îœﬂ£¨À˘“‘ªπ–Ë≈–∂œplayer «∑Ò“—±ªdelete
+        //‰∏ÄÊÆµÊó∂Èó¥clientÊ≤°Ëøû‰∏äÊù•ÔºåÈò≤Ê≠¢Á≠âÂæÖÂä†ÂÖ•‰∏≠ÈÄîÂá∫Èîô(Âº∫ÊùÄËøõÁ®ã)ÔºåÂÜÖÂ≠òÊ≥ÑÈú≤
+        //„ÄêBug„ÄëÂèØËÉΩÂú®ÂÆöÊó∂Âô®ÊúüÈó¥ÔºåÁé©ÂÆ∂ÁôªÂΩïÂèàÁ¶ªÁ∫øÔºåÊâÄ‰ª•ËøòÈúÄÂà§Êñ≠playerÊòØÂê¶Â∑≤Ë¢´delete
         sTimerMgr.AddTimer([=]{
             if (!player->m_isLogin && player->m_pid) delete player;
         }, 10);
 
         lst.push_back(player);
-    } 
+    }
     bool isJoin = false;
     for (auto& it : CRoom::RoomList) {
         if (it.second->TryToJoinWaitLst(lst)) {

@@ -39,22 +39,21 @@ class ClientLink {
 	enum EStatus { State_Close, State_Connecting, State_Connected };
 public:
 	ClientLink(const NetCfgClient& info);
-    //~ClientLink(){};
+    ~ClientLink();
 
 	static bool InitWinsock();
 	static bool CleanWinsock();
 
     typedef std::function<void()> OnConnectFunc;
-    typedef std::function<void(void* pMsg, int size)> HandleMsgFunc;
+    typedef std::function<void(const void* pMsg, int size)> HandleMsgFunc;
 
-    bool CreateLinkAndConnect(const HandleMsgFunc& handleMsg);
+    //【Notice: 设置的callback是由DoneIO线程调用的，里头要考虑线程安全性】
+    bool CreateLinkAndConnect(const OnConnectFunc& onConnect, const HandleMsgFunc& onMsg);
     void CloseLink(int nErrorCode);
     void SendMsg(const void* pMsg, uint16 size);
     bool IsConnect(){ return _eState == State_Connected; }
     bool IsClose(){ return _eState == State_Close; }
     void SetReConnect(bool b){ _bReConnect = b; }
-    ///【Notice: 设置的callback是由DoneIO线程调用的，里头要考虑线程安全性】
-    void SetOnConnect(const OnConnectFunc& func){ _OnConnect = func; }
 private:
     static void CALLBACK DoneIO(DWORD, DWORD, LPOVERLAPPED);
     void DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO eFlag);
@@ -84,8 +83,6 @@ private:
     cMutex _csWrite;
 
 	const NetCfgClient& _config;
-
-    void*               _player = NULL;
     HandleMsgFunc       _HandleServerMsg;
     OnConnectFunc       _OnConnect;
 };

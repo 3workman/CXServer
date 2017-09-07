@@ -335,7 +335,7 @@ void ServLink::Maintain(time_t timenow)
 			printf("DeadTime%d - %d \n", RecvIOElapsed(timenow), _nLinkID);
 			OnInvalidMessage(Net_IdleTooLong, 0, true);
 		}
-		/*【见DoneIOCallback中的优化】
+        /*【见DoneIOCallback中的优化】
 		else if (RecvIOElapsed(timenow) > MAX_Silent_Seconds && _hEventClose)
 		{
 			// 目前是DoneIO“dwNumberOfBytesTransferred = 0”则shutdown成无效的，等待后CloseLink
@@ -375,7 +375,7 @@ void ServLink::OnSend_DoneIO(DWORD dwNumberOfBytesTransferred)
 		有了辅助线程ServerRun_SendIO()，这里的补发貌似可以省掉
 		否则，必不可少，比如：业务层发了最后一条msg，但一次io并未发完
 	*/
-	if (DWORD nLeft = _sendBuf.readableBytes())
+	if (DWORD nLeft = (DWORD)_sendBuf.readableBytes())
 	{
 		PostSend(_sendBuf.beginRead(), nLeft);
 	}
@@ -384,7 +384,7 @@ void ServLink::ServerRun_SendIO() //【brief.7】另辟线程定期发送所有buffer
 {
 	cLock lock(_csLock);
 
-	DWORD nLen = _sendBuf.readableBytes();
+    DWORD nLen = (DWORD)_sendBuf.readableBytes();
 	if (_bCanWrite && nLen > 0)
 	{
 		PostSend(_sendBuf.beginRead(), nLen);
@@ -501,7 +501,7 @@ int ServLink::RecvMsg(char* pMsg, DWORD size)
 			_recvPacketTime = _pMgr->_timeNow;
 			_recvPacket = 0;
 		}else{
-			printf("Recieve %d Packet in Time %d \n", _recvPacket, _pMgr->_timeNow - _recvPacketTime);
+			printf("Recieve %d Packet in Time %lld \n", _recvPacket, _pMgr->_timeNow - _recvPacketTime);
 			OnInvalidMessage(Message_TooMuchPacket, 0, true);
 			_recvPacketTime = _pMgr->_timeNow;
 			_recvPacket = 0;
@@ -510,7 +510,7 @@ int ServLink::RecvMsg(char* pMsg, DWORD size)
 	}
 	return 0;
 }
-void ServLink::OnInvalidMessage(InvalidMessageEnum e, int nErrorCode, bool bToClient, int nParam/* = 0*/)
+void ServLink::OnInvalidMessage(InvalidMessageEnum e, int nErrorCode, bool bToClient)
 {
 	if (!_bInvalid && bToClient)
 	{
@@ -529,19 +529,13 @@ void ServLink::OnInvalidMessage(InvalidMessageEnum e, int nErrorCode, bool bToCl
 	{
 		//stMsg msg;
 		//msg.eReason = e;
-        _pMgr->_ReportErrorMsg(_player, e, nErrorCode, nParam);
+        _pMgr->_ReportErrorMsg(_player, e, nErrorCode);
         _player = NULL;
 	}
 }
 void ServLink::HandleClientMessage(void* pMsg, int size)
 {
     //Notice：这里的stMsg*还是网络buffer里的，得拷贝一份到主循环的消息内存池中，在那边才真正HandleMsg，ServLink只负责收网络包，转给业务层
-
-    /*TODO：
-        1、每个ServLink挂接一个Player指针
-        2、玩家登出时，将指针置空
-        3、在主循环HandleMsg之后，处理登出逻辑，防止消息池中出现野指针
-    */
     if (_player == NULL)
     {
         if (!_pMgr->_BindLinkAndPlayer(_player, this, pMsg, size))
@@ -560,7 +554,7 @@ bool ServLink::SendMsg(const void* pMsg, uint16 msgSize)
     3、目前ServLink同它内部的socket关联太紧密，难以拆分，否则便能学go：断线重连ServLink不变，自动替换内部socket
     4、不过proactor模式，异步接口，想要拆分单独的socket，很不好整啊~囧
     5、golang的tcp_conn.go、tcp_server.go配合起来，能做到协议层面的自动重连，比c++便捷多了 */
-	if (_bInvalid) return false;
+    if (_bInvalid) return false;
 
 	if (msgSize >= IN_BUFFER_SIZE)
 	{
@@ -579,7 +573,7 @@ bool ServLink::SendMsg(const void* pMsg, uint16 msgSize)
 
 	if (_bCanWrite && msgSize > 0)
 	{
-		return PostSend(_sendBuf.beginRead(), _sendBuf.readableBytes());
+		return PostSend(_sendBuf.beginRead(), (DWORD)_sendBuf.readableBytes());
 	}
 	return true;
 }

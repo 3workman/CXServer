@@ -8,7 +8,6 @@
 #elif defined(_USE_HANDY)
 #include "handy/server/TcpServer.h"
 #endif
-#include "iocp/client/ClientLink.h"
 #include "Cross/CrossAgent.h"
 #include "RakSleep.h"
 #include "Service/ServiceMgr.h"
@@ -70,28 +69,27 @@ void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
 
 int main(int argc, char* argv[])
 {
+    setvbuf(stdout, NULL, _IOLBF, 0); //设置stdout的缓冲类型为行缓冲，重定向文件更友好
+
     LogFile log("log/battle", LogFile::TRACK, true);
     _LOG_MAIN_(log);
 
     // unit test
     unittest::UnitTest::RunAllTests();
 
-    ClientLink::InitWinsock();
-    sCrossAgent.RunClientIOCP();
 
     NetCfgServer cfg; //网络，初始化
 #ifdef _USE_RAKNET
     UdpServer upd(cfg);
     upd.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 #elif defined(_USE_IOCP)
-    ClientLink::InitWinsock();
-    //sCrossAgent.RunClientIOCP();
     ServLinkMgr mgr(cfg);
     mgr.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 #elif defined(_USE_HANDY)
     TcpServer svr(cfg);
     svr.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 #endif
+    sCrossAgent.RunClient();
 
     uint64 timeOld(0), timeNow = GameApi::TimeMS();
     while (true) {
@@ -112,6 +110,7 @@ int main(int argc, char* argv[])
 #elif defined(_USE_HANDY)
         sRpcClient.Update();
 #endif
+        sRpcCross.Update();
 
         uint tickDiff = uint(GameApi::TimeMS() - timeNow);
         if (tickDiff < 20) RakSleep(20 - tickDiff); //TODO: bug

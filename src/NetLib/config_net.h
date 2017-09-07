@@ -22,7 +22,7 @@ struct NetCfgServer
 struct NetCfgClient
 {
     const char* svrIp = "127.0.0.1";
-    uint16 svrPort = 7030;
+    uint16 svrPort = 7003; //svr_cross
     uint32 nMaxPackageSend = 1024 * 20;
     const char* kPassword = "ChillyRoom";
 };

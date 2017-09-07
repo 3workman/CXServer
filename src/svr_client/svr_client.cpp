@@ -7,7 +7,7 @@ void test_svr_battle(int playerCnt);
 
 int main(int argc, char* argv[])
 {
-    LogFile log("log\\client", LogFile::DEBUG, true);
+    LogFile log("log/client", LogFile::DEBUG, true);
     _LOG_MAIN_(log);
 
     //test_svr_battle(200);

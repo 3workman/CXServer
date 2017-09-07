@@ -12,9 +12,17 @@ void TcpServer::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, Re
     _HandleClientMsg = handleClientMsg;
     _ReportErrorMsg = reportErrorMsg;
 
-    handy::Signal::signal(SIGINT, [&] { _EventLoop.exit(); });
+    _thread = new std::thread([&]{ _loop(); });
+}
+TcpServer::~TcpServer() {
+    delete _thread;
+}
+void TcpServer::_loop()
+{
+    handy::EventBase base;
+    handy::Signal::signal(SIGINT, [&]{ base.exit(); });
 
-    handy::TcpServerPtr svr = handy::TcpServer::startServer(&_EventLoop, "", _config.wPort);
+    handy::TcpServerPtr svr = handy::TcpServer::startServer(&base, _config.ip, _config.wPort);
     if (svr == NULL) {
         printf("Server failed to start.  Terminating.\n");
         return;
@@ -26,20 +34,18 @@ void TcpServer::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, Re
             case handy::TcpConn::Connected:
                 break;
             case handy::TcpConn::Closed:
+                _ReportErrorMsg(conn->context<void*>(), 0, 0);
+                break;
+            default:
                 break;
             }
         });
         conn->onMsg(new handy::LengthCodec, [&](const handy::TcpConnPtr& conn, handy::Slice msg) {
-            if (msg.size() == 0) { //忽略空消息
-                return;
-            }
-            conn->sendMsg(handy::util::format("#sended to %d users", 233));
-
             if (conn->context<void*>() == NULL)
             {
                 if (!_BindLinkAndPlayer(conn->context<void*>(), conn, msg.begin(), msg.size()))
                 {
-                    _ReportErrorMsg(conn->context<void*>(), 0, 0, 0);
+                    _ReportErrorMsg(conn->context<void*>(), 0, 0);
                     conn->close();
                 }
             }
@@ -47,8 +53,5 @@ void TcpServer::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, Re
         });
         return conn;
     });
-    _thread = new std::thread([&] { _EventLoop.loop(); });
-}
-TcpServer::~TcpServer() {
-    delete _thread;
+    base.loop();
 }

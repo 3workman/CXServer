@@ -87,7 +87,7 @@ public:
 class CPoolLevel {
     enum {
         MinBlock = 32,  //最小内存块尺寸
-        MaxLevel = 5,   //每高一级，尺寸加倍，数量减半
+        MaxLevel = 5,   //每低一级，尺寸减半，数量加倍
     };
 #define LevelSize(lv) (MinBlock << (lv))
 #define LevelCnt(lv)  (m_MaxLvCnt << (MaxLevel-(lv)))

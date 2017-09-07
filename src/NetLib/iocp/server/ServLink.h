@@ -55,7 +55,7 @@
 #include "tool/cLock.h"
 #include "tool/GameApi.h"
 
-enum InvalidMessageEnum{
+enum InvalidMessageEnum {
     Message_NoError,
     Message_InvalidPacket = 1,
     Message_TypeError = 2,
@@ -143,7 +143,7 @@ public:
 	}
 
 	InvalidMessageEnum _eLastError = Message_NoError;
-	void OnInvalidMessage(InvalidMessageEnum e, int nErrorCode, bool bToClient, int nParam = 0);
+	void OnInvalidMessage(InvalidMessageEnum e, int nErrorCode, bool bToClient);
     void HandleClientMessage(void* pMsg, int size);
 
 	void Err(LPCSTR sz){

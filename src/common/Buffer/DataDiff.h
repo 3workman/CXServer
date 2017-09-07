@@ -84,6 +84,14 @@ public:
     }
 
     void diff(NetPack& buf);
-
-    //static void diff(NetPack& buf, GameObject::Ptr obj);
 };
+
+//void CRoom::WriteObjectDiff(NetPack& buf, GameObject::Ptr obj)
+//{
+//    buf.WriteUuid(obj->Get<NetID>()->uid);
+//
+//    if (auto ptr = obj->Get<DataDiff>())
+//    {
+//        ptr->diff(buf);
+//    }
+//}

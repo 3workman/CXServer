@@ -8,13 +8,16 @@
 
 #define CHECK_INTERVAL		1000
 
-ServLinkMgr::ServLinkMgr(const NetCfgServer& info) : _config(info)
+ServLinkMgr::ServLinkMgr(const NetCfgServer& info)
+    : _config(info)
 {
-	_pThread = NULL;
+    InitWinsock();
+    _pThread = NULL;
 	_vecLink.reserve(info.dwMaxLink);
 }
 ServLinkMgr::~ServLinkMgr()
 {
+    CleanWinsock();
 	delete _pThread;
 }
 
@@ -131,7 +134,6 @@ bool ServLinkMgr::Close()
 			it->CloseLink();
 		}
 	}
-	CleanWinsock();
 	Sleep(2000);
 	for (auto& it : _vecLink) { delete it; }
 	return true;
@@ -181,9 +183,9 @@ void ServLinkMgr::Maintain(time_t timenow)
 		if (it->IsSocket())
 			it->Maintain(timenow);
 		else if (_nAccept < _config.nPreAccept)
-			it->CreateLinkAndAccept();
+			it->CreateLinkAndAccept(); //FIXME：这里是纯粹复用旧ServLink的内存块，没经过c++的构造析构过程，不满足c++范式，容易出bug
 	}
-	//Notice：还不够，补新的
+	// 还不够，补新的
 	while (_nAccept < _config.nPreAccept && _vecLink.size() < _config.dwMaxLink)
 	{
 		if (ServLink* pLink = new ServLink(this)) //TODO：可以做个对象池优化下

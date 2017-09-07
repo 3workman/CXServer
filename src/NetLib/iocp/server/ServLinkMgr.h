@@ -38,7 +38,7 @@ class ServLinkMgr{
 public:
     typedef void(*HandleMsgFunc)(void* player, const void* pMsg, int size);
     typedef bool(*BindLinkFunc)(void*& refPlayer, ServLink* p, const void* pMsg, int size);
-    typedef void(*ReportErrorFunc)(void* player, int InvalidEnum, int nErrorCode, int nParam);
+    typedef void(*ReportErrorFunc)(void* player, int InvalidEnum, int nErrorCode);
 
 	const NetCfgServer& _config;
 	time_t              _timeNow = 0;

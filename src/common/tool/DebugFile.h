@@ -8,7 +8,7 @@
 		· 静态字符串，作"key"处理，底层不会移动指针
 		· 变量，作"value"处理，放入一个，指针移动一次
 
-	3、Output()中：sFileName可包含路径"星魂\\ExchangeTrain"；sKeyList用以指定输出那些变量
+	3、Output()中：sFileName可包含路径"星魂/ExchangeTrain"；sKeyList用以指定输出那些变量
 
 	4、可于消息响应函数中绑定关心的变量，函数执行完毕后查看其变动情况
 
@@ -185,9 +185,9 @@ private:
 		int a = 0;
 		float f = 0.1f;
 		double d = 0.02;
-		cDebugFile file("渣渣\\test");
+		cDebugFile file("渣渣/test");
 		file << "a" << a << "f" << f << "d" << d;
-		//DebugFile_Create("渣渣\\test");
+		//DebugFile_Create("渣渣/test");
 		//DebugFile_Input("aa", a);
 		a++; f = 0.11f; d = 0.787;
 	}

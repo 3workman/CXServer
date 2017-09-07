@@ -4,10 +4,10 @@
 static const uint Flush_Interval_Sec = 180; //INFINITE
 
 AsyncLog::AsyncLog(size_t maxSize, const WriteLogFunc& func)
-    : _curBuf(new Buffer(maxSize))
+    : _maxSize(maxSize)
+    , _curBuf(new Buffer(maxSize))
     , _nextBuf(new Buffer(maxSize))
     , _writeLogFunc(func)
-    , _maxSize(maxSize)
     //, _thread([&]{ this->_WriteLoop(bufSize); }) // 可能构造中途调度至子线程，访问到无效资源(_mutex)/未初始化变量
 {
 	_bufVec.reserve(8);

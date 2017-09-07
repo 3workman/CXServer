@@ -46,6 +46,8 @@
 #pragma once
 #include "tool/cLock.h"
 #include "Buffer/buffer.h"
+#include <thread>
+#include <condition_variable>
 
 class AsyncLog{
 public:

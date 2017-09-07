@@ -32,8 +32,8 @@ struct TimerNode {
     std::function<void()> func;
 
     TimerNode(const std::function<void()>& f, uint32 cd = 0, int total = 0)
-        : interval(cd)
-        , timeDead(0)
+        : timeDead(0)
+        , interval(cd)
         , loop(total)
         , func(f){};
     void _Callback();

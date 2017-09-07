@@ -1,0 +1,88 @@
+#!/bin/sh
+
+ulimit -c unlimited # 设置core大小为无限
+
+root=/mnt/d/soulnet
+passwd="890104"
+
+Init() {
+    # 构建配置环境，连接csv、ThirdParty等
+    ln -s $root/svr ~/bin/svr
+    ln -s $root/CXServer/data/csv $root/GoServer/bin/csv
+}
+RunSvr() {
+    # rm -f core
+    # rm -rf ./log
+    if [ $2 ] && [ $2 = "-d" ]; then
+        nohup ./svr_$1 > $root/$1.out 2>&1 &
+    else
+        ./svr_$1
+    fi
+}
+# --------------------------------------------------------------------------
+Battle() {
+    cd $root/CXServer/build
+    RunSvr battle $1
+}
+Center() {
+    cd $root/GoServer/bin
+    RunSvr center $1
+}
+Cross() {
+    cd $root/GoServer/bin
+    RunSvr cross $1
+}
+Game() {
+    cd $root/GoServer/bin
+    RunSvr game $1
+}
+Sdk() {
+    cd $root/GoServer/bin
+    RunSvr sdk $1
+}
+File() {
+    cd $root/GoServer/bin
+    RunSvr file $1
+}
+DB() {
+    nohup echo $passwd | sudo -S mongod --dbpath $root/GoServer/bin/db > $root/db.out 2>&1 &
+}
+# --------------------------------------------------------------------------
+KillAll() {
+    killall -9 svr_battle
+    killall -9 svr_center
+    killall -9 svr_cross
+    killall -9 svr_game
+    killall -9 svr_sdk
+    killall -9 svr_file
+}
+RunOne() {
+    if [ $2 ] && [ $2 != "-d" ]; then
+        echo "-d    run as a daemon"
+    else
+        case $1 in
+            0|"db")         DB $2;;
+            1|"center")     Center $2;;     #
+            2|"cross")      Cross $2;;      #
+            3|"sdk")        Sdk $2;;        #
+            4|"file")       File $2;;       #
+            5|"game")       Game $2;;       # link: cross center sdk
+            6|"battle")     Battle $2;;     # link: cross
+            "kill")         KillAll;;
+            "init")         Init;;
+            *) echo "Input a key, like:\n svr game [-d] \n svr 1 [-d]";;
+        esac
+    fi
+}
+# --------------------------------------------------------------------------
+for arg in $@; do
+    if [ $arg = "-d" ]; then
+        daemon="-d"
+        break
+    fi
+done
+for arg in $@; do
+    if [ $arg != "-d" ]; then
+        RunOne $arg $daemon
+    fi
+done

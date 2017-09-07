@@ -18,7 +18,11 @@ public:
 
     static bool     IsLog;
 private:
-    LARGE_INTEGER	m_begin;
+#ifdef _WIN32
+    LARGE_INTEGER   m_begin;
+#else
+    uint64          m_begin;
+#endif
     uint            m_cast;
     const char*		m_funName;
 };

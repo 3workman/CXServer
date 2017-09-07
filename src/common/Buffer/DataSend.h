@@ -55,14 +55,13 @@ struct Msg_ArrayData {
         MapData,
         CampData,
     };
-    char  typ;
-    bool  isReset;
-    short bits;
-    int data[ArrayData::DATA_SIZE];
+    char  typ = 0;
+    bool  isReset = false;
+    short bits = 0;
+    int data[ArrayData::DATA_SIZE] = {0};
 
-    Msg_ArrayData() : typ(0), bits(0), isReset(false){
+    Msg_ArrayData() {
         static_assert((sizeof(bits) * 8 >= ArrayData::DATA_SIZE), "Msg_ArrayData m_bits too short !!!");
-        memset(data, 0, sizeof(data));
     }
 
     int GetLength() const;

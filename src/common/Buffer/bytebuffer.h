@@ -150,9 +150,9 @@ public:
         assert(pos + cnt <= size());
         memcpy(&_storage[pos], src, cnt);
     }
-    inline void reverse() {
-        std::reverse(_storage.begin(), _storage.end());
-    }
+    //inline void reverse() {
+    //    std::reverse(_storage.begin(), _storage.end());
+    //}
     inline void swap(ByteBuffer &buf) {
         _storage.swap(buf._storage);
     }

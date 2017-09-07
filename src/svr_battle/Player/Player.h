@@ -10,8 +10,7 @@ class UdpClientAgent;   typedef UdpClientAgent*     NetLinkPtr;
 #elif defined(_USE_IOCP)
 class ServLink;         typedef ServLink*           NetLinkPtr;
 #elif defined(_USE_HANDY)
-#include "handy/handy.h"
-class TcpConnPtr;       typedef handy::TcpConnPtr   NetLinkPtr;
+class TcpConn;          typedef std::shared_ptr<TcpConn>   NetLinkPtr;
 #endif
 
 #undef Rpc_Declare
