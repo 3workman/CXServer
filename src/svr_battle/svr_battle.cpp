@@ -69,7 +69,7 @@ void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
 
 int main(int argc, char* argv[])
 {
-    setvbuf(stdout, NULL, _IOLBF, 0); //设置stdout的缓冲类型为行缓冲，重定向文件更友好
+    setvbuf(stdout, NULL, _IOLBF, 2); //设置stdout的缓冲类型为行缓冲，重定向文件更友好
 
     LogFile log("log/battle", LogFile::TRACK, true);
     _LOG_MAIN_(log);

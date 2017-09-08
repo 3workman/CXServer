@@ -5,7 +5,8 @@
 #elif defined(_USE_IOCP)
 #include "iocp/server/ServLink.h"
 #elif defined(_USE_HANDY)
-#include "handy/server/TcpServer.h"
+#include "handy/handy.h"
+#undef info
 #endif
 #include "Buffer/NetPack.h"
 #include "Room/PlayerRoomData.h"
