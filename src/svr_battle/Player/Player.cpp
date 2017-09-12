@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "Player.h"
 #ifdef _USE_RAKNET
+#include "PacketPriority.h"
 #include "raknet/server/UdpClientAgent.h"
 #elif defined(_USE_IOCP)
 #include "iocp/server/ServLink.h"
 #elif defined(_USE_HANDY)
 #include "handy/handy.h"
 #undef info
+#elif defined(_USE_LIBEVENT)
+#include "libevent/server/TcpClientAgent.h"
 #endif
 #include "Buffer/NetPack.h"
 #include "Room/PlayerRoomData.h"

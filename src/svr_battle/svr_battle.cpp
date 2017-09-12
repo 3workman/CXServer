@@ -7,6 +7,8 @@
 #include "iocp/server/ServLinkMgr.h"
 #elif defined(_USE_HANDY)
 #include "handy/server/TcpServer.h"
+#elif defined(_USE_LIBEVENT)
+#include "libevent/server/TcpServer.h"
 #endif
 #include "Cross/CrossAgent.h"
 #include "RakSleep.h"
@@ -46,9 +48,7 @@ void HandleClientMsg(void* player, const void* pMsg, int size)
 #ifdef _USE_RAKNET
     NetPack msg(pMsg, size);
     sRpcClient._Handle((Player*)player, msg);
-#elif defined(_USE_IOCP)
-    sRpcClient.Insert((Player*)player, pMsg, size);
-#elif defined(_USE_HANDY)
+#elif defined(_USE_IOCP) || defined(_USE_HANDY) || defined(_USE_LIBEVENT)
     sRpcClient.Insert((Player*)player, pMsg, size);
 #endif
 }
@@ -80,15 +80,14 @@ int main(int argc, char* argv[])
 
     NetCfgServer cfg; //网络，初始化
 #ifdef _USE_RAKNET
-    UdpServer upd(cfg);
-    upd.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
+    UdpServer svr(cfg);
 #elif defined(_USE_IOCP)
-    ServLinkMgr mgr(cfg);
-    mgr.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
-#elif defined(_USE_HANDY)
+    ServLinkMgr svr(cfg);
+#elif defined(_USE_HANDY) || defined(_USE_LIBEVENT)
     TcpServer svr(cfg);
-    svr.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 #endif
+    svr.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
+
     sCrossAgent.RunClient();
 
     uint64 timeOld(0), timeNow = GameApi::TimeMS();
@@ -103,11 +102,8 @@ int main(int argc, char* argv[])
 
 
 #ifdef _USE_RAKNET  //网络，更新
-        upd.Update();
-#elif defined(_USE_IOCP)
-        sRpcClient.Update();
-        //sRpcCross.Update();
-#elif defined(_USE_HANDY)
+        svr.Update();
+#elif defined(_USE_IOCP) || defined(_USE_HANDY) || defined(_USE_LIBEVENT)
         sRpcClient.Update();
 #endif
         sRpcCross.Update();

@@ -12,6 +12,8 @@ class ServLink;         typedef ServLink*           NetLinkPtr;
 #elif defined(_USE_HANDY)
 namespace handy { struct TcpConn; }
 typedef std::shared_ptr<handy::TcpConn> NetLinkPtr;
+#elif defined(_USE_LIBEVENT)
+class TcpClientAgent;   typedef TcpClientAgent*     NetLinkPtr;
 #endif
 
 #undef Rpc_Declare

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ClientLink.h"
 #include "config_net.h"
+#include "Timer/TimerWheel.h"
 
 #pragma comment(lib,"Ws2_32.lib")
 
@@ -50,7 +51,7 @@ bool ClientLink::CleanWinsock()
 ClientLink::ClientLink(const NetCfgClient& info)
 	: _config(info)
     , _sendBuf(IN_BUFFER_SIZE)
-    , _recvBuf(IN_BUFFER_SIZE * 2)
+    , _recvBuf(IN_BUFFER_SIZE)
 {
 	_ovRecv.eType = IO_Read;
 	_ovSend.eType = IO_Write;
@@ -188,14 +189,7 @@ void ClientLink::CloseLink(int nErrorCode)
     _sendBuf.clear();
 
     if (_bReConnect) {
-        while (!Connect()){
-            DWORD dwError = GetLastError();
-            if (WSAEWOULDBLOCK != dwError && ERROR_IO_PENDING != dwError)
-            {
-                printf("NetError_Connect:%x(%d) \n", dwError, dwError);
-            }
-            Sleep(3000);
-        }
+        sTimerMgr.AddTimer([=]{ Connect(); }, 10);
     }
 }
 
@@ -245,7 +239,7 @@ bool ClientLink::PostRecv()
 	//Notice：buf长度太短的性能损失（_recvBuf开的足够大8k）
 	WSABUF buf;
     buf.buf = _recvBuf.beginWrite();
-    buf.len = (ULONG)_recvBuf.writableBytes();
+    buf.len = _recvBuf.writableBytes();
 	DWORD dwBytes(0), dwFlags(0);
 	if (WSARecv(_sClient, &buf, 1, &dwBytes, &dwFlags, &_ovRecv, 0) == SOCKET_ERROR)
 	{

@@ -84,6 +84,12 @@ public:
 	}
 };
 
+/* 伙伴算法
+    、按2的次幂拆分内存块
+    、分配时，将大块拆为两个小块，剩下的称谓伙伴
+    、释放内存，合并空闲伙伴，直至遇到一个已分配伙伴停止
+    、【给定地址、块大小，很容易计算它伙伴的地址，两者只有一位不同】
+*/
 class CPoolLevel {
     enum {
         MinBlock = 32,  //最小内存块尺寸
@@ -98,10 +104,7 @@ class CPoolLevel {
 public:
     CPoolLevel(size_t maxLvCnt) : m_MaxLvCnt(maxLvCnt)
     {
-        for (int lv = 0; lv <= MaxLevel; ++lv)
-        {
-            _Double(lv);
-        }
+        _Double(lv);
     }
     void* Alloc(size_t size)
     {

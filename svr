@@ -9,6 +9,11 @@ Init() {
     # 构建配置环境，连接csv、ThirdParty等
     ln -s $root/svr ~/bin/svr
     ln -s $root/CXServer/data/csv $root/GoServer/bin/csv
+    ln -s $root/CXServer/ThirdParty/googletest/libgtest.a $root/CXServer/ThirdParty/libgtest.a
+    ln -s $root/CXServer/ThirdParty/handy/libhandy.a $root/CXServer/ThirdParty/libhandy.a
+    ln -s $root/CXServer/ThirdParty/lua-5.3.4/src/liblua.a $root/CXServer/ThirdParty/liblua.a
+    ln -s $root/CXServer/ThirdParty/raknet/Lib/LibStatic/libRakNetLibStatic.a $root/CXServer/ThirdParty/libRakNet.a
+    ln -s $root/CXServer/ThirdParty/zlib/libz.a $root/CXServer/ThirdParty/libz.a
 }
 RunSvr() {
     # rm -f core

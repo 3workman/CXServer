@@ -32,7 +32,8 @@ uint16 ServLink::s_nID = 0;
 
 ServLink::ServLink(ServLinkMgr* pMgr)
 	: _sendBuf(IN_BUFFER_SIZE)
-	, _recvBuf(IN_BUFFER_SIZE * 2) //_recvBuf开两倍大小，避免接收缓冲不够，见PostRecv()的Notice
+	//, _recvBuf(IN_BUFFER_SIZE * 2) //_recvBuf开两倍大小，避免接收缓冲不够，见PostRecv()的Notice
+    , _recvBuf(IN_BUFFER_SIZE)
 	, _pMgr(pMgr)
     , _nLinkID(++s_nID) // LinkID从1开始
 {
@@ -275,6 +276,8 @@ bool ServLink::CloseLink()
 		_hEventClose = NULL;
 	}
 	_eState = STATE_DEAD;
+
+    _pMgr->_ReportErrorMsg(_player, Message_NoError, 0);
     _player = NULL; //Notice：关闭链接时,将对应的角色清除,防止关联到错误的角色上
 
 	return true;
@@ -427,7 +430,8 @@ bool ServLink::PostRecv()
 		//Notice：len是固定的，如果buf指向的内存块实际没这么大，有内存越界风险（所以_recvBuf开了两倍大小）
 		//Notice：长度太短的性能损失
 		WSABUF wbuf;
-		wbuf.len = IN_BUFFER_SIZE;   //dont read so much...
+		//wbuf.len = IN_BUFFER_SIZE;   //dont read so much...
+        wbuf.len = _recvBuf.writableBytes();
         wbuf.buf = _recvBuf.beginWrite();
         DWORD dwBytes(0), dwFlags(0);
 		if (WSARecv(_sClient, &wbuf, 1, &dwBytes, &dwFlags, &_ovRecv, 0) == SOCKET_ERROR)
@@ -458,7 +462,7 @@ void ServLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 		char* pMsg = pPack + c_off;                 // 【后移2字节得：消息体指针】
 
 		// 1、检查消息大小
-		if (Config().nMaxPackage && kMsgSize >= Config().nMaxPackage) //消息太大
+		if (kMsgSize >= Config().nMaxPackage) //消息太大
 		{
 			_recvBuf.clear();
 			printf("TooHugePacket: Msg size(%d) Msg ID(%d)", kMsgSize, *((uint16*)pMsg)); // 【消息体：头2字节为消息ID】
