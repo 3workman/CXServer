@@ -2,12 +2,13 @@
 #include "ServiceMgr.h"
 #include "Service.h"
 
-uint _Service_Patch(void* p) { return printf("Service Path(%d)...\n", (int)p); }
-uint _Service_List(void* p) { printf("Service List(%d)...\n", (int)p); return 2000; }
-uint _Service_Vec(void* p) { printf("Service Vec(%d)...\n", (int)p); return 2000; }
-uint _Service_Map(void* p) { printf("Service Map(%d)...\n", (int)p); return 2000; }
 
-extern uint _Service_Sync_Position(void* p);
+uint _Service_Patch(void* p) { return printf("Service Path(%p)...\n", p); }
+uint _Service_List(void* p) { printf("Service List(%p)...\n", p); return 2000; }
+uint _Service_Vec(void* p) { printf("Service Vec(%p)...\n", p); return 2000; }
+uint _Service_Map(void* p) { printf("Service Map(%p)...\n", p); return 2000; }
+
+extern uint _Service_Room_GameLoop(void* p);
 
 static iService* g_aService[_Service_Max] = {
     new cServicePatch(_Service_Patch, 10000),
@@ -15,7 +16,7 @@ static iService* g_aService[_Service_Max] = {
     new cServiceVec(_Service_Vec),
     new cServiceMap(_Service_Map),
 
-    new cServiceList(_Service_Sync_Position),
+    new cServiceVec(_Service_Room_GameLoop),
 };
 void ServiceMgr::RunAllService(uint time_elapse, time_t timenow)
 {
@@ -32,8 +33,9 @@ bool ServiceMgr::Register(ServiceEnum typ, void* pObj)
 
 //////////////////////////////////////////////////////////////////////////
 // unit test
-#include "tool/UnitTest.h"
-TEST_CASE(ServiceList)
+#include "gtest/gtest.h"
+
+TEST(Service, List)
 {
     ServiceMgr::Register(Service_Test_List, (void*)11);
     ServiceMgr::UnRegister(Service_Test_List, (void*)11);
@@ -52,7 +54,7 @@ TEST_CASE(ServiceList)
     ServiceMgr::UnRegister(Service_Test_List, (void*)12);
     ServiceMgr::UnRegister(Service_Test_List, (void*)13);
 }
-TEST_CASE(ServiceVec)
+TEST(Service, Vec)
 {
     ServiceMgr::Register(Service_Test_Vec, (void*)11);
     ServiceMgr::UnRegister(Service_Test_Vec, (void*)11);
@@ -71,7 +73,7 @@ TEST_CASE(ServiceVec)
     ServiceMgr::UnRegister(Service_Test_Vec, (void*)12);
     ServiceMgr::UnRegister(Service_Test_Vec, (void*)13);
 }
-TEST_CASE(ServiceMap)
+TEST(Service, Map)
 {
     ServiceMgr::Register(Service_Test_Map, (void*)11);
     ServiceMgr::UnRegister(Service_Test_Map, (void*)11);
@@ -90,7 +92,7 @@ TEST_CASE(ServiceMap)
     ServiceMgr::UnRegister(Service_Test_Map, (void*)12);
     ServiceMgr::UnRegister(Service_Test_Map, (void*)13);
 }
-TEST_CASE(ServicePatch) //10s内平均调用
+TEST(Service, Patch) //10s内平均调用
 {
     ServiceMgr::Register(Service_Test_Patch, (void*)11);
     ServiceMgr::Register(Service_Test_Patch, (void*)12);

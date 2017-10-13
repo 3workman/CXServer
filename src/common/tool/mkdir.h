@@ -13,22 +13,22 @@
 #define STRDUP(a) strdup((a))
 #endif
 
-struct Dir { //Notice£ºÖ±½ÓÔÚÍ·ÎÄ¼şĞ´È«¾Öº¯ÊıµÄÊµÏÖ£¬±»¶à¸öcpp°üº¬ºó£¬Á´½Ó±¨´í£¬cµÄ±àÒëÔ­Àí°¡~£¬°üÒ»²ãÀàÉùÃ÷¾ÍÖ»±àÒëÒ»´ÎÁË(Ã²ËÆÀàÊÇÏÈÉ¨ÃèÔÙ±àÒëµÄ)
+struct Dir { //Noticeï¼šç›´æ¥åœ¨å¤´æ–‡ä»¶å†™å…¨å±€å‡½æ•°çš„å®ç°ï¼Œè¢«å¤šä¸ªcppåŒ…å«åï¼Œé“¾æ¥æŠ¥é”™ï¼Œcçš„ç¼–è¯‘åŸç†å•Š~ï¼ŒåŒ…ä¸€å±‚ç±»å£°æ˜å°±åªç¼–è¯‘ä¸€æ¬¡äº†(è²Œä¼¼ç±»æ˜¯å…ˆæ‰«æå†ç¼–è¯‘çš„)
 
 static void CreatDir(char* szDir /* "..\\log\\test\\" */)
 {
-    int kLen = strlen(szDir);
+    int kLen = (int)strlen(szDir);
     for (int i = 0; i < kLen; ++i) {
         if (szDir[i] == '\\' || szDir[i] == '/') {
             szDir[i] = '\0';
 
-            //Èç¹û²»´æÔÚ,´´½¨
+            //å¦‚æœä¸å­˜åœ¨,åˆ›å»º
             if (ACCESS(szDir, 0) != 0){
                 if (MKDIR(szDir) != 0){
                     return;
                 }
             }
-            szDir[i] = '/'; //Ö§³Ölinux,½«ËùÓĞ\\»»³É/
+            szDir[i] = '/'; //æ”¯æŒlinux,å°†æ‰€æœ‰\\æ¢æˆ/
         }
     }
 }
@@ -40,7 +40,7 @@ static void CreatDir(const char* dir)
 }
 
 static const char* FindName(const char* file) {
-    const int len = strlen(file);
+    const int len = (int)strlen(file);
     for (int i = len - 1; i >= 0; --i)
     {
         if (file[i] == '\\' || file[i] == '/')

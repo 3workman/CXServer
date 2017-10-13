@@ -1,8 +1,8 @@
 /***********************************************************************
-* @ 权重随机
+* @ 鏉冮噸闅忔満
 * @ brief
-    1、结构体中须有weight字段
-    2、std::random_shuffle(2)是好东东
+    1銆佺粨鏋勪綋涓』鏈墂eight瀛楁
+    2銆乻td::random_shuffle(2)鏄ソ涓滀笢
 
 * @ author zhoumf
 * @ date 2016-12-26
@@ -25,7 +25,7 @@ template <typename T> typename std::vector<T*>::const_iterator RandWeight(const 
     assert(0);
     return vec.end();
 }
-int RandWeight(const IntPairVec& vec) //权重数值对<val, weight>
+int RandWeight(const IntPairVec& vec) //鏉冮噸鏁板�煎<val, weight>
 {
     int sumWeight = 0;
     for (IntPairVec::const_iterator it = vec.begin(); it != vec.end(); ++it)

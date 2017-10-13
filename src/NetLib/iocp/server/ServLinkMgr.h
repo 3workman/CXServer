@@ -1,29 +1,29 @@
 /***********************************************************************
-* @ IOCPÍøÂç¿â
+* @ IOCPç½‘ç»œåº“
 * @ brief
-	1¡¢ClientÖ÷¶¯¶Ï¿ª£¬ÄÜ±£Ö¤ÊÕµ½socket close·ñ£¿
-		¡¤¿Í»§¶ËÖ÷¶¯close¡¢¹Ø½ø³Ì£¬ÓÐDoneIO»Øµ÷£¬ÇÒ¡°dwNumberOfBytesTransferred = 0¡±
-	2¡¢ClientÇ¿É±½ø³Ì£¬ÐÄÌø¼ì²é
-		¡¤ÊÖ¶¯É±½ø³Ì£º²Ù×÷ÏµÍ³TCPÄ£¿é»á´¥·¢¹Ø±Õ£¬¶Ô¶Ë¿ÉÊÕµ½socket close
-		¡¤Ö±½Ó¹Ø»ú£º¶Ô¶ËÊ²Ã´¶¼²»ÖªµÀÁË£¬Ðë¿¿ÐÄÌø°ü
-	3¡¢°üÓÐÐ§ÐÔÑéÖ¤(´óÐ¡¡¢¸ñÊ½¡¢¼ÓÃÜ)
-	4¡¢¿ØÖÆClient·¢°üÆµÂÊ
-	5¡¢Ä³Á´½ÓÏûÏ¢¶Ñ»ý£¬Ö÷¶¯Ìß³ö
-	6¡¢ÍøÂç²¨¶¯£¬ÕûÌåÑÓÊ±£¬·¢ËÍ»º³å¶Ñ»ý£¬ÄÚ´æÕðµ´
-	7¡¢ºýÍ¿´°¿Ú×ÛºÏÕ÷£¬¶à»áÉèÖÃTCP_NODELAY½ûÓÃNagleËã·¨£¬ÍøÂç¿â×Ô¼º¹ÜÀíÊý¾Ý·¢ËÍ
-		¡¤²¢°üÓÅ»¯£¬ÏûÏ¢»ýÀÛ³¬¹ý¶¨³¤ºó²Åµ÷µ×²ãAPI
-		¡¤Áí±ÙÏß³Ì(£¿)¶¨ÆÚ(50ms)·¢ËÍËùÓÐbuffer
-	8¡¢SYN¹¥»÷£¬·ÀÖ¹´óÁ¿Á´½Ó±»ÎÞÐ§Õ¼ÓÃ
-	9¡¢ÖÐ¼äÍøÂçÓ²¼þÒýÆðµÄsocket close£¬ÀýÈçÂ·ÓÉÆ÷Õ¨ÁË¡¢ÍøÏß±»ÀÏÊó¿ÐÁË
-		¡¤ÊôÓÚ·ÇÒµÎñÂß¼­Òì³££¬Ò»¶ÎÊ±¼äºó»á´¥·¢TCPµÄRSTÖØÖÃ£¬¶ÔÓ¦µÄsocketÒ²²»ÄÜÓÃÁË£¬»áÓÐDoneIO»Øµ÷
-		¡¤ÊÇ·ñÍ¬¡°ÐÄÌø°ü¡±¹¦ÄÜÖØºÏ£¿ÐÄÌø¼ì²éµÄ¶Ï¿ªÊ±ÏÞ³¤Ð©(60s)£¬ÍøÂçÒì³£¼ì²é¼ä¸ô¶ÌºÜ¶à(5s)
-	*¡¢ÊÖÓÎÍøÂçÉÁ¶Ï£¿
+	1ã€Clientä¸»åŠ¨æ–­å¼€ï¼Œèƒ½ä¿è¯æ”¶åˆ°socket closeå¦ï¼Ÿ
+		Â·å®¢æˆ·ç«¯ä¸»åŠ¨closeã€å…³è¿›ç¨‹ï¼Œæœ‰DoneIOå›žè°ƒï¼Œä¸”â€œdwNumberOfBytesTransferred = 0â€
+	2ã€Clientå¼ºæ€è¿›ç¨‹ï¼Œå¿ƒè·³æ£€æŸ¥
+		Â·æ‰‹åŠ¨æ€è¿›ç¨‹ï¼šæ“ä½œç³»ç»ŸTCPæ¨¡å—ä¼šè§¦å‘å…³é—­ï¼Œå¯¹ç«¯å¯æ”¶åˆ°socket close
+		Â·ç›´æŽ¥å…³æœºï¼šå¯¹ç«¯ä»€ä¹ˆéƒ½ä¸çŸ¥é“äº†ï¼Œé¡»é å¿ƒè·³åŒ…
+	3ã€åŒ…æœ‰æ•ˆæ€§éªŒè¯(å¤§å°ã€æ ¼å¼ã€åŠ å¯†)
+	4ã€æŽ§åˆ¶Clientå‘åŒ…é¢‘çŽ‡
+	5ã€æŸé“¾æŽ¥æ¶ˆæ¯å †ç§¯ï¼Œä¸»åŠ¨è¸¢å‡º
+	6ã€ç½‘ç»œæ³¢åŠ¨ï¼Œæ•´ä½“å»¶æ—¶ï¼Œå‘é€ç¼“å†²å †ç§¯ï¼Œå†…å­˜éœ‡è¡
+	7ã€ç³Šæ¶‚çª—å£ç»¼åˆå¾ï¼Œå¤šä¼šè®¾ç½®TCP_NODELAYç¦ç”¨Nagleç®—æ³•ï¼Œç½‘ç»œåº“è‡ªå·±ç®¡ç†æ•°æ®å‘é€
+		Â·å¹¶åŒ…ä¼˜åŒ–ï¼Œæ¶ˆæ¯ç§¯ç´¯è¶…è¿‡å®šé•¿åŽæ‰è°ƒåº•å±‚API
+		Â·å¦è¾Ÿçº¿ç¨‹(ï¼Ÿ)å®šæœŸ(50ms)å‘é€æ‰€æœ‰buffer
+	8ã€SYNæ”»å‡»ï¼Œé˜²æ­¢å¤§é‡é“¾æŽ¥è¢«æ— æ•ˆå ç”¨
+	9ã€ä¸­é—´ç½‘ç»œç¡¬ä»¶å¼•èµ·çš„socket closeï¼Œä¾‹å¦‚è·¯ç”±å™¨ç‚¸äº†ã€ç½‘çº¿è¢«è€é¼ å•ƒäº†
+		Â·å±žäºŽéžä¸šåŠ¡é€»è¾‘å¼‚å¸¸ï¼Œä¸€æ®µæ—¶é—´åŽä¼šè§¦å‘TCPçš„RSTé‡ç½®ï¼Œå¯¹åº”çš„socketä¹Ÿä¸èƒ½ç”¨äº†ï¼Œä¼šæœ‰DoneIOå›žè°ƒ
+		Â·æ˜¯å¦åŒâ€œå¿ƒè·³åŒ…â€åŠŸèƒ½é‡åˆï¼Ÿå¿ƒè·³æ£€æŸ¥çš„æ–­å¼€æ—¶é™é•¿äº›(60s)ï¼Œç½‘ç»œå¼‚å¸¸æ£€æŸ¥é—´éš”çŸ­å¾ˆå¤š(5s)
+	*ã€æ‰‹æ¸¸ç½‘ç»œé—ªæ–­ï¼Ÿ
 * @ author zhoumf
 * @ date 2016-7-15
 ************************************************************************/
 #pragma once
 //////////////////////////////////////////////////////////////////////////
-// Ê¹ÓÃwinsock2  ±ÜÃâÍ¬winsock³åÍ»
+// ä½¿ç”¨winsock2  é¿å…åŒwinsockå†²çª
 //#ifndef WIN32_LEAN_AND_MEAN
 //#define WIN32_LEAN_AND_MEAN
 //#endif
@@ -53,20 +53,20 @@ public:
 	static bool CleanWinsock();
 	static bool IsValidIP(LPCSTR szIP){ return true; }
 
-	// ´´½¨¼àÌýsocket£¬²¢ÏÈÍ¶µÝ¼¸¸öAcceptEx
-    bool Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg); //Notice£º´íÏûÏ¢Ê±£¬playerÖ¸Õë¿ÉÄÜÎªNULL
+	// åˆ›å»ºç›‘å¬socketï¼Œå¹¶å…ˆæŠ•é€’å‡ ä¸ªAcceptEx
+    bool Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg); //Noticeï¼šé”™æ¶ˆæ¯æ—¶ï¼ŒplayeræŒ‡é’ˆå¯èƒ½ä¸ºNULL
 	bool Close();
 
 	bool AssistThreadLoop();
 	bool _AssistLoop();
 	void BroadcastMsg(const void* pMsg, uint16 msgSize);
 
-	// ¼ì²ésClient(ServerLink)£¬ÈôAcceptÊýÁ¿²»¹»(´´½¨¼àÌýsocketÊ±Ô¤ÏÈÍ¶µÝÁË¼¸¸öAccept)£¬¼ÌÐøÔö¼Ó
+	// æ£€æŸ¥sClient(ServerLink)ï¼Œè‹¥Acceptæ•°é‡ä¸å¤Ÿ(åˆ›å»ºç›‘å¬socketæ—¶é¢„å…ˆæŠ•é€’äº†å‡ ä¸ªAccept)ï¼Œç»§ç»­å¢žåŠ 
 	void Maintain(time_t timenow);
 
 	SOCKET GetListener(){ return _sListener; }
 
-	// Ô­×ÓÐÔ²Ù×÷£º±ä¸üconnect¡¢accept¡¢invalidÊý£¬Á½¸öÔ­×Ó²Ù×÷ÖÐ¼äÓÐ¾ºÌ¬µÄ£¬»á²»»á³öBug£¿
+	// åŽŸå­æ€§æ“ä½œï¼šå˜æ›´connectã€acceptã€invalidæ•°ï¼Œä¸¤ä¸ªåŽŸå­æ“ä½œä¸­é—´æœ‰ç«žæ€çš„ï¼Œä¼šä¸ä¼šå‡ºBugï¼Ÿ
 	void LinkOnCreate(int id){
 		InterlockedIncrement(&_nAccept);
 		InterlockedDecrement(&_nInvalid);
@@ -85,10 +85,10 @@ public:
 	}
 private:
 	LONG _nInvalid;
-	LONG _nAccept;     // ÕýÔÚµÈ´ýÁ¬½ÓµÄsocketÊýÁ¿
-	LONG _nConnect;    // ÒÑÁ¬½ÓµÄsocketÊýÁ¿
+	LONG _nAccept;     // æ­£åœ¨ç­‰å¾…è¿žæŽ¥çš„socketæ•°é‡
+	LONG _nConnect;    // å·²è¿žæŽ¥çš„socketæ•°é‡
 
-    Thread* _pThread = NULL; //ÓÐÁËc++11£¬Ö¸Õë³ÉÔ±×îºÃÉùÃ÷Ê±¼´Ö¸¶¨NULL£¬·ÀÖ¹ctorÖÐÂ©µô£¬³öÏÖÒ°Ö¸Õë
+    Thread* _pThread = NULL; //æœ‰äº†c++11ï¼ŒæŒ‡é’ˆæˆå‘˜æœ€å¥½å£°æ˜Žæ—¶å³æŒ‡å®šNULLï¼Œé˜²æ­¢ctorä¸­æ¼æŽ‰ï¼Œå‡ºçŽ°é‡ŽæŒ‡é’ˆ
 
 	SOCKET	_sListener;
 	std::vector<ServLink*> _vecLink;

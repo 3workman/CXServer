@@ -1,20 +1,20 @@
 /***********************************************************************
-* @ ÏÂ·¢Ò»ÏµÁĞÊı¾İÖĞµÄ±ä¶¯²¿·Ö
+* @ ä¸‹å‘ä¸€ç³»åˆ—æ•°æ®ä¸­çš„å˜åŠ¨éƒ¨åˆ†
 * @ brief
-	1¡¢
-	2¡¢
+	1ã€
+	2ã€
 * @ author zhoumf
 * @ date 2014-12-25
 ************************************************************************/
 #pragma once
 
-// ¾²Ì¬È«¾Ö±äÁ¿ÔòÏŞÖÆÁËÆä×÷ÓÃÓò£¬ ¼´Ö»ÔÚ¶¨Òå¸Ã±äÁ¿µÄÔ´ÎÄ¼şÄÚÓĞĞ§£¬ ÔÚÍ¬Ò»Ô´³ÌĞòµÄÆäËüÔ´ÎÄ¼şÖĞ²»ÄÜÊ¹ÓÃËü
-// ¾²Ì¬µÄÈ«¾Öº¯Êı±íÊ¾Ö»ÄÜ±»µ±Ç°ÎÄ¼şËùÊ¹ÓÃ£¬Íâ²¿ÓÃextern¹Ø¼ü×ÖÉùÃ÷Ö®ºóÒ²ÊÇÎŞ·¨Ê¹ÓÃµÄ
+// é™æ€å…¨å±€å˜é‡åˆ™é™åˆ¶äº†å…¶ä½œç”¨åŸŸï¼Œ å³åªåœ¨å®šä¹‰è¯¥å˜é‡çš„æºæ–‡ä»¶å†…æœ‰æ•ˆï¼Œ åœ¨åŒä¸€æºç¨‹åºçš„å…¶å®ƒæºæ–‡ä»¶ä¸­ä¸èƒ½ä½¿ç”¨å®ƒ
+// é™æ€çš„å…¨å±€å‡½æ•°è¡¨ç¤ºåªèƒ½è¢«å½“å‰æ–‡ä»¶æ‰€ä½¿ç”¨ï¼Œå¤–éƒ¨ç”¨externå…³é”®å­—å£°æ˜ä¹‹åä¹Ÿæ˜¯æ— æ³•ä½¿ç”¨çš„
 static const uint DATA_SEND_SIZE = 32;
 
 class ByteBuffer;
 struct DataSend {
-	int m_bits; //¼ÇÂ¼Ä³Î»µÄÊı¾İÊÇ·ñ±ä¶¯
+	int m_bits; //è®°å½•æŸä½çš„æ•°æ®æ˜¯å¦å˜åŠ¨
 	int m_data[DATA_SEND_SIZE];
 public:
 	DataSend() {
@@ -25,19 +25,19 @@ public:
     int  Get(uint index){ return index < DATA_SEND_SIZE ? m_data[index] : -1; }
 	void SetZero(){ m_bits = 0xffffffff; memset(m_data, 0, sizeof(m_data)); }
 	void Clear(){ m_bits = 0; memset(m_data, 0, sizeof(m_data)); }
-	//void ClearData(){ memset(this, 0, sizeof(*this)); } //»á°ÑĞé±í¸Éµô£¡£¡£¡µ÷Ğéº¯Êı¾Íå´»úÁË
+	//void ClearData(){ memset(this, 0, sizeof(*this)); } //ä¼šæŠŠè™šè¡¨å¹²æ‰ï¼ï¼ï¼è°ƒè™šå‡½æ•°å°±å®•æœºäº†
 
 	bool isDirty() const{ return m_bits > 0; }
     void ReadDif(ByteBuffer& bf, bool bReadAll);
     void WriteDif(ByteBuffer& bf);
 
-	// ²»Òªmemset(this, ...)»á¸ÉµôĞé±í£¬µ÷ÓÃĞéº¯Êıå´»ú
+	// ä¸è¦memset(this, ...)ä¼šå¹²æ‰è™šè¡¨ï¼Œè°ƒç”¨è™šå‡½æ•°å®•æœº
 	virtual void OnDataChange(uint nIndex, int oldValue, int newValue){}
 };
 
 class ArrayData {
     static const uint DATA_SIZE = 16;
-    short m_bits; // ±ê¼ÇÓĞĞ§Öµ
+    short m_bits; // æ ‡è®°æœ‰æ•ˆå€¼
     int m_data[DATA_SIZE];
 public:
     ArrayData() {
@@ -58,10 +58,11 @@ struct Msg_ArrayData {
     char  typ = 0;
     bool  isReset = false;
     short bits = 0;
-    int data[ArrayData::DATA_SIZE] = {0};
+    int data[ArrayData::DATA_SIZE];
 
     Msg_ArrayData() {
         static_assert((sizeof(bits) * 8 >= ArrayData::DATA_SIZE), "Msg_ArrayData m_bits too short !!!");
+        memset(data, 0, sizeof(data));
     }
 
     int GetLength() const;

@@ -1,10 +1,10 @@
 /***********************************************************************
-* @ Ê±¼äÂÖËã·¨
+* @ æ—¶é—´è½®ç®—æ³•
 * @ brief
-    1¡¢ÓëÊ±¼äÓĞ¹ØµÄÖÜÆÚĞÔÖØ¸´Ö´ĞĞ£¬Ğë¿¼ÂÇ¿¨¶ÙºóµÄ×·Ö¡ÎÊÌâ£¬²Î¼ûService.hµÄList¡¢Patch²îÒì
+    1ã€ä¸æ—¶é—´æœ‰å…³çš„å‘¨æœŸæ€§é‡å¤æ‰§è¡Œï¼Œé¡»è€ƒè™‘å¡é¡¿åçš„è¿½å¸§é—®é¢˜ï¼Œå‚è§Service.hçš„Listã€Patchå·®å¼‚
 
-    2¡¢TimerNode::_Callback ÀïÖØĞÂ·ÅÈëÂÖ×Ó
-        *¡¢²»Ó¦ÔÙÈ¡ÏµÍ³Ê±¼ä£¬·ñÔò²»»á¿¨¶ÙºóÁ¢¼´×·Ö¡£¬ÇÒ¸Ã×¢²áº¯ÊıµÄÖ´ĞĞ×ÜÊ±³¤»á±ä³¤£¬Ò×ÒıÆğ´íÂÒ
+    2ã€TimerNode::_Callback é‡Œé‡æ–°æ”¾å…¥è½®å­
+        *ã€ä¸åº”å†å–ç³»ç»Ÿæ—¶é—´ï¼Œå¦åˆ™ä¸ä¼šå¡é¡¿åç«‹å³è¿½å¸§ï¼Œä¸”è¯¥æ³¨å†Œå‡½æ•°çš„æ‰§è¡Œæ€»æ—¶é•¿ä¼šå˜é•¿ï¼Œæ˜“å¼•èµ·é”™ä¹±
 
 * @ author zhoumf
 * @ date 2017-2-20
@@ -14,9 +14,9 @@
 #include <functional>
 #include "../tool/Mempool.h"
 
-const char WHEEL_BIT[] = {8, 6, 6, 6, 5}; //ÓÃÁËÀÛ¼ÆÎ»ÒÆ£¬×ÜºÍ³¬32£¬Î»²Ù×÷»á(Î´¶¨ÒåĞĞÎª)
+const char WHEEL_BIT[] = {8, 6, 6, 6, 5}; //ç”¨äº†ç´¯è®¡ä½ç§»ï¼Œæ€»å’Œè¶…32ï¼Œä½æ“ä½œä¼š(æœªå®šä¹‰è¡Œä¸º)
 #define WHEEL_NUM sizeof(WHEEL_BIT)/sizeof(WHEEL_BIT[0])
-#define TIME_TICK_LEN 25 //Ò»¸ñµÄ¿Ì¶È ms
+#define TIME_TICK_LEN 25 //ä¸€æ ¼çš„åˆ»åº¦ ms
 
 struct NodeLink {
     NodeLink* prev;
@@ -27,8 +27,8 @@ struct TimerNode {
     Pool_Obj_Define(TimerNode, 32)
     NodeLink link; //must in the head
     uint32 timeDead;
-    uint32 interval; //¼ä¸ô¶à¾Ã
-    int loop;        //×Ü¹²Ñ­»·¶à¾Ã
+    uint32 interval; //é—´éš”å¤šä¹…
+    int loop;        //æ€»å…±å¾ªç¯å¤šä¹…
     std::function<void()> func;
 
     TimerNode(const std::function<void()>& f, uint32 cd = 0, int total = 0)
@@ -39,7 +39,7 @@ struct TimerNode {
     void _Callback();
 };
 struct stWheel {
-    NodeLink* slots; //Ã¿¸öslotÎ¬»¤µÄnodeÁ´±íÎªÒ»¸ö»·£¬Èç´Ë¿ÉÒÔ¼ò»¯²åÈëÉ¾³ıµÄ²Ù×÷¡£slot->nextÎªnodeÁ´±íÖĞµÚÒ»¸ö½Úµã£¬prevÎªnodeµÄ×îºóÒ»¸ö½Úµã
+    NodeLink* slots; //æ¯ä¸ªslotç»´æŠ¤çš„nodeé“¾è¡¨ä¸ºä¸€ä¸ªç¯ï¼Œå¦‚æ­¤å¯ä»¥ç®€åŒ–æ’å…¥åˆ é™¤çš„æ“ä½œã€‚slot->nextä¸ºnodeé“¾è¡¨ä¸­ç¬¬ä¸€ä¸ªèŠ‚ç‚¹ï¼Œprevä¸ºnodeçš„æœ€åä¸€ä¸ªèŠ‚ç‚¹
     const uint32 size;
     uint32 slotIdx;
     stWheel(uint32 n) : size(n), slotIdx(0){ slots = new NodeLink[size]; }
@@ -69,7 +69,7 @@ class CTimerMgr {
     ~CTimerMgr();
 public:
     static CTimerMgr& Instance(){ static CTimerMgr T; return T; }
-    void Refresh(uint32 time_elapse, const time_t timenow);
+    void Refresh(uint32 time_elasped, const time_t timenow);
 
     TimerNode* AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec = 0, int totalSec = 0);
     void _AddTimerNode(uint32 milseconds, TimerNode* node);

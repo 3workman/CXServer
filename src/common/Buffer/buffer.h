@@ -1,8 +1,8 @@
 /***********************************************************************
-* @ ÍøÂçÍ¨ĞÅBuffer
+* @ ç½‘ç»œé€šä¿¡Buffer
 * @ brief
-	1¡¢Ïà±ÈÓÚ"bytebuffer.h"£¬Êı¾İreadÍêºó»áÖØÖÃÓÎ±ê£¬¸´ÓÃÄÚ´æ¿é
-	2¡¢Ö§³Öprepend²Ù×÷(ÔÚbufferÇ°²åÈëÊı¾İ)£¬¿ÉÄÜÔì³É´óÁ¿ÄÚ´æÒÆ¶¯
+	1ã€ç›¸æ¯”äº"bytebuffer.h"ï¼Œæ•°æ®readå®Œåä¼šé‡ç½®æ¸¸æ ‡ï¼Œå¤ç”¨å†…å­˜å—
+	2ã€æ”¯æŒprependæ“ä½œ(åœ¨bufferå‰æ’å…¥æ•°æ®)ï¼Œå¯èƒ½é€ æˆå¤§é‡å†…å­˜ç§»åŠ¨
 * @ author zhoumf
 * @ date 2016-7-11
 ************************************************************************/
@@ -36,21 +36,17 @@ namespace net
 			assert(writableBytes() == initialSize);
 			assert(prependBytes() == kCheapPrepend);
 		}
-        /*~Buffer() {
-            //Notice£ºÄ³Ğ©±àÒëÆ÷ÉÏ£¬ÕâÀïÒÑ¾­ÊµÀı»¯ÁË template <typename T> T read()£¬ºóÃæ¾Í²»ÄÜÔÙÆ«ÌØ»¯ÁË
-			printf("---BufferÎö¹¹---%s (%d)\n", read<std::string>().c_str(), size());// ²âÊÔ AsyncLog
-        }*/
 
         char* beginRead(){ return begin() + _rpos; }
         char* beginWrite(){ return begin() + _wpos; }
-        size_t readableBytes() const { return _wpos - _rpos; } //buffÖĞ»¹ÓĞ¶àÉÙÊı¾İ
-        size_t writableBytes() const { return size() - _wpos; } //Ê£Óà¿Õ¼ä
+        size_t readableBytes() const { return _wpos - _rpos; } //buffä¸­è¿˜æœ‰å¤šå°‘æ•°æ®
+        size_t writableBytes() const { return size() - _wpos; } //å‰©ä½™ç©ºé—´
 		size_t prependBytes() const { return _rpos; }
 		size_t size() const { return _buffer.size(); }
 		size_t capacity() const { return _buffer.capacity(); }
 		void clear() { _rpos = _wpos = kCheapPrepend; }
 
-//---------------------------Ğ´Èë---------------------------------------------------
+//---------------------------å†™å…¥---------------------------------------------------
 		void append(const void* data, size_t len){
 			ensureWritableBytes(len);
 			const char* p = static_cast<const char*>(data);
@@ -62,7 +58,7 @@ namespace net
 			if (len <= _rpos){
 				_rpos -= len;
 			}else{
-				//Notice£ºÒÆ¶¯ÄÚ´æ¿éÌ«ºÄÁË£¬Íâ²¿µ÷ÓÃÇ°×îºÃÅĞ¶ÏÏÂ£ºlen <= prependBytes()
+				//Noticeï¼šç§»åŠ¨å†…å­˜å—å¤ªè€—äº†ï¼Œå¤–éƒ¨è°ƒç”¨å‰æœ€å¥½åˆ¤æ–­ä¸‹ï¼šlen <= prependBytes()
 				ensureWritableBytes(len - _rpos);
 				std::copy(beginRead(), beginWrite(), begin() + len);
 				_wpos += (len - _rpos);
@@ -76,8 +72,9 @@ namespace net
 		template <typename T> bool prepend(const T& x) {
 			return prepend(&x, sizeof(x));
 		}
-		// NOTICE£º³£Á¿×Ö·û´®²»»áÒşÊ½×ª»»Îªstring
-		// NOTICE£ºÈôÎŞconst char* ÖØÔØ£¬»áÆ¥Åä½øtemplateº¯Êı
+        
+		// NOTICEï¼šå¸¸é‡å­—ç¬¦ä¸²ä¸ä¼šéšå¼è½¬æ¢ä¸ºstring
+		// NOTICEï¼šè‹¥æ— const char* é‡è½½ï¼Œä¼šåŒ¹é…è¿›templateå‡½æ•°
 		void append(const std::string& str) {
 			append(str.c_str(), str.size() + 1);
 		}
@@ -91,8 +88,8 @@ namespace net
 			prepend(str, strlen(str) + 1);
 		}
 
-//---------------------------¶Á³ö£¬Ö¸ÕëÒÆ¶¯£¬¾ÉÊı¾İ²»»á±£Áô----------------------------------------
-        template <typename T> T read() { // Íâ²¿Ğ´buf.read<string>()¾ÍĞ¦ÁË¡ª¡ªÆ«ÌØ»¯
+//---------------------------è¯»å‡ºï¼ŒæŒ‡é’ˆç§»åŠ¨ï¼Œæ—§æ•°æ®ä¸ä¼šä¿ç•™----------------------------------------
+        template <typename T> T read() { // å¤–éƒ¨å†™buf.read<string>()å°±ç¬‘äº†â€”â€”åç‰¹åŒ–
 			T result(0);
 			if (readableBytes() < sizeof(T))
 			{
@@ -102,40 +99,27 @@ namespace net
 			readerMove(sizeof(T));
 			return result;
 		}
-		template <> std::string read() { // Æ«ÌØ»¯£¬±£³Ö½Ó¿Ú·ç¸ñÍ³Ò»£¬Notice£ºÎö¹¹º¯ÊıÖĞÒÑÌáÇ°Ê¹ÓÃ£¬Ä³Ğ©±àÒëÆ÷»á±¨´í
-			size_t len = 0;
-			const char* begin = beginRead();
-			const char* p = begin;
-            while (*p) { ++p; ++len; }
-
-            if (readableBytes() < len + 1)
-            {
-                return "";
-            }
-			readerMove(len + 1); // NOTICE£º°Ñ'/0'½áÎ²¶Á×ß
-			return std::string(begin, len);
-		}
 
 		void readerMove(size_t len)
 		{
 			if (len < readableBytes())
 				_rpos += len;
 			else
-				_rpos = _wpos = kCheapPrepend; // È«²¿¶ÁÍê£¬»ØÍËÖÁÆğµã
+				_rpos = _wpos = kCheapPrepend; // å…¨éƒ¨è¯»å®Œï¼Œå›é€€è‡³èµ·ç‚¹
 		}
 		void writerMove(size_t len)
 		{
 			ensureWritableBytes(len);
 			_wpos += len;
 		}
-        void ensureWritableBytes(size_t len) //È·±£Ê£Óà¿Õ¼ä×ã¹»£¬Ò»¶¨ÄÜĞ´Èë
+        void ensureWritableBytes(size_t len) //ç¡®ä¿å‰©ä½™ç©ºé—´è¶³å¤Ÿï¼Œä¸€å®šèƒ½å†™å…¥
         {
             if (writableBytes() < len) makeSpace(len);
 
             assert(writableBytes() >= len);
         }
 
-//---------------------------ÖØÖÃ´óĞ¡£¬¾ÉÄÚÈİ±£Áô------------------------------------
+//---------------------------é‡ç½®å¤§å°ï¼Œæ—§å†…å®¹ä¿ç•™------------------------------------
         void shrink(size_t reserve)
 		{
 			// FIXME: use vector::shrink_to_fit() in C++ 11 if possible.
@@ -173,13 +157,28 @@ namespace net
 		size_t _rpos;
 		size_t _wpos;
 	};
+    
+    template<> inline std::string Buffer::read<std::string>()
+    {
+        size_t len = 0;
+        const char* begin = beginRead();
+        const char* p = begin;
+        while (*p) { ++p; ++len; }
+        
+        if (readableBytes() < len + 1)
+        {
+            return "";
+        }
+        readerMove(len + 1); // NOTICEï¼šæŠŠ'/0'ç»“å°¾è¯»èµ°
+        return std::string(begin, len);
+    }
 }
 
 /************************************************************************/
-// Ê¾Àı
+// ç¤ºä¾‹
 #ifdef _MY_Test
 	void test_NetBuffer(){
-		cout << "¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª net::Buffer ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª" << endl;
+		cout << "â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” net::Buffer â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”" << endl;
 		net::Buffer buf(8);
 		buf.append("aa");
 		cout << "size:" << buf.size() << endl;
@@ -189,7 +188,7 @@ namespace net
 		cout << "size:" << buf.size() << endl;
 		string s = buf.read<string>();
 		cout << "prepend: " << s << ":" << s.size() << endl;
-		//Notice£ºÄÔ¶´ÇåÆæµÄcoutº¯Êıµ÷ÓÃË³Ğò£¬ÏÈµ÷ºóÃæµÄ /(¨Òo¨Ò)/~~
+		//Noticeï¼šè„‘æ´æ¸…å¥‡çš„coutå‡½æ•°è°ƒç”¨é¡ºåºï¼Œå…ˆè°ƒåé¢çš„ /(ã„’oã„’)/~~
 		// cout << buf.read<string>() << "--int:" << buf.read<int>() << endl;
 		cout << "append 1: " << buf.read<string>() << endl;
 		cout << "append 2: " << buf.read<int>() << endl;

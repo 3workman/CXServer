@@ -1,16 +1,16 @@
 /***********************************************************************
-* @ ÏûÏ¢³Ø
+* @ æ¶ˆæ¯æ± 
 * @ brief
-    1¡¢×ª½ÓÍøÂç²ãbufferÖĞµÄÊı¾İ£¬»º´æ£¬ÒÔ´ıÖ÷Âß¼­Ñ­»·´¦Àí
-    2¡¢Ö±½Ó´¦ÀíÍøÂçbufferµÄÊı¾İ£¬ÄÇ¾ÍÊÇÔÚIOÏß³Ì×öÂß¼­ÁË£¬ºÜ¿ÉÄÜ³öÏÖĞÔÄÜ·çÏÕ
+    1ã€è½¬æ¥ç½‘ç»œå±‚bufferä¸­çš„æ•°æ®ï¼Œç¼“å­˜ï¼Œä»¥å¾…ä¸»é€»è¾‘å¾ªç¯å¤„ç†
+    2ã€ç›´æ¥å¤„ç†ç½‘ç»œbufferçš„æ•°æ®ï¼Œé‚£å°±æ˜¯åœ¨IOçº¿ç¨‹åšé€»è¾‘äº†ï¼Œå¾ˆå¯èƒ½å‡ºç°æ€§èƒ½é£é™©
 
 * @ Notice
-    1¡¢Insert()½Ó¿Ú£¬¹©ÍøÂç²ãµ÷ÓÃ£¬ÊÇ¶àÏß³ÌµÄ£¬ËùÒÔÏûÏ¢³Ø±ØĞëÏß³Ì°²È«
-    2¡¢±ÜÃâÒ°Ö¸Õë£º¶ÓÁĞÖĞ»º´æÁËPlayer*£¬Ó¦ÔÚÖ÷Âß¼­Handle()ºó²Å×ö delete player
+    1ã€Insert()æ¥å£ï¼Œä¾›ç½‘ç»œå±‚è°ƒç”¨ï¼Œæ˜¯å¤šçº¿ç¨‹çš„ï¼Œæ‰€ä»¥æ¶ˆæ¯æ± å¿…é¡»çº¿ç¨‹å®‰å…¨
+    2ã€é¿å…é‡æŒ‡é’ˆï¼šé˜Ÿåˆ—ä¸­ç¼“å­˜äº†Player*ï¼Œåº”åœ¨ä¸»é€»è¾‘Handle()åæ‰åš delete player
 
-    3¡¢¡°Í¬Ãûrpc»ìÂÒ¡±£ºclient rpc serverÇÒÓĞ»Ø°ü£»ÈôserverÄÇ±ßÒ²ÓĞ¸öÍ¬Ãûrpc client£¬ÄÇclient¾Í²»ºÃÇø·Öµ×²ãÊÕµ½µÄ°ü£¬ÊÇ×Ô¼ºrpcµÄ»Ø¸´£¬»¹ÊÇ¶Ô·½Ö÷¶¯rpc
-    4¡¢Ô¶³Ìµ÷ÓÃÆäËüÄ£¿éµÄrpc£¬Ó¦ÊÇ±¾Ä£¿éÎ´ÉùÃ÷ÊµÏÖµÄ¡£±ÜÃâÍ¬ÃûrpcµÄ»ìÂÒ
-    5¡¢rpcµ×²ãµÄ»Ø°ü£¬Éè¼Æ³É´øÀàĞÍµÄ£¨Ö÷¶¯·¢¡¢±»¶¯»Ø£©£¬ÄÜ½â¾ö¡°Í¬Ãûrpc»ìÂÒ¡±ÎÊÌâ£¬µ«¾õÓÃ´¦²»´ó£¬¾ÍÏÈÃâµô
+    3ã€â€œåŒårpcæ··ä¹±â€ï¼šclient rpc serverä¸”æœ‰å›åŒ…ï¼›è‹¥serveré‚£è¾¹ä¹Ÿæœ‰ä¸ªåŒårpc clientï¼Œé‚£clientå°±ä¸å¥½åŒºåˆ†åº•å±‚æ”¶åˆ°çš„åŒ…ï¼Œæ˜¯è‡ªå·±rpcçš„å›å¤ï¼Œè¿˜æ˜¯å¯¹æ–¹ä¸»åŠ¨rpc
+    4ã€è¿œç¨‹è°ƒç”¨å…¶å®ƒæ¨¡å—çš„rpcï¼Œåº”æ˜¯æœ¬æ¨¡å—æœªå£°æ˜å®ç°çš„ã€‚é¿å…åŒårpcçš„æ··ä¹±
+    5ã€rpcåº•å±‚çš„å›åŒ…ï¼Œè®¾è®¡æˆå¸¦ç±»å‹çš„ï¼ˆä¸»åŠ¨å‘ã€è¢«åŠ¨å›ï¼‰ï¼Œèƒ½è§£å†³â€œåŒårpcæ··ä¹±â€é—®é¢˜ï¼Œä½†è§‰ç”¨å¤„ä¸å¤§ï¼Œå°±å…ˆå…æ‰
 
 * @ author zhoumf
 * @ date 2016-12-12
@@ -19,21 +19,21 @@
 #include "tool/SafeQueue.h"
 #include "Buffer/NetPack.h"
 #include "Csv/CSVparser.hpp"
+#include "enum/generate_rpc_enum.h"
 
 typedef std::function<void(NetPack&)> ParseRpcParam;
 typedef std::function<void(const NetPack&)> SendMsgFunc;
 
-template <typename Typ> // ÀàĞÍTypĞëº¬ÓĞ£º_rpcÁĞ±í£¬SendMsg()
+template <typename Typ> // ç±»å‹Typé¡»å«æœ‰ï¼š_rpcåˆ—è¡¨ï¼ŒSendMsg()
 class RpcQueue {
     typedef std::pair<Typ*, NetPack*> RpcPair;
 
-    std::map<uint64, ParseRpcParam> m_response;  //rpcÔ¶¶ËµÄ»Ø¸´
-    SafeQueue<RpcPair>          m_queue; //Notice£ºÎª±ÜÃâ»º´æÖ¸ÕëÒ°µô£¬Ö÷Ñ­»·HandleMsgÖ®ºó£¬´¦ÀíµÇ³öÂß¼­
+    std::map<uint64, ParseRpcParam> m_response;  //rpcè¿œç«¯çš„å›å¤
+    SafeQueue<RpcPair>          m_queue; //Noticeï¼šä¸ºé¿å…ç¼“å­˜æŒ‡é’ˆé‡æ‰ï¼Œä¸»å¾ªç¯HandleMsgä¹‹åï¼Œå¤„ç†ç™»å‡ºé€»è¾‘
     NetPack m_SendBuffer;
     NetPack m_BackBuffer;
 public:
     static RpcQueue& Instance(){ static RpcQueue T; return T; }
-    RpcQueue() { LoadRpcCsv(); }
 
     flatbuffers::FlatBufferBuilder SendBuilder;
     flatbuffers::FlatBufferBuilder BackBuilder;
@@ -42,7 +42,7 @@ public:
     {
         m_queue.push(std::make_pair(pObj, new NetPack(pData, size)));
     }
-    void Update() //Ö÷Ñ­»·£¬Ã¿Ö¡µ÷Ò»´Î
+    void Update() //ä¸»å¾ªç¯ï¼Œæ¯å¸§è°ƒä¸€æ¬¡
     {
         RpcPair data;
         if (m_queue.pop(data)) {
@@ -52,14 +52,13 @@ public:
     }
     void _Handle(Typ* pObj, NetPack& buf)
     {
-        uint16 opCode = buf.OpCode();
-        auto it = Typ::_rpc.find(opCode);
-        if (it != Typ::_rpc.end()) {
+        uint16 opCode = buf.OpCode(); if (opCode >= ARRAY_SIZE(Typ::_rpc)) { assert(0); return; }
+        if (auto func = Typ::_rpc[opCode]) {
             m_BackBuffer.ResetHead(buf);
-            (pObj->*(it->second))(buf, m_BackBuffer);
-            if (m_BackBuffer.OpCode()) SendBackBuffer(pObj);
+            (pObj->*func)(buf, m_BackBuffer);
+            if(m_BackBuffer.OpCode()) SendBackBuffer(pObj);
 #ifdef _DEBUG
-            std::cout << "Recv Msg: " << RpcIdToName(opCode) << " id:" << opCode << std::endl;
+            //std::cout << "Recv Msg: " << RpcIdToName(opCode) << " ID:" << opCode << std::endl;
 #endif
         } else {
             auto it = m_response.find(buf.GetReqKey());
@@ -72,42 +71,26 @@ public:
     }
     void SendBackBuffer(Typ* pObj)
     {
-        assert(m_BackBuffer.OpCode() && "send rpc back buffer repeatedly");
+        assert(m_BackBuffer.OpCode() > 0 && "send rpc relay repeatedly");
         m_BackBuffer.MoveToBuf(BackBuilder);
         if (m_BackBuffer.BodySize()) pObj->SendMsg(m_BackBuffer);
         m_BackBuffer.Clear();
     }
     void RegistResponse(uint64 reqKey, const ParseRpcParam& func)
     {
-        m_response[reqKey] = func; //ºóÀ´µÄÓ¦¸Ã¸²¸ÇÖ®Ç°µÄ
+        m_response[reqKey] = func; //åæ¥çš„åº”è¯¥è¦†ç›–ä¹‹å‰çš„
         //m_response.insert(make_pair(reqKey, func));
     }
-    uint16 RpcNameToId(const char* name)
+    uint64 _CallRpc(RpcEnum rid, const ParseRpcParam& func, const SendMsgFunc& doSend)
     {
-        auto it = _rpc_table.find(name);
-        if (it == _rpc_table.end()) {
-            assert(0);
-            return 0;
-        }
-        return (uint16)it->second;
-    }
-    const char* RpcIdToName(int id)
-    {
-        for (auto& it : _rpc_table)
-        {
-            if (it.second == id) return it.first.c_str();
-        }
-        return "nil";
-    }
-    uint64 _CallRpc(const char* name, const ParseRpcParam& func, const SendMsgFunc& doSend)
-    {
-        assert(m_SendBuffer.OpCode() == 0); // CallRpc can't reentry
+        // make sure body is cleared, to avoid nested buffer writes
+        assert(m_SendBuffer.OpCode() == 0 && "opcode overwriten, probably nested rpc buffer write");
+        
         static uint32 _auto_req_idx = 0;
-        auto opCodeId = RpcNameToId(name);
         // Server and Client have the same Rpc
-        assert(Typ::_rpc.find(opCodeId) == Typ::_rpc.end());
+        assert(Typ::_rpc[rid] == NULL);
 
-        m_SendBuffer.OpCode(opCodeId);
+        m_SendBuffer.OpCode(rid);
         m_SendBuffer.ReqIdx(++_auto_req_idx);
         auto ret = m_SendBuffer.GetReqKey();
 
@@ -116,18 +99,6 @@ public:
         doSend(m_SendBuffer);
         m_SendBuffer.Clear();
         return ret;
-    }
-
-private:
-    std::map<std::string, int> _rpc_table;
-    void LoadRpcCsv()
-    {
-        csv::Parser file = csv::Parser("../conf/csv/rpc.csv");
-        uint cnt = file.rowCount();
-        for (uint i = 0; i < cnt; ++i) {
-            csv::Row& row = file[i];
-            _rpc_table[row["name"]] = atoi(row["id"].c_str());
-        }
     }
 };
 #define sRpcClient RpcQueue<Player>::Instance()

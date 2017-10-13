@@ -10,10 +10,10 @@
 #include "Timer/TimerWheel.h"
 #include "Room/Room.h"
 #include "Log/LogFile.h"
-#include "Room/PlayerRoomData.h"
 
 using namespace std;
-std::map<int, CrossAgent::_RpcFunc> CrossAgent::_rpc;
+
+CrossAgent::_RpcFunc CrossAgent::_rpc[rpc_enum_cnt] = { 0 };
 
 void CrossAgent::RunClient()
 {
@@ -31,33 +31,32 @@ void CrossAgent::_OnConnect()
     //Notice: 这里不能用CallRpc，多线程呐~
     _netLink->SendMsg(&_connId, sizeof(_connId)); //第一条消息：上报connId
     NetPack regMsg(16);
-    regMsg.OpCode(sRpcCross.RpcNameToId("rpc_regist"));
+    regMsg.OpCode(rpc_regist);
     regMsg << "battle" << (uint32)1;
     SendMsg(regMsg);
 }
 
 CrossAgent::CrossAgent()
 {
-    _netLink = new TcpClient(_config);
-
-    if (_rpc.empty())
+    //if (_rpc.empty())
     {
 #undef Rpc_Declare
-#define Rpc_Declare(typ) _rpc[sRpcCross.RpcNameToId(#typ)] = &CrossAgent::HandleRpc_##typ;
+#define Rpc_Declare(typ) _rpc[typ] = &CrossAgent::HandleRpc_##typ;
         Rpc_For_Cross;
     }
+    _netLink = new TcpClient(_config);
 }
 CrossAgent::~CrossAgent()
 {
     delete _netLink;
 }
-uint64 CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun)
+uint64 CrossAgent::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun)
 {
-    return sRpcCross._CallRpc(name, sendFun, std::bind(&CrossAgent::SendMsg, this, std::placeholders::_1));
+    return sRpcCross._CallRpc(rid, sendFun, std::bind(&CrossAgent::SendMsg, this, std::placeholders::_1));
 }
-void CrossAgent::CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
+void CrossAgent::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {
-    uint64 reqKey = CallRpc(name, sendFun);
+    uint64 reqKey = CallRpc(rid, sendFun);
 
     sRpcCross.RegistResponse(reqKey, recvFun);
 }
@@ -68,14 +67,6 @@ void CrossAgent::SendMsg(const NetPack& pack)
 
 //////////////////////////////////////////////////////////////////////////
 // rpc
-Rpc_Realize(rpc_echo)
-{
-    string str = req.ReadString();
-    printf("Echo: %s\n", str.c_str());
-
-    //NetPack& backBuffer = BackBuffer();
-    //backBuffer << str;
-}
 Rpc_Realize(rpc_svr_accept)
 {
     _connId = req.ReadUInt32();
@@ -96,8 +87,8 @@ Rpc_Realize(rpc_battle_handle_player_data)//回复<pid>列表
 
         ack << pid;
 
-        if (player->m_Room.m_roomId) {
-            LOG_TRACK("PlayerId(%d) is already in room(%d)", pid, player->m_Room.m_roomId);
+        if (player->m_roomId) {
+            LOG_TRACK("PlayerId(%d) is already in room(%d)", pid, player->m_roomId);
             continue;
         }
 

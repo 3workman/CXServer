@@ -24,12 +24,12 @@ void LogFile::Log(const char* curFile, const int curLine, LogLv kLevel, const ch
 {
     if (kLevel < _level) return;
 
-    int idx = sprintf(g_logBuff, "[%s]", LevelToString[kLevel]);
+    int idx = (int)sprintf(g_logBuff, "[%s]", ::LevelToString[kLevel]);
     time_t t; time(&t);
-    idx += strftime(g_logBuff+idx, 32, "[%Y-%m-%d %H:%M:%S]", localtime(&t));
-    idx += sprintf(g_logBuff+idx, "[%s(%d)]\n", Dir::FindName(curFile), curLine);
+    idx += (int)strftime(g_logBuff+idx, 32, "[%Y-%m-%d %H:%M:%S]", localtime(&t));
+    idx += (int)sprintf(g_logBuff+idx, "[%s(%d)]\n", Dir::FindName(curFile), curLine);
 
-    //TODO:[pid=15529][thread=0x12345]  ½ø³Ìid¡¢Ïß³Ìid
+    //TODO:[pid=15529][thread=0x12345]  è¿›ç¨‹idã€çº¿ç¨‹id
 
     va_list ap;
     va_start(ap, fmt);
@@ -43,12 +43,14 @@ void LogFile::Log(const char* curFile, const int curLine, LogLv kLevel, const ch
 
     _async->Append(g_logBuff, idx);
     //if (_fp) {
-    //    fwrite(g_logBuff, sizeof(char), idx, _fp); //Notice£º×Ö³¤²»°üÀ¨½áÎ²'\0'£¬·ñÔòÂÒÂë
+    //    fwrite(g_logBuff, sizeof(char), idx, _fp); //Noticeï¼šå­—é•¿ä¸åŒ…æ‹¬ç»“å°¾'\0'ï¼Œå¦åˆ™ä¹±ç 
     //    fflush(_fp);
     //}
-    if (_isPrint) printf("%s", g_logBuff);
+#ifdef _DEBUG
+    printf("%s", g_logBuff);
+#endif
 }
-LogFile::LogFile(std::string fileName, LogLv lv, bool isPrint)
+LogFile::LogFile(std::string fileName, LogLv lv)
 {
     char sTime[32];
     time_t t; time(&t);
@@ -73,11 +75,11 @@ LogFile::LogFile(std::string fileName, LogLv lv, bool isPrint)
         fflush(_fp);
     });
 
-    SetLog(lv, isPrint);
+    SetLog(lv);
 }
 LogFile::~LogFile()
 {
-    delete _async; // ±ØĞëÔÚ_fpÖ®Ç°£¬AsyncLogÎö¹¹Ê±»¹ÓĞĞ´Ò»´ÎÎÄ¼ş
+    delete _async; // å¿…é¡»åœ¨_fpä¹‹å‰ï¼ŒAsyncLogææ„æ—¶è¿˜æœ‰å†™ä¸€æ¬¡æ–‡ä»¶
     if (_fp) fclose(_fp);
     g_log = NULL;
 }

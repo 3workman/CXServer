@@ -8,12 +8,12 @@ AsyncLog::AsyncLog(size_t maxSize, const WriteLogFunc& func)
     , _curBuf(new Buffer(maxSize))
     , _nextBuf(new Buffer(maxSize))
     , _writeLogFunc(func)
-    //, _thread([&]{ this->_WriteLoop(bufSize); }) // ¿ÉÄÜ¹¹ÔìÖÐÍ¾µ÷¶ÈÖÁ×ÓÏß³Ì£¬·ÃÎÊµ½ÎÞÐ§×ÊÔ´(_mutex)/Î´³õÊ¼»¯±äÁ¿
+    //, _thread([&]{ this->_WriteLoop(bufSize); }) // å¯èƒ½æž„é€ ä¸­é€”è°ƒåº¦è‡³å­çº¿ç¨‹ï¼Œè®¿é—®åˆ°æ— æ•ˆèµ„æº(_mutex)/æœªåˆå§‹åŒ–å˜é‡
 {
 	_bufVec.reserve(8);
-    //Notice£º²»ÄÜÓÃ[&]£¬maxSizeÊÇ¾Ö²¿±äÁ¿
+    //Noticeï¼šä¸èƒ½ç”¨[&]ï¼ŒmaxSizeæ˜¯å±€éƒ¨å˜é‡
     _thread = new std::thread([=]{ this->_WriteLoop(); });
-    //_thread->detach(); // "Îö¹¹/Stop"ÖÐµÄ_thread->join()±Ø²»¿ÉÉÙ£¬ÕâÀï¾Í²»ÒªÁË
+    //_thread->detach(); // "æžæž„/Stop"ä¸­çš„_thread->join()å¿…ä¸å¯å°‘ï¼Œè¿™é‡Œå°±ä¸è¦äº†
 }
 AsyncLog::~AsyncLog()
 {
@@ -33,7 +33,7 @@ void AsyncLog::Append(const void* data, size_t len)
     {
         _bufVec.push_back(_curBuf);
 
-        //FIXME£ºnew¿ÉÄÜ·µ»Ønull£¬²»¹ýÄÇ»áÏµÍ³ÒÑ¾­Òª¹òÁË°É~
+        //FIXMEï¼šnewå¯èƒ½è¿”å›žnullï¼Œä¸è¿‡é‚£ä¼šç³»ç»Ÿå·²ç»è¦è·ªäº†å§~
         if (_nextBuf)
             _curBuf = std::move(_nextBuf);
         else
@@ -60,7 +60,7 @@ void AsyncLog::_WriteLoop()
             _curBuf = std::move(spareBuf1);
 			if (_nextBuf == NULL) _nextBuf = std::move(spareBuf2);
         }
-        _writeLogFunc(bufToWriteVec); // ??? IOÊ±£¬Ö÷Ïß³Ìµ÷ÁËAppend()ÇÒËæ¼´dtor£¬ÄÇ±¾´ÎAppendµÄÊý¾Ý²»»á¼ÇLog£¬ÒòÎªÏÂ´ÎloopÊ±_runningÎªfalseÁË
+        _writeLogFunc(bufToWriteVec); // ??? IOæ—¶ï¼Œä¸»çº¿ç¨‹è°ƒäº†Append()ä¸”éšå³dtorï¼Œé‚£æœ¬æ¬¡Appendçš„æ•°æ®ä¸ä¼šè®°Logï¼Œå› ä¸ºä¸‹æ¬¡loopæ—¶_runningä¸ºfalseäº†
 
         if (spareBuf1 == NULL){ spareBuf1 = bufToWriteVec[0]; spareBuf1->clear(); }
         if (spareBuf2 == NULL){ spareBuf2 = bufToWriteVec[1]; spareBuf2->clear(); }
@@ -69,8 +69,8 @@ void AsyncLog::_WriteLoop()
     }
     printf("loop end\n");
 
-    //¡¾race condition 4¡¿£ºAsyncLog¶ÔÏóÎö¹¹£¬_running false£¬²¹Ð´ÒÅÁôÊý¾Ý
-    // Ö´ÐÐÎö¹¹/Stop²Å»áÌø³öwhileÑ­»·£¬ÕâÀï_bufVecÐ´Êý¾Ý²»´æÔÚ¾ºÌ¬£¬StopÀïµÄjoin»á×èÈûµ½_WriteLoopÖ´ÐÐÍê±Ï
+    //ã€race condition 4ã€‘ï¼šAsyncLogå¯¹è±¡æžæž„ï¼Œ_running falseï¼Œè¡¥å†™é—ç•™æ•°æ®
+    // æ‰§è¡Œæžæž„/Stopæ‰ä¼šè·³å‡ºwhileå¾ªçŽ¯ï¼Œè¿™é‡Œ_bufVecå†™æ•°æ®ä¸å­˜åœ¨ç«žæ€ï¼ŒStopé‡Œçš„joinä¼šé˜»å¡žåˆ°_WriteLoopæ‰§è¡Œå®Œæ¯•
     _bufVec.push_back(_curBuf);
     _writeLogFunc(_bufVec);
 }
@@ -79,10 +79,10 @@ void AsyncLog::Stop()
     _running = false;
     _cond.notify_one();
     //::WakeConditionVariable(&_cond);
-    _thread->join(); //Notice£º×èÈû£¬µÈ´ý×ÓÏß³ÌÖ´ÐÐ½áÊø
+    _thread->join(); //Noticeï¼šé˜»å¡žï¼Œç­‰å¾…å­çº¿ç¨‹æ‰§è¡Œç»“æŸ
     /*
-        Îö¹¹Ê±£¬ÕâÀï±ØÐëµ÷join£¨²»ÄÜdetach£©£¬±ØÐëµÈ×ÓÏß³Ì½áÊø
-        ÔÙ²Å»ØÊÕÖ÷Ïß³ÌµÄ×ÊÔ´£¬Èç_mutex/_curBuf
-        ·ñÔò£¬Ö÷Ïß³ÌµÄÎö¹¹ÏÈÍê³É£¬WriteLoopÏß³ÌÔÙ»½ÐÑÊ±£¬¾Í·ÃÎÊµ½ÎÞÐ§×ÊÔ´ÁË
+        æžæž„æ—¶ï¼Œè¿™é‡Œå¿…é¡»è°ƒjoinï¼ˆä¸èƒ½detachï¼‰ï¼Œå¿…é¡»ç­‰å­çº¿ç¨‹ç»“æŸ
+        å†æ‰å›žæ”¶ä¸»çº¿ç¨‹çš„èµ„æºï¼Œå¦‚_mutex/_curBuf
+        å¦åˆ™ï¼Œä¸»çº¿ç¨‹çš„æžæž„å…ˆå®Œæˆï¼ŒWriteLoopçº¿ç¨‹å†å”¤é†’æ—¶ï¼Œå°±è®¿é—®åˆ°æ— æ•ˆèµ„æºäº†
     */
 }

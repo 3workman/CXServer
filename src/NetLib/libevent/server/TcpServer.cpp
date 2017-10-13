@@ -57,8 +57,8 @@ void TcpServer::_loop()
     sin.sin_family = AF_INET;
     sin.sin_port = htons(_config.wPort);
 
-    // bindÔÚÉÏÃæÖÆ¶¨µÄIPºÍ¶Ë¿Ú£¬Í¬Ê±³õÊ¼»¯listenµÄÊÂ¼şÑ­»·ºÍcallback£ºlistener_cb 
-    // ²¢°ÑlistenerµÄÊÂ¼şÑ­»·×¢²áÔÚevent_base£ºbaseÉÏ
+    // bindåœ¨ä¸Šé¢åˆ¶å®šçš„IPå’Œç«¯å£ï¼ŒåŒæ—¶åˆå§‹åŒ–listençš„äº‹ä»¶å¾ªç¯å’Œcallbackï¼šlistener_cb 
+    // å¹¶æŠŠlistenerçš„äº‹ä»¶å¾ªç¯æ³¨å†Œåœ¨event_baseï¼šbaseä¸Š
     evconnlistener* listener = evconnlistener_new_bind(base, cb_listener, this,
         LEV_OPT_REUSEABLE | LEV_OPT_CLOSE_ON_FREE, -1,
         (struct sockaddr*)&sin,
@@ -68,16 +68,16 @@ void TcpServer::_loop()
         return;
     }
 
-    // ³õÊ¼»¯ĞÅºÅ´¦Àíevent 
+    // åˆå§‹åŒ–ä¿¡å·å¤„ç†event 
     event* signal_event = evsignal_new(base, SIGINT, cb_signal, base);
-    // °ÑÕâ¸öcallback·ÅÈëbaseÖĞ 
+    // æŠŠè¿™ä¸ªcallbackæ”¾å…¥baseä¸­ 
     if (!signal_event || event_add(signal_event, NULL) < 0) {
         fprintf(stderr, "Could not create/add a signal event!\n");
         return;
     }
 
-    // ³ÌĞò½«ÔÚÏÂÃæÕâÒ»ĞĞÄÚÆô¶¯eventÑ­»·£¬Ö»ÓĞÔÚµ÷ÓÃevent_base_loopexitºó 
-    // ²Å»á´ÓÏÂÃæÕâ¸öº¯Êı·µ»Ø£¬²¢ÏòÏÂÖ´ĞĞ¸÷ÖÖÇåÀíº¯Êı£¬µ¼ÖÂÕû¸ö³ÌĞòÍË³ö 
+    // ç¨‹åºå°†åœ¨ä¸‹é¢è¿™ä¸€è¡Œå†…å¯åŠ¨eventå¾ªç¯ï¼Œåªæœ‰åœ¨è°ƒç”¨event_base_loopexitå 
+    // æ‰ä¼šä»ä¸‹é¢è¿™ä¸ªå‡½æ•°è¿”å›ï¼Œå¹¶å‘ä¸‹æ‰§è¡Œå„ç§æ¸…ç†å‡½æ•°ï¼Œå¯¼è‡´æ•´ä¸ªç¨‹åºé€€å‡º 
     event_base_dispatch(base);
 
     evconnlistener_free(listener);
@@ -90,8 +90,8 @@ static void cb_listener(struct evconnlistener *listener, evutil_socket_t fd,
 {
     event_base *base = evconnlistener_get_base(listener);
 
-    // ĞÂ½¨Ò»¸öbufferevent£¬Éè¶¨BEV_OPT_CLOSE_ON_FREE£¬ 
-    // ±£Ö¤bufferevent±»freeµÄÊ±ºòfdÒ²»á±»¹Ø±Õ 
+    // æ–°å»ºä¸€ä¸ªbuffereventï¼Œè®¾å®šBEV_OPT_CLOSE_ON_FREEï¼Œ 
+    // ä¿è¯buffereventè¢«freeçš„æ—¶å€™fdä¹Ÿä¼šè¢«å…³é—­ 
     bufferevent* bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
     if (!bev) {
         fprintf(stderr, "Error constructing bufferevent!");
@@ -100,9 +100,9 @@ static void cb_listener(struct evconnlistener *listener, evutil_socket_t fd,
     }
     auto agent = new TcpClientAgent((TcpServer*)user_data, bev);
 
-    // Éè¶¨Ğ´bufferµÄeventºÍÆäËüevent 
+    // è®¾å®šå†™bufferçš„eventå’Œå…¶å®ƒevent 
     bufferevent_setcb(bev, cb_conn_read, NULL, cb_conn_event, agent);
-    bufferevent_enable(bev, EV_READ); // ÆôÓÃÊÂ¼ş
+    bufferevent_enable(bev, EV_READ); // å¯ç”¨äº‹ä»¶
 }
 static void delete_agent(TcpClientAgent* agent)
 {
@@ -121,28 +121,28 @@ static void cb_conn_read(struct bufferevent *bev, void *user_data)
     char* pPack = buf.beginRead();
     while (buf.readableBytes() >= c_off)
     {
-        const uint kMsgSize = *((uint16*)pPack);	// ¡¾ÍøÂç°ü£ºÍ·2×Ö½ÚÎªÏûÏ¢Ìå´óĞ¡¡¿
-        const uint kPackSize = kMsgSize + c_off;	// ¡¾ÍøÂç°ü³¤ = ÏûÏ¢Ìå´óĞ¡ + Í·³¤¶È¡¿
-        char* pMsg = pPack + c_off;                 // ¡¾ºóÒÆ2×Ö½ÚµÃ£ºÏûÏ¢ÌåÖ¸Õë¡¿
+        const uint kMsgSize = *((uint16*)pPack);	// ã€ç½‘ç»œåŒ…ï¼šå¤´2å­—èŠ‚ä¸ºæ¶ˆæ¯ä½“å¤§å°ã€‘
+        const uint kPackSize = kMsgSize + c_off;	// ã€ç½‘ç»œåŒ…é•¿ = æ¶ˆæ¯ä½“å¤§å° + å¤´é•¿åº¦ã€‘
+        char* pMsg = pPack + c_off;                 // ã€åç§»2å­—èŠ‚å¾—ï¼šæ¶ˆæ¯ä½“æŒ‡é’ˆã€‘
 
-        // 1¡¢¼ì²éÏûÏ¢´óĞ¡
-        if (kMsgSize >= agent->m_pMgr->_config.nMaxPackage) //ÏûÏ¢Ì«´ó
+        // 1ã€æ£€æŸ¥æ¶ˆæ¯å¤§å°
+        if (kMsgSize >= agent->m_pMgr->_config.nMaxPackage) //æ¶ˆæ¯å¤ªå¤§
         {
             delete_agent(agent);
         }
-        // 2¡¢ÊÇ·ñ½Óµ½ÍêÕû°ü
-        if (kPackSize > buf.readableBytes()) break; // ¡¾°üÎ´ÊÕÍê£º½ÓÊÕ×Ö½Ú < °ü´óĞ¡¡¿
+        // 2ã€æ˜¯å¦æ¥åˆ°å®Œæ•´åŒ…
+        if (kPackSize > buf.readableBytes()) break; // ã€åŒ…æœªæ”¶å®Œï¼šæ¥æ”¶å­—èŠ‚ < åŒ…å¤§å°ã€‘
 
-        // 3¡¢ÏûÏ¢½âÂë¡¢´¦Àí decode, unpack and ungroup
+        // 3ã€æ¶ˆæ¯è§£ç ã€å¤„ç† decode, unpack and ungroup
         agent->RecvMsg(pMsg, kMsgSize);
 
-        // 4¡¢ÏûÏ¢´¦ÀíÍê±Ï£¬½ÓÊÕ×Ö½Ú/°üÖ¸Õë¸üĞÂ(´¦ÀíÏÂÒ»¸ö°ü)
+        // 4ã€æ¶ˆæ¯å¤„ç†å®Œæ¯•ï¼Œæ¥æ”¶å­—èŠ‚/åŒ…æŒ‡é’ˆæ›´æ–°(å¤„ç†ä¸‹ä¸€ä¸ªåŒ…)
         buf.readerMove(n);
         pPack += kPackSize;
     }
 }
 
-// ´¦Àí¶Á¡¢Ğ´eventÖ®ÍâµÄeventµÄcallback 
+// å¤„ç†è¯»ã€å†™eventä¹‹å¤–çš„eventçš„callback 
 static void cb_conn_event(struct bufferevent *bev, short events, void *user_data)
 {
     if (events & BEV_EVENT_EOF) {
@@ -153,7 +153,7 @@ static void cb_conn_event(struct bufferevent *bev, short events, void *user_data
     delete_agent((TcpClientAgent*)user_data);
 }
 
-// ĞÅºÅ´¦Àíevent£¬ÊÕµ½SIGINT (ctrl-c)ĞÅºÅºó£¬ÑÓ³Ù2sÍË³öeventÑ­»· 
+// ä¿¡å·å¤„ç†eventï¼Œæ”¶åˆ°SIGINT (ctrl-c)ä¿¡å·åï¼Œå»¶è¿Ÿ2sé€€å‡ºeventå¾ªç¯ 
 static void cb_signal(evutil_socket_t sig, short events, void *user_data)
 {
     struct event_base *base = (event_base*)user_data;

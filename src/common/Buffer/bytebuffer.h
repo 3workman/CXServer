@@ -3,14 +3,13 @@
 #include <list>
 #include <map>
 #include <set>
-#include <hash_map>
 #include <assert.h>
 
 /*
-	×¢Òâ£º¡¾bufferÊä³ö£¬²»ÒªÓÃÎ»Óò±äÁ¿½Ó¡¿
-		1¡¢µ×²ãÈ¡µØÖ·£¬memcpyÊ±£¬¼«Ò×Ğ´Ô½½ç
-		2¡¢Î»Óò±äÁ¿£¬ÓÃ'&'È¡µØÖ·£¬²»ÊÇÕæÕıµÄÊı¾İ¿ªÍ·
-		3¡¢»°Ëµ£¬Î»Óò±äÁ¿½øÈçºÎ½øĞĞº¯ÊıÆ¥ÅäµÄÄØ£¿ int64  a:2; b62;  ByteBuffer::read(a) Æ¥Åä½øÄÄ¸ö£¿ read<int8>¡¢read<int64>£¿
+	æ³¨æ„ï¼šã€bufferè¾“å‡ºï¼Œä¸è¦ç”¨ä½åŸŸå˜é‡æ¥ã€‘
+		1ã€åº•å±‚å–åœ°å€ï¼Œmemcpyæ—¶ï¼Œææ˜“å†™è¶Šç•Œ
+		2ã€ä½åŸŸå˜é‡ï¼Œç”¨'&'å–åœ°å€ï¼Œä¸æ˜¯çœŸæ­£çš„æ•°æ®å¼€å¤´
+		3ã€è¯è¯´ï¼Œä½åŸŸå˜é‡è¿›å¦‚ä½•è¿›è¡Œå‡½æ•°åŒ¹é…çš„å‘¢ï¼Ÿ int64  a:2; b62;  ByteBuffer::read(a) åŒ¹é…è¿›å“ªä¸ªï¼Ÿ read<int8>ã€read<int64>ï¼Ÿ
 */
 
 class ByteBuffer {//tolua_export
@@ -18,17 +17,17 @@ class ByteBuffer {//tolua_export
     size_t _rpos, _wpos;
     std::vector<uint8> _storage;
 public:
-	//¾²Ì¬Êı¾İ³ÉÔ±£ºÖ»ÓĞÒ»·İ¿½±´£¬²»ÊôÓÚÈÎºÎÒ»¸ö¶ÔÏó
-	//Ò»°ãÍ¨¹ı·ÇÄÚÁªº¯ÊıÀ´·ÃÎÊ£¬ÒòÎª±àÒëÆ÷È·±£ÔÚµ÷ÓÃÈÎºÎÒ»¸ö·ÇÄÚÁªº¯ÊıÖ®Ç°£¬³õÊ¼»¯¾²Ì¬Êı¾İ³ÉÔ±
-	//µ±´Ó¡¾ÁíÒ»¸ö¡¿±àÒëµ¥ÔªÍ¨¹ıÄÚÁªº¯Êıµ÷ÓÃ¾²Ì¬³ÉÔ±Ê±£¬¾²Ì¬³ÉÔ±ÓĞ¿ÉÄÜÉĞÎ´±»³õÊ¼»¯
-	//C++¶Ô¡°¶¨ÒåÓÚ²»Í¬±àÒëµ¥ÔªÄÚµÄnon-local static¶ÔÏó¡±µÄ³õÊ¼»¯Ïà¶Ô´ÎĞòÎŞÃ÷È·¶¨Òå
-	//C++±£Ö¤£¬º¯ÊıÄÚµÄlocal static¶ÔÏó»áÔÚ¡°¸Ãº¯Êı±»µ÷ÓÃÆÚ¼ä¡±¡°Ê×´ÎÓöÉÏ¸Ã¶ÔÏóÖ®¶¨ÒåÊ½¡±Ê±±»³õÊ¼»¯
+	//é™æ€æ•°æ®æˆå‘˜ï¼šåªæœ‰ä¸€ä»½æ‹·è´ï¼Œä¸å±äºä»»ä½•ä¸€ä¸ªå¯¹è±¡
+	//ä¸€èˆ¬é€šè¿‡éå†…è”å‡½æ•°æ¥è®¿é—®ï¼Œå› ä¸ºç¼–è¯‘å™¨ç¡®ä¿åœ¨è°ƒç”¨ä»»ä½•ä¸€ä¸ªéå†…è”å‡½æ•°ä¹‹å‰ï¼Œåˆå§‹åŒ–é™æ€æ•°æ®æˆå‘˜
+	//å½“ä»ã€å¦ä¸€ä¸ªã€‘ç¼–è¯‘å•å…ƒé€šè¿‡å†…è”å‡½æ•°è°ƒç”¨é™æ€æˆå‘˜æ—¶ï¼Œé™æ€æˆå‘˜æœ‰å¯èƒ½å°šæœªè¢«åˆå§‹åŒ–
+	//C++å¯¹â€œå®šä¹‰äºä¸åŒç¼–è¯‘å•å…ƒå†…çš„non-local staticå¯¹è±¡â€çš„åˆå§‹åŒ–ç›¸å¯¹æ¬¡åºæ— æ˜ç¡®å®šä¹‰
+	//C++ä¿è¯ï¼Œå‡½æ•°å†…çš„local staticå¯¹è±¡ä¼šåœ¨â€œè¯¥å‡½æ•°è¢«è°ƒç”¨æœŸé—´â€â€œé¦–æ¬¡é‡ä¸Šè¯¥å¯¹è±¡ä¹‹å®šä¹‰å¼â€æ—¶è¢«åˆå§‹åŒ–
 	const static size_t DEFAULT_SIZE = 0x1000;
 
-	//vectorµÄreserveÔö¼ÓÁËvectorµÄcapacity£¬µ«ÊÇËüµÄsizeÃ»ÓĞ¸Ä±ä£¡¶øresize¸Ä±äÁËvectorµÄcapacityÍ¬Ê±Ò²Ôö¼ÓÁËËüµÄsize
-	//reserveÊÇÈİÆ÷Ô¤Áô¿Õ¼ä£¬µ«ÔÚ¿Õ¼äÄÚ²»ÕæÕı´´½¨ÔªËØ¶ÔÏó£¬ËùÒÔÔÚÃ»ÓĞÌí¼ÓĞÂµÄ¶ÔÏóÖ®Ç°£¬²»ÄÜÒıÓÃÈİÆ÷ÄÚµÄÔªËØ
-	//resizeÊÇ¸Ä±äÈİÆ÷µÄ´óĞ¡£¬ÇÒÔÚ´´½¨¶ÔÏó£¬Òò´Ëµ÷ÓÃÕâ¸öº¯ÊıÖ®ºó£¬¾Í¿ÉÒÔÒıÓÃÈİÆ÷ÄÚµÄ¶ÔÏóÁË
-	//resize¡¾Èç¹û±ÈÔ­ÈİÆ÷¸üĞ¡£¬Çå³ıÎ²²¿¶à³öµÄÔªËØ¡¿
+	//vectorçš„reserveå¢åŠ äº†vectorçš„capacityï¼Œä½†æ˜¯å®ƒçš„sizeæ²¡æœ‰æ”¹å˜ï¼è€Œresizeæ”¹å˜äº†vectorçš„capacityåŒæ—¶ä¹Ÿå¢åŠ äº†å®ƒçš„size
+	//reserveæ˜¯å®¹å™¨é¢„ç•™ç©ºé—´ï¼Œä½†åœ¨ç©ºé—´å†…ä¸çœŸæ­£åˆ›å»ºå…ƒç´ å¯¹è±¡ï¼Œæ‰€ä»¥åœ¨æ²¡æœ‰æ·»åŠ æ–°çš„å¯¹è±¡ä¹‹å‰ï¼Œä¸èƒ½å¼•ç”¨å®¹å™¨å†…çš„å…ƒç´ 
+	//resizeæ˜¯æ”¹å˜å®¹å™¨çš„å¤§å°ï¼Œä¸”åœ¨åˆ›å»ºå¯¹è±¡ï¼Œå› æ­¤è°ƒç”¨è¿™ä¸ªå‡½æ•°ä¹‹åï¼Œå°±å¯ä»¥å¼•ç”¨å®¹å™¨å†…çš„å¯¹è±¡äº†ã€ã€‘
+	//resizeã€å¦‚æœæ¯”åŸå®¹å™¨æ›´å°ï¼Œæ¸…é™¤å°¾éƒ¨å¤šå‡ºçš„å…ƒç´ ã€‘
 	ByteBuffer() : _rpos(0), _wpos(0) {
 		_storage.reserve(DEFAULT_SIZE);
 	}
@@ -70,13 +69,7 @@ public:
         _rpos += sizeof(T);
         return r;
     }
-    template<> std::string read<std::string>() {
-        std::string str;
-        uint16 len = read<uint16>();
-        str.assign((const char*)contentsRpos(), len);
-        _rpos += len;
-        return str; //c++11 move
-    }
+
     void read(void* dest, size_t len) {//tolua_export
         if (_rpos + len <= _wpos) {
             memcpy(dest, &_storage[_rpos], len);
@@ -90,11 +83,11 @@ public:
     //	value.clear();
     //	while (--len >= 0) {
     //		char c = read<char>();
-    //		value += c; // Éú³ÉÁÙÊ±string¶ÔÏóÔÙÆ´½Ó£¬/(¨Òo¨Ò)/~~
+    //		value += c; // ç”Ÿæˆä¸´æ—¶stringå¯¹è±¡å†æ‹¼æ¥ï¼Œ/(ã„’oã„’)/~~
     //	}
-    //	/* Õâ¸ö½Ó¿Ú²»°²È«Òì³£Çé¿ö£º
-    //		1¡¢len³¬³¤
-    //		2¡¢bufÖĞÓĞ¶à¸ö'/0'
+    //	/* è¿™ä¸ªæ¥å£ä¸å®‰å…¨å¼‚å¸¸æƒ…å†µï¼š
+    //		1ã€lenè¶…é•¿
+    //		2ã€bufä¸­æœ‰å¤šä¸ª'/0'
     //	*/
     //}
 
@@ -105,8 +98,8 @@ public:
         append(str.c_str(), len);
     }//tolua_export
 
-    // NOTICE£º³£Á¿×Ö·û´®²»»áÒşÊ½×ª»»Îªstring
-    // NOTICE£ºÈôÎŞconst char* ÖØÔØ£¬»áÆ¥Åä½øtemplateº¯Êı
+    // NOTICEï¼šå¸¸é‡å­—ç¬¦ä¸²ä¸ä¼šéšå¼è½¬æ¢ä¸ºstring
+    // NOTICEï¼šè‹¥æ— const char* é‡è½½ï¼Œä¼šåŒ¹é…è¿›templateå‡½æ•°
     void append(const char* str) {
         uint16 len = (uint16)strlen(str);
         append(len);
@@ -150,9 +143,6 @@ public:
         assert(pos + cnt <= size());
         memcpy(&_storage[pos], src, cnt);
     }
-    //inline void reverse() {
-    //    std::reverse(_storage.begin(), _storage.end());
-    //}
     inline void swap(ByteBuffer &buf) {
         _storage.swap(buf._storage);
     }
@@ -268,10 +258,8 @@ public:
 		value = read<double>();
 		return *this;
 	}//tolua_export
-	ByteBuffer &operator>>(std::string& value) {//tolua_export
-        value = read<std::string>();
-		return *this;
-	}//tolua_export
+
+    inline ByteBuffer& operator>>(std::string& value);//tolua_export
 
 	void hexlike()
 	{
@@ -324,6 +312,19 @@ public:
 	}
 };//tolua_export
 
+template<> inline std::string ByteBuffer::read<std::string>()
+{
+    std::string str;
+    uint16 len = read<uint16>();
+    str.assign((const char*)contentsRpos(), len);
+    _rpos += len;
+    return str; //c++11 move
+}
+
+inline ByteBuffer& ByteBuffer::operator>>(std::string& value) {//tolua_export
+    value = read<std::string>();
+    return *this;
+}//tolua_export
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -398,26 +399,6 @@ template <typename K, typename V> ByteBuffer &operator<<(ByteBuffer &b, std::map
 	return b;
 }
 template <typename K, typename V> ByteBuffer &operator>>(ByteBuffer &b, std::map<K, V> &m)
-{
-	uint32 msize; K k; V v;
-	b >> msize;
-	m.clear();
-	while (--msize) {
-		b >> k >> v;
-		m.insert(make_pair(k, v));
-	}
-	return b;
-}
-
-template <typename K, typename V> ByteBuffer &operator<<(ByteBuffer &b, stdext::hash_map<K, V> &m)
-{
-	b << (uint32)m.size();
-	for (typename stdext::hash_map<K, V>::iterator i = m.begin(); i != m.end(); ++i) {
-		b << i->first << i->second;
-	}
-	return b;
-}
-template <typename K, typename V> ByteBuffer &operator>>(ByteBuffer &b, stdext::hash_map<K, V> &m)
 {
 	uint32 msize; K k; V v;
 	b >> msize;

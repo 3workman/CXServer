@@ -1,21 +1,21 @@
 /***********************************************************************
-* @ ÄÚ´æ³Ø
+* @ å†…å­˜æ± 
 * @ brief
-	1¡¢Ô¤ÏÈÉêÇëÒ»´ó¿éÄÚ´æ£¬°´¹Ì¶¨´óĞ¡·ÖÒ³£¬Ò³Í·µØÖ·¸øÍâ½çÊ¹ÓÃ
-	2¡¢¶àÉæ¼°operator new¡¢operator delete
+	1ã€é¢„å…ˆç”³è¯·ä¸€å¤§å—å†…å­˜ï¼ŒæŒ‰å›ºå®šå¤§å°åˆ†é¡µï¼Œé¡µå¤´åœ°å€ç»™å¤–ç•Œä½¿ç”¨
+	2ã€å¤šæ¶‰åŠoperator newã€operator delete
 
 * @ Notice
-    1¡¢cPool_Index ÄÚ´æ³ØÀïµÄ¶ÔÏó£¬ÓĞm_indexÊı¾İ£¬ÊµÎªÄÚ´æË÷Òı
-    2¡¢±»Íâ½ç±£´æÊ±£¬¿ÉÄÜ¶ÔÏóÒÑ¾­ÀúÏûÍö¡¢¸´ÓÃ£¬ÄÇÃ´Í¨¹ı±£´æµÄidxÕÒµ½µÄ¾ÍÊÇ´íÎóÖ¸ÕëÁË
-    3¡¢±ÈÈç±£´æNpcID£¬ÄÇ¸öNpcÒÑ¾­ËÀÍö£¬ÄÚ´æÇ¡ºÃ±»ĞÂNpc¸´ÓÃ£¬´ËÊ±Í¨¹ıNpcIDÕÒµ½µÄ¾Í²»ÖªµÀÊÇÉ¶ÁË
-    4¡¢¿ÉÒÔÔÚ¶ÔÏóÀï¼Ó¸ö×ÔÔö±äÁ¿£¬±ÈÈç¡°uint16 autoId;¡±£¬Í¬m_indexºÏ²¢³Éuint32£¬µ±Î¨Ò»id¡£±ÜÃâÍâ½çÖ±½ÓÊ¹ÓÃm_index
-    5¡¢¿ÕSTLÈİÆ÷µ÷front()¡¢pop()Ö±½Óå´»ú
+    1ã€cPool_Index å†…å­˜æ± é‡Œçš„å¯¹è±¡ï¼Œæœ‰m_indexæ•°æ®ï¼Œå®ä¸ºå†…å­˜ç´¢å¼•
+    2ã€è¢«å¤–ç•Œä¿å­˜æ—¶ï¼Œå¯èƒ½å¯¹è±¡å·²ç»å†æ¶ˆäº¡ã€å¤ç”¨ï¼Œé‚£ä¹ˆé€šè¿‡ä¿å­˜çš„idxæ‰¾åˆ°çš„å°±æ˜¯é”™è¯¯æŒ‡é’ˆäº†
+    3ã€æ¯”å¦‚ä¿å­˜NpcIDï¼Œé‚£ä¸ªNpcå·²ç»æ­»äº¡ï¼Œå†…å­˜æ°å¥½è¢«æ–°Npcå¤ç”¨ï¼Œæ­¤æ—¶é€šè¿‡NpcIDæ‰¾åˆ°çš„å°±ä¸çŸ¥é“æ˜¯å•¥äº†
+    4ã€å¯ä»¥åœ¨å¯¹è±¡é‡ŒåŠ ä¸ªè‡ªå¢å˜é‡ï¼Œæ¯”å¦‚â€œuint16 autoId;â€ï¼ŒåŒm_indexåˆå¹¶æˆuint32ï¼Œå½“å”¯ä¸€idã€‚é¿å…å¤–ç•Œç›´æ¥ä½¿ç”¨m_index
+    5ã€ç©ºSTLå®¹å™¨è°ƒfront()ã€pop()ç›´æ¥å®•æœº
 
-    void MyClass::_CreateUniqueId() //½öÔÚ¶ÔÏóĞÂ½¨Ê±µ÷ÓÃ£¬ÆäËüµØ·½Ö±½ÓÓÃ m_unique_id
+    void MyClass::_CreateUniqueId() //ä»…åœ¨å¯¹è±¡æ–°å»ºæ—¶è°ƒç”¨ï¼Œå…¶å®ƒåœ°æ–¹ç›´æ¥ç”¨ m_unique_id
     {
         static uint16 s_auto_id = 0;
 
-        m_unique_id = ((++s_auto_id) << 16) + m_index; //¶ÔÏóÊı16Î»¾Í¹»ÓÃ£¬²»¹»µÄ»°·â¸ö64Î»µÄunion°É
+        m_unique_id = ((++s_auto_id) << 16) + m_index; //å¯¹è±¡æ•°16ä½å°±å¤Ÿç”¨ï¼Œä¸å¤Ÿçš„è¯å°ä¸ª64ä½çš„unionå§
     }
     MyClass* MyClass::FindGroup(uint32 uniqueId)
     {
@@ -33,8 +33,8 @@
 #pragma once
 #include "SafeQueue.h"
 
-// ¼ì²éÒ»¶ÎÄÚ´æÊÇ·ñÔ½½ç(Í·Î²Éè±ê¼Ç)
-#define CHECKNU 6893    // ³ı0ÍâÈÎÒâÖµ
+// æ£€æŸ¥ä¸€æ®µå†…å­˜æ˜¯å¦è¶Šç•Œ(å¤´å°¾è®¾æ ‡è®°)
+#define CHECKNU 6893    // é™¤0å¤–ä»»æ„å€¼
 #define PRECHECK_FIELD(i) int __precheck##i;
 #define POSCHECK_FIELD(i) int __poscheck##i;
 #define INIT_CHECK(o, i) { (o)->__precheck##i = CHECKNU; (o)->__poscheck##i = CHECKNU; }
@@ -44,15 +44,15 @@ if ((o)->__precheck##i != CHECKNU || (o)->__poscheck##i != CHECKNU){\
 	__FILE__, __LINE__, (o)->__precheck##i, (o)->__poscheck##i);}\
 }
 
-class CPoolPage{//Ïß³Ì°²È«µÄ
+class CPoolPage{//çº¿ç¨‹å®‰å…¨çš„
 	const size_t	  m_pageSize;
 	const size_t	  m_pageCnt;
     SafeQueue<void*>  m_queue;
 
-    bool Double() // ¿ÉÉèÖÃDouble´ÎÊıÏŞÖÆ
+    bool Double() // å¯è®¾ç½®Doubleæ¬¡æ•°é™åˆ¶
     {
-        // ÎŞ³õÊ¼»¯£¬Íâ½çÒªoperator new»òµ÷ÓÃnew(ptr)
-        char* p = (char*)malloc(m_pageSize * m_pageCnt); // Òç³ö·çÏÕ£ºm_pageSize * m_pageNum
+        // æ— åˆå§‹åŒ–ï¼Œå¤–ç•Œè¦operator newæˆ–è°ƒç”¨new(ptr)
+        char* p = (char*)malloc(m_pageSize * m_pageCnt); // æº¢å‡ºé£é™©ï¼šm_pageSize * m_pageNum
         if (!p) return false;
 
         for (size_t i = 0; i < m_pageCnt; ++i) {
@@ -63,11 +63,11 @@ class CPoolPage{//Ïß³Ì°²È«µÄ
     }
 public:
 	CPoolPage(size_t pageSize, size_t pageCnt) : m_pageSize(pageSize), m_pageCnt(pageCnt){
-        /*  ¶ÔÏó¹¹ÔìµÄÏß³Ì°²È«£º
-            1¡¢²»ÒªÔÚctorÖĞ×¢²á»Øµ÷
-            2¡¢´ËÊ±Ò²²»Òª°Ñthis´«¸ø¿çÏß³ÌµÄ¶ÔÏó
-            3¡¢×¢Òâµ÷ÓÃµÄ³ÉÔ±º¯ÊıÒ²¿ÉÄÜ¸É»µÊÂ
-            4¡¢¼´±ãÔÚ¹¹Ôìº¯ÊıµÄ×îºóÒ»ĞĞÒ²²»ĞĞ
+        /*  å¯¹è±¡æ„é€ çš„çº¿ç¨‹å®‰å…¨ï¼š
+            1ã€ä¸è¦åœ¨ctorä¸­æ³¨å†Œå›è°ƒ
+            2ã€æ­¤æ—¶ä¹Ÿä¸è¦æŠŠthisä¼ ç»™è·¨çº¿ç¨‹çš„å¯¹è±¡
+            3ã€æ³¨æ„è°ƒç”¨çš„æˆå‘˜å‡½æ•°ä¹Ÿå¯èƒ½å¹²åäº‹
+            4ã€å³ä¾¿åœ¨æ„é€ å‡½æ•°çš„æœ€åä¸€è¡Œä¹Ÿä¸è¡Œ
         */
 		Double();
 	}
@@ -84,29 +84,30 @@ public:
 	}
 };
 
-/* »ï°éËã·¨
-    ¡¢°´2µÄ´ÎÃİ²ğ·ÖÄÚ´æ¿é
-    ¡¢·ÖÅäÊ±£¬½«´ó¿é²ğÎªÁ½¸öĞ¡¿é£¬Ê£ÏÂµÄ³ÆÎ½»ï°é
-    ¡¢ÊÍ·ÅÄÚ´æ£¬ºÏ²¢¿ÕÏĞ»ï°é£¬Ö±ÖÁÓöµ½Ò»¸öÒÑ·ÖÅä»ï°éÍ£Ö¹
-    ¡¢¡¾¸ø¶¨µØÖ·¡¢¿é´óĞ¡£¬ºÜÈİÒ×¼ÆËãËü»ï°éµÄµØÖ·£¬Á½ÕßÖ»ÓĞÒ»Î»²»Í¬¡¿
+
+/* ä¼™ä¼´ç®—æ³•
+    ã€æŒ‰2çš„æ¬¡å¹‚æ‹†åˆ†å†…å­˜å—
+    ã€åˆ†é…æ—¶ï¼Œå°†å¤§å—æ‹†ä¸ºä¸¤ä¸ªå°å—ï¼Œå‰©ä¸‹çš„ç§°è°“ä¼™ä¼´
+    ã€é‡Šæ”¾å†…å­˜ï¼Œåˆå¹¶ç©ºé—²ä¼™ä¼´ï¼Œç›´è‡³é‡åˆ°ä¸€ä¸ªå·²åˆ†é…ä¼™ä¼´åœæ­¢
+    ã€ã€ç»™å®šåœ°å€ã€å—å¤§å°ï¼Œå¾ˆå®¹æ˜“è®¡ç®—å®ƒä¼™ä¼´çš„åœ°å€ï¼Œä¸¤è€…åªæœ‰ä¸€ä½ä¸åŒã€‘
 */
 class CPoolLevel {
     enum {
-        MinBlock = 32,  //×îĞ¡ÄÚ´æ¿é³ß´ç
-        MaxLevel = 5,   //Ã¿µÍÒ»¼¶£¬³ß´ç¼õ°ë£¬ÊıÁ¿¼Ó±¶
+        MinBlock = 32,  //æœ€å°å†…å­˜å—å°ºå¯¸
+        MaxLevel = 5,   //æ¯ä½ä¸€çº§ï¼Œå°ºå¯¸å‡åŠï¼Œæ•°é‡åŠ å€
     };
 #define LevelSize(lv) (MinBlock << (lv))
 #define LevelCnt(lv)  (m_MaxLvCnt << (MaxLevel-(lv)))
 
-    const size_t	  m_MaxLvCnt;
+    const int   	  m_MaxLvCnt;
     SafeQueue<void*>  m_queue[MaxLevel+1];
 
 public:
-    CPoolLevel(size_t maxLvCnt) : m_MaxLvCnt(maxLvCnt)
+    CPoolLevel(int maxLvCnt) : m_MaxLvCnt(maxLvCnt)
     {
-        _Double(lv);
+        _Double(MaxLevel);
     }
-    void* Alloc(size_t size)
+    void* Alloc(int size)
     {
         int lv = _GetLevel(size);
 
@@ -119,7 +120,7 @@ public:
         }
         return ret;
     }
-    void Dealloc(void* p, size_t size)
+    void Dealloc(void* p, int size)
     {
         int lv = _GetLevel(size);
         if (lv == -1) {
@@ -134,7 +135,7 @@ private:
         size_t pageSize = LevelSize(lv);
         size_t pageCnt  = LevelCnt(lv);
 
-        char* p = (char*)malloc(pageSize * pageCnt); // Òç³ö·çÏÕ£ºm_pageSize * m_pageNum
+        char* p = (char*)malloc(pageSize * pageCnt); // æº¢å‡ºé£é™©ï¼šm_pageSize * m_pageNum
         if (!p) return false;
 
         for (size_t i = 0; i < pageCnt; ++i) {
@@ -145,17 +146,18 @@ private:
     }
     bool _Append(uint lv)
     {
-        //µÍ¼¶µÄ²»¹»£¬Ïò¸ß¼¶µÄÒª
+        //ä½çº§çš„ä¸å¤Ÿï¼Œå‘é«˜çº§çš„è¦
         return (lv < MaxLevel) ? _Split(lv+1) : _Double(lv);
     }
-    bool _Split(uint lv) //½«±¾¼¶ÄÚ´æ¿é²ğ·Ö£¬¼Óµ½Ğ¡Ò»¼¶ÄÚ´æ³ØÖĞ
+    bool _Split(uint lv) //å°†æœ¬çº§å†…å­˜å—æ‹†åˆ†ï¼ŒåŠ åˆ°å°ä¸€çº§å†…å­˜æ± ä¸­
     {
         if (m_queue[lv].empty())
         {
-            if (lv == MaxLevel) { //¡¾Notice¡¿²»¼Ó´óÀ¨ºÅ£¬if elseÆ¥ÅäÆçÒå
+            if (lv == MaxLevel) {
                 if (!_Double(lv)) return false;
-            } else {
-                if (!_Split(lv + 1)) return false;
+            }
+            else {
+                if (!_Split(lv+1)) return false;
             }
         }
 
@@ -181,10 +183,10 @@ private:
 #undef LevelCnt
 };
 
-// Ç±ÔÚBug£ºm_index±»Íâ½ç±£´æ£¬µ«ÏóÒÑ¾­ÏûÍö£¬¸ÃÄÚ´æ¿éÓÖÇ¡ÇÉ±»ĞÂ¶ÔÏó¸´ÓÃ¡­¡­´ËÊ±Âß¼­²ã¶¨Î»µ½µÄÖ¸Õë¾Í´íÂÒÁË
+// æ½œåœ¨Bugï¼šm_indexè¢«å¤–ç•Œä¿å­˜ï¼Œä½†è±¡å·²ç»æ¶ˆäº¡ï¼Œè¯¥å†…å­˜å—åˆæ°å·§è¢«æ–°å¯¹è±¡å¤ç”¨â€¦â€¦æ­¤æ—¶é€»è¾‘å±‚å®šä½åˆ°çš„æŒ‡é’ˆå°±é”™ä¹±äº†
 #define VOID_POOL_ID -1
 template <class T>
-class CPoolIndex{ // ×Ô¶¯±àºÅ£¬±ãÓÚ¹ÜÀí(¶ÔÏóÒªº¬ÓĞm_index±äÁ¿£¬¼ÇÂ¼ÆäÄÚ´æid)£¬¡¾·ÇÏß³Ì°²È«¡¿
+class CPoolIndex{ // è‡ªåŠ¨ç¼–å·ï¼Œä¾¿äºç®¡ç†(å¯¹è±¡è¦å«æœ‰m_indexå˜é‡ï¼Œè®°å½•å…¶å†…å­˜id)ï¼Œã€éçº¿ç¨‹å®‰å…¨ã€‘
 	T**    m_arrPtr;
     uint   m_cnt;
     std::queue<uint> m_queue;
@@ -193,9 +195,9 @@ public:
 		m_arrPtr = (T**)malloc(m_cnt * sizeof(T*));
 		if (!m_arrPtr) return;
 
-        //T* pObj = ::new T[m_num]; // ÈôÀàÃ»operator new£¬¾ÍÓÃÈ«¾ÖµÄnew(È·±£³õÊ¼»¯)
+        //T* pObj = ::new T[m_num]; // è‹¥ç±»æ²¡operator newï¼Œå°±ç”¨å…¨å±€çš„new(ç¡®ä¿åˆå§‹åŒ–)
         T* pObj = (T*)malloc(m_cnt * sizeof(T));
-        if (!pObj) return;	         // ÈôÀàoperator new£¬´Ë´¦ÓÃnew£¬»á¶à´Îµ÷ÓÃ¹¹Ôìº¯Êı
+        if (!pObj) return;	         // è‹¥ç±»operator newï¼Œæ­¤å¤„ç”¨newï¼Œä¼šå¤šæ¬¡è°ƒç”¨æ„é€ å‡½æ•°
 
         for (uint i = 0; i < m_cnt; ++i) {
             m_arrPtr[i] = pObj++;
@@ -203,10 +205,10 @@ public:
         }
 	}
 	bool Double(){
-		T** temp = (T**)malloc(m_cnt * 2 * sizeof(T*)); //´æÖ¸ÕëµÄÊı×é£¬ĞëÁ¬Ğø
+		T** temp = (T**)malloc(m_cnt * 2 * sizeof(T*)); //å­˜æŒ‡é’ˆçš„æ•°ç»„ï¼Œé¡»è¿ç»­
 		if (!temp) return false;
 
-        T* pObj = (T*)malloc(m_cnt * sizeof(T)); //¿ª±ÙĞÂÄÚ´æ¿é£¬´æ¶ÔÏó£¬¿ÉÉ¢ÁĞ
+        T* pObj = (T*)malloc(m_cnt * sizeof(T)); //å¼€è¾Ÿæ–°å†…å­˜å—ï¼Œå­˜å¯¹è±¡ï¼Œå¯æ•£åˆ—
         if (!pObj) return false;
 
 		memcpy(temp, m_arrPtr, m_cnt * sizeof(T*));
@@ -223,13 +225,13 @@ public:
 		if (m_queue.empty() && !Double()) return NULL;
         uint id = m_queue.front();
 		m_queue.pop();
-        T::_StaticIndex() = id; // ·ÖÅäÊ±ÉèÖÃÄÚ´æid
-        //m_arrPtr[id]->m_index = id; //±àÒëÆ÷¿ÉÄÜoperator newºóautoclassinit2£¬ÖÃ0Êı¾İ
+        T::_StaticIndex() = id; // åˆ†é…æ—¶è®¾ç½®å†…å­˜id
+        //m_arrPtr[id]->m_index = id; //ç¼–è¯‘å™¨å¯èƒ½operator newåautoclassinit2ï¼Œç½®0æ•°æ®
 		return m_arrPtr[id];
 	}
 	void Dealloc(T* p){
 		m_queue.push(p->m_index);
-		p->m_index = VOID_POOL_ID; // »ØÊÕºóÖÃ¿ÕÄÚ´æid
+		p->m_index = VOID_POOL_ID; // å›æ”¶åç½®ç©ºå†…å­˜id
 	}
     T* GetByIdx(uint id){
 		if (id >= m_cnt) return NULL;
@@ -247,7 +249,7 @@ public:
         void operator delete(void* p, size_t) { return _Pool().Dealloc((T*)p); }\
         static T* FindByIdx(uint idx){ return _Pool().GetByIdx(idx); }
 
-// ·ÀÖ¹Ë÷ÒıÄÚ´æ³Ø£¬¶¨Î»´íÂÒ£ºÈçÍâ½ç³ÖÓĞNpcË÷Òı£¬µ«¸ÃnpcÒÑ±»»ØÊÕ£¬ÔÙ¶¨Î»µ½µÄ¿ÉÄÜÊÇĞÂnpcÁË
+// é˜²æ­¢ç´¢å¼•å†…å­˜æ± ï¼Œå®šä½é”™ä¹±ï¼šå¦‚å¤–ç•ŒæŒæœ‰Npcç´¢å¼•ï¼Œä½†è¯¥npcå·²è¢«å›æ”¶ï¼Œå†å®šä½åˆ°çš„å¯èƒ½æ˜¯æ–°npcäº†
 #define Pool_Index_UniqueID32(T) \
         private: \
         uint32 m_unique_id = _CreateUniqueId(); \
@@ -298,25 +300,25 @@ public:
 
 
 /************************************************************************/
-// Ê¾Àı
+// ç¤ºä¾‹
 #ifdef _MY_Test
 	CPoolPage g_pool(4/*sizeof(cObj_Pool)*/, 2);
 	class cObj_Pool{
 		int _a = -1;
 	public:
-		cObj_Pool() { cout << "Ä¬ÈÏ¹¹Ôìº¯Êı£º" << _a << endl; }
-		cObj_Pool(int a) : _a(a) { cout << "º¬²Î¹¹Ôìº¯Êı£º" << _a << endl; }
+		cObj_Pool() { cout << "é»˜è®¤æ„é€ å‡½æ•°ï¼š" << _a << endl; }
+		cObj_Pool(int a) : _a(a) { cout << "å«å‚æ„é€ å‡½æ•°ï¼š" << _a << endl; }
 
 		void* operator new(size_t){ return g_pool.Alloc(); }
-		void* operator new(size_t, void* p){ return p; } // Ä¬ÈÏµÄnew(ptr)¸úÕâ¸öµÄÊµÏÖÒ»Ñù£¬½öreturn p;
+		void* operator new(size_t, void* p){ return p; } // é»˜è®¤çš„new(ptr)è·Ÿè¿™ä¸ªçš„å®ç°ä¸€æ ·ï¼Œä»…return p;
 	};
 
 	void test_Mempool(){
-		cout << "¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ªÄÚ´æ³Ø¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª" << endl;
+		cout << "â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”å†…å­˜æ± â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”" << endl;
 
- 		cObj_Pool* p = (cObj_Pool*)g_pool.Alloc(); // ÎŞ³õÊ¼»¯ÄÚ´æ¿é
-		new(p)cObj_Pool(5);		// ÖØÔØ°æ±¾¡ª¡ªÔÚptrËùÖ¸µØÖ·ÉÏ¹¹½¨Ò»¸ö¶ÔÏó(µ÷¹¹Ôìº¯Êı)
-		::new(p)cObj_Pool(10);	// È«¾Ö°æ±¾¡ª¡ªÔÚptrËùÖ¸µØÖ·ÉÏ¹¹½¨Ò»¸ö¶ÔÏó(µ÷¹¹Ôìº¯Êı)
+ 		cObj_Pool* p = (cObj_Pool*)g_pool.Alloc(); // æ— åˆå§‹åŒ–å†…å­˜å—
+		new(p)cObj_Pool(5);		// é‡è½½ç‰ˆæœ¬â€”â€”åœ¨ptræ‰€æŒ‡åœ°å€ä¸Šæ„å»ºä¸€ä¸ªå¯¹è±¡(è°ƒæ„é€ å‡½æ•°)
+		::new(p)cObj_Pool(10);	// å…¨å±€ç‰ˆæœ¬â€”â€”åœ¨ptræ‰€æŒ‡åœ°å€ä¸Šæ„å»ºä¸€ä¸ªå¯¹è±¡(è°ƒæ„é€ å‡½æ•°)
 
 		cObj_Pool* pp = new cObj_Pool;
 	}

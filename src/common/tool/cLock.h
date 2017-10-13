@@ -1,11 +1,11 @@
 /***********************************************************************
-* @ »¥³âËø¡¢ÁÙ½çÇø£¨CRITICAL_SECTION£©
+* @ äº’æ–¥é”ã€ä¸´ç•ŒåŒºï¼ˆCRITICAL_SECTIONï¼‰
 * @ brief
-	1¡¢ÁÙ½çÇø¶ÔÏó±ØÐë¾­¹ý::InitializeCriticalSection()µÄ³õÊ¼»¯ºó²ÅÄÜÊ¹ÓÃ
-	2¡¢Ê¹ÓÃÍê±ÏÒª::DeleteCriticalSection()É¾³ý
-	3¡¢::EnterCriticalSection()/::LeaveCriticalSection()±êÊ¶/ÊÍ·ÅÒ»¸öÁÙ½çÇø
-	4¡¢Á½º¯ÊýÖ®¼äµÄ´úÂë¶Î¼´»á»¥³â·ÃÎÊ£»cLockÀà·â×°Ò»²ã£¬±£Ö¤Á½º¯ÊýµÄ²¢ÐÐ
-	5¡¢::LeaveCriticalSection()Ò»¶¨Òª±»Ö´ÐÐµ½£¬·ñÔòËÀËø(Ò»Ö±ÎÞ·¨·ÃÎÊ)£¬²»ÒªÔÚÁ½º¯ÊýÖ±½Óreturn/breakµÈ´ò¶Ï
+	1ã€ä¸´ç•ŒåŒºå¯¹è±¡å¿…é¡»ç»è¿‡::InitializeCriticalSection()çš„åˆå§‹åŒ–åŽæ‰èƒ½ä½¿ç”¨
+	2ã€ä½¿ç”¨å®Œæ¯•è¦::DeleteCriticalSection()åˆ é™¤
+	3ã€::EnterCriticalSection()/::LeaveCriticalSection()æ ‡è¯†/é‡Šæ”¾ä¸€ä¸ªä¸´ç•ŒåŒº
+	4ã€ä¸¤å‡½æ•°ä¹‹é—´çš„ä»£ç æ®µå³ä¼šäº’æ–¥è®¿é—®ï¼›cLockç±»å°è£…ä¸€å±‚ï¼Œä¿è¯ä¸¤å‡½æ•°çš„å¹¶è¡Œ
+	5ã€::LeaveCriticalSection()ä¸€å®šè¦è¢«æ‰§è¡Œåˆ°ï¼Œå¦åˆ™æ­»é”(ä¸€ç›´æ— æ³•è®¿é—®)ï¼Œä¸è¦åœ¨ä¸¤å‡½æ•°ç›´æŽ¥return/breakç­‰æ‰“æ–­
 * @ author zhoumf
 * @ date 2014-11-21
 ************************************************************************/
@@ -23,14 +23,15 @@
 //};
 //
 //class cLock : public boost::noncopyable{
-//	CRITICAL_SECTION& _refLock; // ´æÒýÓÃ½ÚÊ¡ÅÐ¿Õ²Ù×÷(±ÈÖ¸Õë)
+//	CRITICAL_SECTION& _refLock; // å­˜å¼•ç”¨èŠ‚çœåˆ¤ç©ºæ“ä½œ(æ¯”æŒ‡é’ˆ)
 //public:
-//    cLock(cMutex& mutex) : _refLock(mutex) // ¶ÔÏó¹¹½¨£¬½øÈëÁÙ½çÇø
+//    cLock(cMutex& mutex) : _refLock(mutex) // å¯¹è±¡æž„å»ºï¼Œè¿›å…¥ä¸´ç•ŒåŒº
 //    {
 //        ::EnterCriticalSection(&_refLock);
 //    }
-//    ~cLock() { ::LeaveCriticalSection(&_refLock); } // ¶ÔÏóÎö¹¹£¬ÍË³öÁÙ½çÇø
+//    ~cLock() { ::LeaveCriticalSection(&_refLock); } // å¯¹è±¡æžæž„ï¼Œé€€å‡ºä¸´ç•ŒåŒº
 //};
+
 
 #include <mutex>
 

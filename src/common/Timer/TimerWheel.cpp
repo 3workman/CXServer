@@ -10,7 +10,7 @@ CTimerMgr::CTimerMgr() {
     assert(SUM_ARR(WHEEL_BIT, WHEEL_NUM) < 32);
     for (int i = 0; i < WHEEL_NUM; ++i) {
         WHEEL_SIZE[i] = 1 << WHEEL_BIT[i];
-        //WHEEL_CAP[i] = i > 0 ? (WHEEL_CAP[i-1]*WHEEL_SIZE[i]) : WHEEL_SIZE[i]; //ÏÂÒ»¼¶¿Ì¶È×ÜÁ¿ = ÉÏÒ»¼¶¿Ì¶È×ÜÁ¿ * ±¾¼¶¸ñ×ÓÊı
+        //WHEEL_CAP[i] = i > 0 ? (WHEEL_CAP[i-1]*WHEEL_SIZE[i]) : WHEEL_SIZE[i]; //ä¸‹ä¸€çº§åˆ»åº¦æ€»é‡ = ä¸Šä¸€çº§åˆ»åº¦æ€»é‡ * æœ¬çº§æ ¼å­æ•°
         WHEEL_CAP[i] = 1 << SUM_ARR(WHEEL_BIT, i+1);
         _wheels[i] = new stWheel(WHEEL_SIZE[i]);
     }
@@ -25,7 +25,7 @@ void TimerNode::_Callback(){
     loop -= interval;
     if (loop > 0) {
         //timeDead = TimeNow() + interval;
-        timeDead += interval; //Notice£ºÖÜÆÚÖ´ĞĞµÄº¯Êı£¬·şÎñÆ÷¿¨¶ÙÓ¦¸Ã×·Ö¡£¬ÔÙÈ¡ÏµÍ³µ±Ç°Ê±¼äÊÇ´íµÄ
+        timeDead += interval; //Noticeï¼šå‘¨æœŸæ‰§è¡Œçš„å‡½æ•°ï¼ŒæœåŠ¡å™¨å¡é¡¿åº”è¯¥è¿½å¸§ï¼Œå†å–ç³»ç»Ÿå½“å‰æ—¶é—´æ˜¯é”™çš„
         CTimerMgr::Instance()._AddTimerNode(interval, this);
         func(); //must at the last line; timer may be deleted in _func();
     } else {
@@ -43,14 +43,14 @@ void CTimerMgr::_AddTimerNode(uint32 milseconds, TimerNode* node) {
     NodeLink* slot = NULL;
     uint32 tickCnt = milseconds / TIME_TICK_LEN;
     if (tickCnt < WHEEL_CAP[0]) {
-        uint32 index = (_wheels[0]->slotIdx + tickCnt) & (WHEEL_SIZE[0] - 1); //2µÄN´ÎÃİÎ»²Ù×÷È¡Óà
+        uint32 index = (_wheels[0]->slotIdx + tickCnt) & (WHEEL_SIZE[0] - 1); //2çš„Næ¬¡å¹‚ä½æ“ä½œå–ä½™
         slot = _wheels[0]->slots + index;
         //LOG_TRACK("wheel[%u], slot[%u], curSlot[%u], node[%p], msec[%u]", 0, index, _wheels[0]->slotIdx, node, milseconds);
     } else {
         for (int i = 1; i < WHEEL_NUM; ++i) {
             if (tickCnt < WHEEL_CAP[i]) {
-                uint32 preCap = WHEEL_CAP[i - 1]; //ÉÏÒ»¼¶×ÜÈİÁ¿¼´Îª±¾¼¶µÄÒ»¸ñÈİÁ¿
-                uint32 index = (_wheels[i]->slotIdx + tickCnt / preCap - 1) & (WHEEL_SIZE[i] - 1); //ÎğÍü-1
+                uint32 preCap = WHEEL_CAP[i - 1]; //ä¸Šä¸€çº§æ€»å®¹é‡å³ä¸ºæœ¬çº§çš„ä¸€æ ¼å®¹é‡
+                uint32 index = (_wheels[i]->slotIdx + tickCnt / preCap - 1) & (WHEEL_SIZE[i] - 1); //å‹¿å¿˜-1
                 slot = _wheels[i]->slots + index;
                 //LOG_TRACK("wheel[%u], slot[%u], curSlot[%u], node[%p], msec[%u]", i, index, _wheels[i]->slotIdx, node, milseconds);
                 break;
@@ -58,7 +58,7 @@ void CTimerMgr::_AddTimerNode(uint32 milseconds, TimerNode* node) {
         }
     }
     NodeLink* link = &(node->link);
-    link->prev = slot->prev; //²åÈë¸ñ×ÓµÄprevÎ»ÖÃ(Î²½Úµã)
+    link->prev = slot->prev; //æ’å…¥æ ¼å­çš„prevä½ç½®(å°¾èŠ‚ç‚¹)
     link->prev->next = link;
     link->next = slot;
     slot->prev = link;
@@ -77,7 +77,7 @@ void CTimerMgr::RemoveTimer(TimerNode* node) {
 }
 void CTimerMgr::Refresh(uint32 time_elapse, const time_t timenow) {
     uint32 tickCnt = time_elapse / TIME_TICK_LEN;
-    for (uint32 i = 0; i < tickCnt; ++i) { //É¨¹ıµÄslot¾ù³¬Ê±
+    for (uint32 i = 0; i < tickCnt; ++i) { //æ‰«è¿‡çš„slotå‡è¶…æ—¶
         bool isCascade = false;
         stWheel* wheel = _wheels[0];
         NodeLink* slot = wheel->GetCurSlot();
@@ -86,13 +86,13 @@ void CTimerMgr::Refresh(uint32 time_elapse, const time_t timenow) {
             isCascade = true;
         }
         NodeLink* link = slot->next;
-        slot->next = slot->prev = slot; //Çå¿Õµ±Ç°¸ñ×Ó
-        while (link != slot) {          //»·ĞÎÁ´±í±éÀú
+        slot->next = slot->prev = slot; //æ¸…ç©ºå½“å‰æ ¼å­
+        while (link != slot) {          //ç¯å½¢é“¾è¡¨éå†
             TimerNode* node = (TimerNode*)link;
-            link = node->link.next; //µÃ·ÅÔÚÇ°Ãæ£¬ºóĞøº¯Êıµ÷ÓÃ£¬¿ÉÄÜ»á¸ü¸ÄnodeµÄÁ´½Ó¹ØÏµ
+            link = node->link.next; //å¾—æ”¾åœ¨å‰é¢ï¼Œåç»­å‡½æ•°è°ƒç”¨ï¼Œå¯èƒ½ä¼šæ›´æ”¹nodeçš„é“¾æ¥å…³ç³»
             AddToReadyNode(node);
         }
-        if (isCascade) Cascade(1, timenow); //Ìø¼¶
+        if (isCascade) Cascade(1, timenow); //è·³çº§
     }
     DoTimeOutCallBack();
 }
@@ -118,13 +118,13 @@ void CTimerMgr::Cascade(uint32 wheelIdx, const time_t timenow) {
     bool isCascade = false;
     stWheel* wheel = _wheels[wheelIdx];
     NodeLink* slot = wheel->GetCurSlot();
-    //¡¾Bug¡¿ĞëÏÈ¸üĞÂ²ÛÎ»¡ª¡ª¡ª¡ªÉ¨¸ñ×ÓÊ±¼ÓĞÂNode£¬²»ÄÜÔÙ·ÅÈëµ±Ç°²ÛÎ»ÁË
+    //ã€Bugã€‘é¡»å…ˆæ›´æ–°æ§½ä½â€”â€”â€”â€”æ‰«æ ¼å­æ—¶åŠ æ–°Nodeï¼Œä¸èƒ½å†æ”¾å…¥å½“å‰æ§½ä½äº†
     if (++(wheel->slotIdx) >= wheel->size) {
         wheel->slotIdx = 0;
         isCascade = true;
     }
     NodeLink* link = slot->next;
-    slot->next = slot->prev = slot; //Çå¿Õµ±Ç°¸ñ×Ó
+    slot->next = slot->prev = slot; //æ¸…ç©ºå½“å‰æ ¼å­
     while (link != slot) {
         TimerNode* node = (TimerNode*)link;
         link = node->link.next;
@@ -132,7 +132,7 @@ void CTimerMgr::Cascade(uint32 wheelIdx, const time_t timenow) {
             AddToReadyNode(node);
         } else {
             //LOG_TRACK("wheel[%u], curSlot[%u], node[%p], msec[%u]", wheelIdx, wheel->slotIdx, node, node->timeDead - timenow);
-            //¡¾Bug¡¿¼ÓĞÂNode£¬Ğë¼Óµ½ÆäËü²ÛÎ»£¬±¾²ÛÎ»ÒÑÉ¨¹ı(Ê§Ğ§£¬µÈÒ»ÕûÂÖ²Å»áÔÙÉ¨µ½)
+            //ã€Bugã€‘åŠ æ–°Nodeï¼Œé¡»åŠ åˆ°å…¶å®ƒæ§½ä½ï¼Œæœ¬æ§½ä½å·²æ‰«è¿‡(å¤±æ•ˆï¼Œç­‰ä¸€æ•´è½®æ‰ä¼šå†æ‰«åˆ°)
             _AddTimerNode(uint32(node->timeDead - timenow), node);
         }
     }

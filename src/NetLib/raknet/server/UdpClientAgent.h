@@ -9,7 +9,7 @@ class UdpClientAgent {
     RakNet::SystemAddress   m_addr;
     RakNet::RakNetGUID      m_guid;
     UdpServer* const        m_pMgr;
-    void*                   m_player = NULL; //ÊÕµ½Íæ¼ÒµÚÒ»ÌõÏûÏ¢(µÇÂ¼)£¬´Ó½ÇÉ«ÄÚ´æ³Ø(ÓĞÉÏÏŞ5000)ÖĞÈ¡¸ö£¬ÓëLink°ó¶¨
+    void*                   m_player = NULL; //æ”¶åˆ°ç©å®¶ç¬¬ä¸€æ¡æ¶ˆæ¯(ç™»å½•)ï¼Œä»è§’è‰²å†…å­˜æ± (æœ‰ä¸Šé™5000)ä¸­å–ä¸ªï¼Œä¸Linkç»‘å®š
     RakNet::RakPeerInterface* const m_rakPeer;
 
 public:
@@ -17,4 +17,6 @@ public:
     void CloseLink();
     void RecvMsg(const void* pMsg, int size);
     void SendMsg(const void* pMsg, int size);
+    void SendUdpMsg(const void* pMsg, int size);
+    void SendReliablyMsg(const void* pMsg, int size);
 };

@@ -1,7 +1,7 @@
 /***********************************************************************
-* @ ÒµÎñ²ãÊ¹ÓÃµÄÍøÂç°ü
+* @ ä¸šåŠ¡å±‚ä½¿ç”¨çš„ç½‘ç»œåŒ…
 * @ brief
-    1¡¢Ó¦Éè¼ÆÎª¿ÉÌæ»»¡¾ÍøÂç¿â¡¿ºÍ¡¾Ğ­Òé¡¿µÄ
+    1ã€åº”è®¾è®¡ä¸ºå¯æ›¿æ¢ã€ç½‘ç»œåº“ã€‘å’Œã€åè®®ã€‘çš„
 
 * @ author zhoumf
 * @ date 2016-3-21
@@ -9,15 +9,16 @@
 #pragma once
 #include "bytebuffer.h"
 #include "../tool/Mempool.h"
+#include "boost/uuid/uuid.hpp"
 #include "flatbuffers/flatbuffers.h"
 
-template<typename T> using FlatVector = std::vector<flatbuffers::Offset<T>>; //c++11µÄÄ£°å±ğÃû£¬ºÃÓÃ
+template<typename T> using FlatVector = std::vector<flatbuffers::Offset<T>>;
 
 class NetPack : public ByteBuffer
 {
     Pool_Obj_Define(NetPack, 4096)
 public:
-    static const size_t HEADER_SIZE     = sizeof(uint8) + sizeof(uint16) + sizeof(uint32); // packetType & Opcode & reqIdx
+    static const size_t HEADER_SIZE     = sizeof(uint8)+sizeof(uint16)+sizeof(uint32); // packetType & Opcode & reqIdx
     static const size_t TYPE_INDEX      = 0;
     static const size_t OPCODE_INDEX    = 1;
     static const size_t REQ_IDX_INDEX   = 3;
@@ -54,7 +55,7 @@ public:
     const uint8* Body() const { return contents() + HEADER_SIZE; }
     uint64 GetReqKey() { return (uint64(OpCode()) << 32) | ReqIdx(); }
 
-    // for logic
+// for logic
 public:
     void    WriteBool(bool val) { append(val); }
     void    WriteInt8(int8 val) { append(val); }
@@ -70,6 +71,7 @@ public:
     void    WriteString(const std::string& val) { append(val); }
     void    WriteString(const char* val) { append(val); }
     void    WriteBuf(const void* buf, size_t len) { append(buf, len); }
+    void    WriteUuid(const boost::uuids::uuid& uuid) { append(uuid.data, uuid.static_size); }
 
     bool    ReadBool() { return read<bool>(); }
     int8    ReadInt8() { return read<int8>(); }
@@ -82,10 +84,19 @@ public:
     uint64  ReadUInt64() { return read<uint64>(); }
     float   ReadFloat() { return read<float>(); }
     double  ReadDouble() { return read<double>(); }
-    std::string  ReadString() {
+    std::string  ReadString() { 
         return read<std::string>();
         //return std::move(str);
-        //return str; // c++11 ÓÒÖµÒıÓÃ£¬ÒÆ¶¯¹¹Ôì
+        //return str; // c++11 å³å€¼å¼•ç”¨ï¼Œç§»åŠ¨æ„é€ 
+    }
+    boost::uuids::uuid ReadUuid() {
+        using namespace boost::uuids;
+        // according to boost doc, uuid::static_size is always 16 bytes
+        char bytes[uuid::static_size];
+        read(bytes, uuid::static_size);
+        boost::uuids::uuid uuid;
+        memcpy(&uuid, bytes, uuid::static_size);
+        return uuid;
     }
     void MoveToBuf(flatbuffers::FlatBufferBuilder& builder) {
         if (builder.GetSize()) {
@@ -94,6 +105,6 @@ public:
         }
     }
 
-    void   SetPos(int pos, uint32 v) { put(HEADER_SIZE + pos, v); }
+    void   SetPos(int pos, uint32 v){ put(HEADER_SIZE + pos, v); }
     uint32 GetPos(int pos) { return show<uint32>(HEADER_SIZE + pos); }
 };

@@ -4,10 +4,8 @@
 #include "MessageIdentifiers.h"
 #include "config_net.h"
 
-#pragma comment(lib,"Ws2_32.lib")
-
 UdpClient::UdpClient(const NetCfgClient& info)
-: m_config(info)
+    : m_config(info)
 {
 
 }
@@ -16,7 +14,7 @@ bool UdpClient::Start(const HandleMsgFunc& func) {
     // Note we can easily have both in the same program
     m_rakPeer = RakNet::RakPeerInterface::GetInstance();
     const char* password = m_config.kPassword;
-    int   passwordLength = strlen(password);
+    int   passwordLength = (int)strlen(password);
     // Connecting the client is very simple.  0 means we don't care about
     // a connectionValidationInteger, and false for low priority threads
     RakNet::SocketDescriptor socketDescriptor(0, 0);
@@ -56,28 +54,28 @@ void UdpClient::_HandlePacket(RakNet::Packet* packet) {
     RakNet::MessageID raknetMsgId = GetPacketIdentifier(packet);
     switch (raknetMsgId) {
     case ID_CONNECTION_REQUEST_ACCEPTED: {
-        // Á¬½Ó³É¹¦
+        // è¿æ¥æˆåŠŸ
         m_serverAddr = packet->systemAddress;
         m_eState = State_Connected;
         m_onConnect();
     } break;
     case ID_CONNECTION_ATTEMPT_FAILED: {
-        // Á¬½ÓÊ§°Ü
+        // è¿æ¥å¤±è´¥
         printf("connect failed ... \n");
         m_eState = State_Close;
     } break;
     case ID_NO_FREE_INCOMING_CONNECTIONS: {
-        // ·şÎñÆ÷Á¬½ÓÂúÁË
+        // æœåŠ¡å™¨è¿æ¥æ»¡äº†
         printf("server if full ... \n");
         m_eState = State_Close;
     } break;
     case ID_DISCONNECTION_NOTIFICATION: {
-       // Á¬½ÓÖ÷¶¯¶Ï¿ª£¬×Ô¼ºµ÷CloseConnection()Ò»¶¨ÊÕµ½±¾ÏûÏ¢
+       // è¿æ¥ä¸»åŠ¨æ–­å¼€ï¼Œè‡ªå·±è°ƒCloseConnection()ä¸€å®šæ”¶åˆ°æœ¬æ¶ˆæ¯
        printf("server has disconnected ... \n");
        m_eState = State_Close;
     } break;
     case ID_CONNECTION_LOST: {
-        // ¶Ô¶Ë¶ªÊ§
+        // å¯¹ç«¯ä¸¢å¤±
         printf("server lost connection ... \n");
         m_eState = State_Close;
     } break;

@@ -4,7 +4,7 @@
 
 void DataDiff::diff(NetPack& buf)
 {
-    _bit = 0; int bitPosInPack = buf.wpos();
+    _bit = 0; int bitPosInPack = (int)buf.wpos();
     buf << _bit; //先写入位标记，diff完毕后重设
 
     const char* val;

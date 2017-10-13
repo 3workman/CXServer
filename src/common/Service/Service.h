@@ -1,16 +1,16 @@
 /***********************************************************************
-* @ ÅúÁ¿Ö´ĞĞº¯Êıµ÷ÓÃ£¬¡¾µ¥Ïß³Ì¡¿Ñ­»·¿ò¼Ü
+* @ æ‰¹é‡æ‰§è¡Œå‡½æ•°è°ƒç”¨ï¼Œã€å•çº¿ç¨‹ã€‘å¾ªç¯æ¡†æ¶
 * @ brief
-	1¡¢cServicePatch£º¶à³¤Ê±¼äÅÜÍêÒ»ÂÖ£¬»á¶¯Ì¬Æ½ºâ£¨Èç£ºÊµÏÖÊ®Îå·ÖÖÓÈ«·şÍæ¼ÒÈë¿â£©£¬ÇÒ»á²¹Ö¡£¨¿¨¶ÙºóµÄ»á¶à´ÎÖ´ĞĞ£©
+	1ã€cServicePatchï¼šå¤šé•¿æ—¶é—´è·‘å®Œä¸€è½®ï¼Œä¼šåŠ¨æ€å¹³è¡¡ï¼ˆå¦‚ï¼šå®ç°åäº”åˆ†é’Ÿå…¨æœç©å®¶å…¥åº“ï¼‰ï¼Œä¸”ä¼šè¡¥å¸§ï¼ˆå¡é¡¿åçš„ä¼šå¤šæ¬¡æ‰§è¡Œï¼‰
 
-	2¡¢cServiceList/cServiceMap£º¼ä¸ô¶à¾ÃÖ´ĞĞ£¬²»²¹Ö¡£¬Ã¿Ö¡×î¶àÅÜÒ»´Î
-        *¡¢×¢²áµÄ»Øµ÷º¯Êı·µ»ØÖµ¼´CD£¬0-ÖĞ¶Ï£¬ÄÜ¶¯Ì¬Ö¸¶¨¼ä¸ôÖÜÆÚ
-        *¡¢cServiceList°´Âß¼­ÏÈºóË³ĞòÖ´ĞĞ£¬cServiceMapÔòÊÇ°´Ê±¼äË³Ğò
-        *¡¢¾ùÊÇ½«Ö´ĞĞ¹ıµÄ¶ÔÏóÅ²ÖÁ¶ÓÎ²£¬ËùÒÔListµÄRunĞÔÄÜ±ÈMapºÃ£¬µ«Æµ·±ÔöÉ¾µÄ»°£¬Map¾ÍÓÅÊÆÁË
+	2ã€cServiceList/cServiceMapï¼šé—´éš”å¤šä¹…æ‰§è¡Œï¼Œä¸è¡¥å¸§ï¼Œæ¯å¸§æœ€å¤šè·‘ä¸€æ¬¡
+        *ã€æ³¨å†Œçš„å›è°ƒå‡½æ•°è¿”å›å€¼å³CDï¼Œ0-ä¸­æ–­ï¼Œèƒ½åŠ¨æ€æŒ‡å®šé—´éš”å‘¨æœŸ
+        *ã€cServiceListæŒ‰é€»è¾‘å…ˆåé¡ºåºæ‰§è¡Œï¼ŒcServiceMapåˆ™æ˜¯æŒ‰æ—¶é—´é¡ºåº
+        *ã€å‡æ˜¯å°†æ‰§è¡Œè¿‡çš„å¯¹è±¡æŒªè‡³é˜Ÿå°¾ï¼Œæ‰€ä»¥Listçš„Runæ€§èƒ½æ¯”Mapå¥½ï¼Œä½†é¢‘ç¹å¢åˆ çš„è¯ï¼ŒMapå°±ä¼˜åŠ¿äº†
 
-    3¡¢ServiceÊÇÎª²»Í¬¶ÔÏó¼ÆÊ±Ö´ĞĞÍ¬Ò»º¯Êı£¬¶¨Ê±Æ÷ÊÇ¼ÆÊ±Ö´ĞĞ¸÷ÖÖ²»Í¬µÄ×¢²áº¯Êı¡£
-        *¡¢ËüÃÇÉè¼ÆË¼Â·Ò»ÖÂµÄ£¬¹¹ÔìexeTimeÓĞĞò±í£¬ÖğÖ¡¼ì²éÖ´ĞĞ
-        *¡¢Ò»µ©Ä³¸ö½ÚµãÎ´³¬Ê±£¬ÄÇºóÃæµÄ¾Í¶¼Î´³¬Ê±£¬Ëæ¼´½áÊøÑ­»·
+    3ã€Serviceæ˜¯ä¸ºä¸åŒå¯¹è±¡è®¡æ—¶æ‰§è¡ŒåŒä¸€å‡½æ•°ï¼Œå®šæ—¶å™¨æ˜¯è®¡æ—¶æ‰§è¡Œå„ç§ä¸åŒçš„æ³¨å†Œå‡½æ•°ã€‚
+        *ã€å®ƒä»¬è®¾è®¡æ€è·¯ä¸€è‡´çš„ï¼Œæ„é€ exeTimeæœ‰åºè¡¨ï¼Œé€å¸§æ£€æŸ¥æ‰§è¡Œ
+        *ã€ä¸€æ—¦æŸä¸ªèŠ‚ç‚¹æœªè¶…æ—¶ï¼Œé‚£åé¢çš„å°±éƒ½æœªè¶…æ—¶ï¼Œéšå³ç»“æŸå¾ªç¯
 
 * @ author zhoumf
 * @ date 2014-12-16
@@ -25,8 +25,8 @@ class iService{
 public:
     typedef uint(*RefreshFun)(void*);
     virtual void UnRegister(void* pObj) = 0;
-    virtual bool Register(void* pObj, uint exeTime = 0) = 0; //ÄÄ¸öÊ±¿ÌÖ´ĞĞ
-    virtual void RunSevice(uint time_elapse, time_t timenow) = 0; //Ñ­»·ÄÚµÄ»Øµ÷º¯Êı(m_func)¿ÉÄÜµ÷µ½Register¡¢UnRegister
+    virtual bool Register(void* pObj, uint exeTime = 0) = 0; //å“ªä¸ªæ—¶åˆ»æ‰§è¡Œ
+    virtual void RunSevice(uint time_elapse, time_t timenow) = 0; //å¾ªç¯å†…çš„å›è°ƒå‡½æ•°(m_func)å¯èƒ½è°ƒåˆ°Registerã€UnRegister
 protected:
     typedef std::multimap<time_t, void*>    mapTimer;
     typedef std::pair<time_t, void*>        TimerPair;
@@ -35,7 +35,7 @@ protected:
     typedef std::set<void*>::iterator       ItSet;
 
 	bool m_bRun;
-	RefreshFun m_func;	//»Øµ÷º¯Êı
+	RefreshFun m_func;	//å›è°ƒå‡½æ•°
     iService(RefreshFun func) : m_bRun(false) { m_func = func; }
 	virtual ~iService(){};
 };
@@ -43,7 +43,7 @@ protected:
 class cServicePatch: public iService{
     int  m_runPos = 0;
     uint m_timeWait = 0;
-    const uint c_timeAll;  //¶àÉÙmsÈ«²¿ÔËĞĞÒ»´Î
+    const uint c_timeAll;  //å¤šå°‘mså…¨éƒ¨è¿è¡Œä¸€æ¬¡
     std::vector<void*> m_aObj;
 public:
     cServicePatch(RefreshFun func, uint timeAll) : iService(func), c_timeAll(timeAll){}
@@ -65,45 +65,45 @@ public:
     {
         if (m_aObj.size() <= 0) return;
 
-        /******************************¸ºÔØ¾ùºâËã·¨********************************/
+        /******************************è´Ÿè½½å‡è¡¡ç®—æ³•********************************/
         m_timeWait += time_elapse;
-        const int runNum = m_timeWait * m_aObj.size() / c_timeAll; //µ¥Î»Ê±³¤ÀïÒª´¦ÀíµÄ¸öÊı£¬¿ÉÄÜ´óÓÚÁĞ±íÖĞobj×ÜÊı£¬±ÈÈç·şÎñÆ÷¿¨¶ÙºÜ¾Ã£¬µÃ×·Ö¡
+        const int runNum = m_timeWait * (int)m_aObj.size() / c_timeAll; //å•ä½æ—¶é•¿é‡Œè¦å¤„ç†çš„ä¸ªæ•°ï¼Œå¯èƒ½å¤§äºåˆ—è¡¨ä¸­objæ€»æ•°ï¼Œæ¯”å¦‚æœåŠ¡å™¨å¡é¡¿å¾ˆä¹…ï¼Œå¾—è¿½å¸§
         if (runNum == 0) return;
 
-        int temp = c_timeAll / m_aObj.size();//´¦ÀíÒ»¸öµÄÊ±³¤
-        m_timeWait = temp ? m_timeWait % temp : 0;//¸üĞÂµÈ´ıÊ±¼ä(ĞëĞ¡ÓÚ"´¦ÀíÒ»¸öµÄÊ±³¤")£º¶Ô"´¦ÀíÒ»¸öµÄÊ±³¤"È¡Ä£(³ı·¨µÄ·ÇÁã±£»¤)
+        int temp = c_timeAll / (int)m_aObj.size();//å¤„ç†ä¸€ä¸ªçš„æ—¶é•¿
+        m_timeWait = temp ? m_timeWait % temp : 0;//æ›´æ–°ç­‰å¾…æ—¶é—´(é¡»å°äº"å¤„ç†ä¸€ä¸ªçš„æ—¶é•¿")ï¼šå¯¹"å¤„ç†ä¸€ä¸ªçš„æ—¶é•¿"å–æ¨¡(é™¤æ³•çš„éé›¶ä¿æŠ¤)
         /**************************************************************************/
 
         m_bRun = true;
         for (int i = 0; i < runNum; ++i){
             auto it = m_aObj.begin() + m_runPos;
             m_func(*it);
-            if (++m_runPos == m_aObj.size()) m_runPos = 0; //µ½Ä©Î²ÁË£¬»Øµ½¶ÓÍ·
+            if (++m_runPos == m_aObj.size()) m_runPos = 0; //åˆ°æœ«å°¾äº†ï¼Œå›åˆ°é˜Ÿå¤´
         }
         m_bRun = false;
     }
 };
 
-//Èç¹ûºóÃæÏîµÄÊ±¼ä±ÈÇ°ÃæÏîµÄÊ±¼äĞ¡£¬ÄÇÃ´ÔÚÇ°ÃæÏîÃ»ÓĞ±»pop_frontÇ°£¬ºóÃæÏîÎŞ·¨Ö´ĞĞµ½£¬Ôò»á³öÎÊÌâ
-//Õı³£Ê¹ÓÃ²»»á³öÏÖ´ËÀàÇéĞÎ£¬ÒòÎªÖ´ĞĞµÄÍ¬Ò»º¯Êı£¬ºó×¢²áµÄObjÒ»¶¨¸üÍí£¬exeTime¸üĞ¡
+//å¦‚æœåé¢é¡¹çš„æ—¶é—´æ¯”å‰é¢é¡¹çš„æ—¶é—´å°ï¼Œé‚£ä¹ˆåœ¨å‰é¢é¡¹æ²¡æœ‰è¢«pop_frontå‰ï¼Œåé¢é¡¹æ— æ³•æ‰§è¡Œåˆ°ï¼Œåˆ™ä¼šå‡ºé—®é¢˜
+//æ­£å¸¸ä½¿ç”¨ä¸ä¼šå‡ºç°æ­¤ç±»æƒ…å½¢ï¼Œå› ä¸ºæ‰§è¡Œçš„åŒä¸€å‡½æ•°ï¼Œåæ³¨å†Œçš„Objä¸€å®šæ›´æ™šï¼ŒexeTimeæ›´å°
 class cServiceList: public iService{
     listTimer   m_list;
     itListTimer m_runIt;
 public:
 	cServiceList(RefreshFun func) : iService(func) {
-        m_list.push_back(TimerPair(0, NULL)); //¡¾Ìî³äÍ·½áµã£¬·ÀÖ¹--m_runItå´»ú¡¿
+        m_list.push_back(TimerPair(0, NULL)); //ã€å¡«å……å¤´ç»“ç‚¹ï¼Œé˜²æ­¢--m_runItå®•æœºã€‘
         m_runIt = m_list.end();
     }
 	bool Register(void* pObj, uint exeTime){
-		m_list.push_back(TimerPair(exeTime,pObj)); //list½á¹¹£¬·Åµ½×îºóÃæ£¬ÔÚRunÊ±µ÷ÁËRegÒ²Ã»¹ØÏµ
+		m_list.push_back(TimerPair(exeTime,pObj)); //listç»“æ„ï¼Œæ”¾åˆ°æœ€åé¢ï¼Œåœ¨Runæ—¶è°ƒäº†Regä¹Ÿæ²¡å…³ç³»
 		return true;
 	}
 	void UnRegister(void* pObj){
         if (m_runIt != m_list.end() && m_runIt->second == pObj) {
-            m_runIt = m_list.erase(m_runIt);//É¾×Ô¼º£¬µü´úÆ÷µ½ÏÂÒ»¸ö
-            --m_runIt;                      //»Øµ½ÉÏÒ»¸ö£¬Ñ­»·ÖĞ++m_runItÔÙÅ²»ØÀ´¡¾beginÊ±»á¹ò¡¿
+            m_runIt = m_list.erase(m_runIt);//åˆ è‡ªå·±ï¼Œè¿­ä»£å™¨åˆ°ä¸‹ä¸€ä¸ª
+            --m_runIt;                      //å›åˆ°ä¸Šä¸€ä¸ªï¼Œå¾ªç¯ä¸­++m_runItå†æŒªå›æ¥ã€beginæ—¶ä¼šè·ªã€‘
         } else {
-                                            //É¾±ğÈË£¬Ö±½Óerase£¬Ñ­»·ÖĞ++m_runIt°²È«¡¾vectorĞè¿¼ÂÇÔÚm_runItÇ°»¹ÊÇºó£¬É¾Ç°ÃæÒªÅ²¶¯...vectroÓÃË÷ÒıÌæ»»it°É¡¿
+                                            //åˆ åˆ«äººï¼Œç›´æ¥eraseï¼Œå¾ªç¯ä¸­++m_runItå®‰å…¨ã€vectoréœ€è€ƒè™‘åœ¨m_runItå‰è¿˜æ˜¯åï¼Œåˆ å‰é¢è¦æŒªåŠ¨...vectroç”¨ç´¢å¼•æ›¿æ¢itå§ã€‘
             for (itListTimer it = m_list.begin(); it != m_list.end(); ++it)
             {
                 if (it->second == pObj) { m_list.erase(it); break; }
@@ -111,12 +111,12 @@ public:
         }
     }
 	void RunSevice(uint /*time_elapse*/, time_t timenow){
-        if (m_runIt == m_list.end()) m_runIt = ++m_list.begin(); //¡¾Ìø¹ıÍ·½áµã¡¿
+        if (m_runIt == m_list.end()) m_runIt = ++m_list.begin(); //ã€è·³è¿‡å¤´ç»“ç‚¹ã€‘
         m_bRun = true;
         while (m_runIt != m_list.end()) {
             if (m_runIt->first <= timenow) {
                 void* runObj = m_runIt->second;
-                uint nextTime = m_func(runObj);//ÀïÍ·¿ÉÄÜ°Ñ×Ô¼ºÉ¾µô£¬m_runItÖ¸Ïò¸Ä±ä
+                uint nextTime = m_func(runObj);//é‡Œå¤´å¯èƒ½æŠŠè‡ªå·±åˆ æ‰ï¼Œm_runItæŒ‡å‘æ”¹å˜
                 if (m_runIt->second == runObj) m_runIt->first = timenow + nextTime;
                 if (++m_runIt == m_list.end()) m_runIt = ++m_list.begin();
             } else
@@ -150,7 +150,7 @@ public:
             TimerPair& it = m_vec[m_runPos];
             if (it.first <= timenow) {
                 void* runObj = it.second;
-                uint nextTime = m_func(runObj);//ÀïÍ·¿ÉÄÜ°Ñ×Ô¼ºÉ¾µô£¬m_runItÖ¸Ïò¸Ä±ä
+                uint nextTime = m_func(runObj);//é‡Œå¤´å¯èƒ½æŠŠè‡ªå·±åˆ æ‰ï¼Œm_runItæŒ‡å‘æ”¹å˜
                 if (it.second == runObj) it.first = timenow + nextTime;
                 if (++m_runPos == m_vec.size()) m_runPos = 0;
             }
@@ -191,7 +191,7 @@ public:
 
 		m_bRun = true;
         for (auto it = m_map.begin(); it != m_map.end();){
-			if (it->first <= timenow)//mutilpymapËùÒÔÒª=ºÅ
+			if (it->first <= timenow)//mutilpymapæ‰€ä»¥è¦=å·
 			{
                 if (m_setDel.find(it->second) != m_setDel.end()){
                     it = m_map.erase(it);
@@ -201,7 +201,7 @@ public:
                 if (nextTime > 0) m_mapAdd.insert(TimerPair(timenow + nextTime, it->second));
 				it = m_map.erase(it);
 			}else{
-				//++it; //mapÒÔÊ±¼ä×÷key£¬×Ô¶¯°´´ÓĞ¡µ½´óÅÅĞò£¬±¾´ÎµÄit->first > timenowÄÇºóÃæµÄ»áÈ«´óÓÚ£¬²»±Ø¼ÌĞøÑ­»·ÁË
+				//++it; //mapä»¥æ—¶é—´ä½œkeyï¼Œè‡ªåŠ¨æŒ‰ä»å°åˆ°å¤§æ’åºï¼Œæœ¬æ¬¡çš„it->first > timenowé‚£åé¢çš„ä¼šå…¨å¤§äºï¼Œä¸å¿…ç»§ç»­å¾ªç¯äº†
                 break;
 			}
 		}

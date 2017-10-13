@@ -30,3 +30,11 @@ void UdpClientAgent::SendMsg(const void* pMsg, int size)
 {
     m_rakPeer->Send((const char*)pMsg, size, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_addr, false);
 }
+void UdpClientAgent::SendUdpMsg(const void* pMsg, int size)
+{
+    m_rakPeer->Send((const char*)pMsg, size, HIGH_PRIORITY, UNRELIABLE, 1, m_addr, false);
+}
+void UdpClientAgent::SendReliablyMsg(const void* pMsg, int size)
+{
+    m_rakPeer->Send((const char*)pMsg, size, HIGH_PRIORITY, RELIABLE, 2, m_addr, false);
+}

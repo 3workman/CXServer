@@ -1,21 +1,25 @@
 #pragma once
-//#include <atlstr.h>
 
 namespace GameApi {
-    // °Ñstr²ğ·Ö³É¶à¸ö×Ö·û´®;
+    // æŠŠstræ‹†åˆ†æˆå¤šä¸ªå­—ç¬¦ä¸²;
     void SplitStr(const std::string& str, std::vector<std::string>& retVec, const char split = '|');
-    // °Ñstr²ğ·Ö³É¶à¸öint
+    // æŠŠstræ‹†åˆ†æˆå¤šä¸ªint
     void SplitStr(const std::string& str, std::vector<int>& retVec, const char split = ',');
 
-    // "(2|3)(7|4)(9|6)"£¬·Ö¸îÎªÊıÖµ¶Ô
+    // "(2|3)(7|4)(9|6)"ï¼Œåˆ†å‰²ä¸ºæ•°å€¼å¯¹
     void SplitStr(const std::string& str, IntPairVec& retVec);
-    // "2|3,7|4,9|6"£¬·Ö¸îÎªÊıÖµ¶Ô
+    // "2|3,7|4,9|6"ï¼Œåˆ†å‰²ä¸ºæ•°å€¼å¯¹
     void SplitStr2(const std::string& str, IntPairVec& retVec);
 
-    //Ã¿Ö¡Ò»´ÎRefresh£¬ÒµÎñÈ¥»º´æÊı¾İ£¬±ÜÃâ¶à´Îµ÷ÓÃµ×²ãapi
-    time_t TimeMS();
+    //æ¯å¸§ä¸€æ¬¡Refreshï¼Œä¸šåŠ¡å»ç¼“å­˜æ•°æ®ï¼Œé¿å…å¤šæ¬¡è°ƒç”¨åº•å±‚api
     time_t TimeNow(); //second
     void RefreshTimeNow();
+
+    /*
+        ã€æº¢å‡ºBugã€‘uint timenow = GetTickCount();
+        uint32çš„æ¯«ç§’è®¡æ•°ï¼Œæœ€å¤šåˆ°49.7å¤©ï¼Œç³»ç»Ÿé•¿æœŸè¿è¡Œåï¼Œè®¡æ—¶å™¨å½’0ï¼Œè®¸å¤šé€»è¾‘å°±é”™ä¹±äº†
+    */
+    uint64 TimeMS();
 
     int TimeHour();
     int TimeMonth();
@@ -26,5 +30,5 @@ namespace GameApi {
     bool IsToday(time_t sec);
     bool IsSameDay(time_t sec1, time_t sec2);
 
-    time_t ParseTime(time_t num); //20160223145632£º2016Äê2ÔÂ23ºÅ14:56:32
+    time_t ParseTime(time_t num); //20160223145632ï¼š2016å¹´2æœˆ23å·14:56:32
 }

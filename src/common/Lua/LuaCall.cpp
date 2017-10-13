@@ -4,8 +4,8 @@
 
 using namespace std;
 
-#define LUA_PATH  "../script/"
-#define LUA_PATH2 "package.path = '../script/?.lua;'..package.path"
+#define LUA_PATH  "../lua/"
+#define LUA_PATH2 "package.path = '../lua/?.lua;'..package.path"
 
 LuaCall* G_Lua = new LuaCall("test.lua");
 
@@ -19,12 +19,12 @@ LuaCall::LuaCall(const char* szFile) : m_szFile(szFile)
         LOG_ERROR("create lua state error.");
         return;
     }
-    luaL_openlibs(m_pL); //ÔØÈëLua»ù±¾¿â£¬·ñÔò½Å±¾ÀïµÄprintÄÚÖÃº¯Êı»á±¨´í
+    luaL_openlibs(m_pL); //è½½å…¥LuaåŸºæœ¬åº“ï¼Œå¦åˆ™è„šæœ¬é‡Œçš„printå†…ç½®å‡½æ•°ä¼šæŠ¥é”™
     luaL_dostring(m_pL, LUA_PATH2);
 
-    tolua::InitLuaReg(m_pL); //ÔØÈëc++½Ó¿Ú
+    tolua::InitLuaReg(m_pL); //è½½å…¥c++æ¥å£
 
-    if (m_szFile) DoFile(m_szFile); //ÔØÈëÈë¿Ú½Å±¾£¬´Ë½Å±¾ÄÚ¿É¼ÓÔØÆäËüËùĞè½Å±¾
+    if (m_szFile) DoFile(m_szFile); //è½½å…¥å…¥å£è„šæœ¬ï¼Œæ­¤è„šæœ¬å†…å¯åŠ è½½å…¶å®ƒæ‰€éœ€è„šæœ¬
 }
 LuaCall::~LuaCall()
 {
@@ -175,9 +175,9 @@ endwhile:
 	}
 	catch(...)
 	{
-		Call("throw", "s", "C++Òì³£");
+		Call("throw", "s", "C++å¼‚å¸¸");
 		lua_settop(m_pL, nTop);
-		LOG_ERROR("lua µ÷ÓÃ´íÎó");
+		LOG_ERROR("lua è°ƒç”¨é”™è¯¯");
 	}
 
 	lua_settop(m_pL, nTop);
@@ -202,11 +202,11 @@ void LuaCall::ReloadFile(const char* szFile /* = NULL */)
 {
     if (szFile == NULL) szFile = m_szFile;
 
-    CallReload(1);      //ReloadBegin£¬Çå¾É½Å±¾Êı¾İµÈ
+    CallReload(1);      //ReloadBeginï¼Œæ¸…æ—§è„šæœ¬æ•°æ®ç­‰
     UnRegLuaCall();
 
     if (DoFile(szFile) && RegLuaCall()) {
-        CallReload(2);  //ReloadEnd£¬ÖØĞÂµ÷ÓÃ½Å±¾³õÊ¼»¯Á÷³Ì
+        CallReload(2);  //ReloadEndï¼Œé‡æ–°è°ƒç”¨è„šæœ¬åˆå§‹åŒ–æµç¨‹
         GC();
     }
 }
@@ -379,16 +379,16 @@ bool LuaCall::CallRecv(NetPack* buf)
 }
 bool LuaCall::CallSend()
 {
-	if (!m_FuncIdx[eSend]) return false;
+    if (!m_FuncIdx[eSend]) return false;
 
-	lua_rawgeti(m_pL, LUA_REGISTRYINDEX, m_FuncIdx[eSend]);
+    lua_rawgeti(m_pL, LUA_REGISTRYINDEX, m_FuncIdx[eSend]);
 
-	if (lua_pcall(m_pL, 0, 0, 0))
-	{
-		LOG_ERROR("Server error running function `%s': %s","CallSend", lua_tostring(m_pL, -1));
-		lua_pop(m_pL, 1);
-		lua_settop(m_pL, 0);
-		return false;
-	}
-	return true;
+    if (lua_pcall(m_pL, 0, 0, 0))
+    {
+        LOG_ERROR("Server error running function `%s': %s", "CallSend", lua_tostring(m_pL, -1));
+        lua_pop(m_pL, 1);
+        lua_settop(m_pL, 0);
+        return false;
+    }
+    return true;
 }

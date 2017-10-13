@@ -1,26 +1,21 @@
 /***********************************************************************
-* @ ¸ßÐÔÄÜÒì²½ÈÕÖ¾
+* @ é«˜æ€§èƒ½å¼‚æ­¥æ—¥å¿—
 * @ brief
-    1¡¢¾¡Á¿Ã¿ÌõÈÕÖ¾Õ¼Ò»ÐÐ£¬ÈÝÒ×ÓÃgrepµÈÃüÁîÐÐ¹¤¾ß·ÖÎö
-    2¡¢Ê±¼ä´Á¾«È·µ½Î¢Ãë¡£ÓÃgettimeofday(2)£¬ÔÚLinuxÉÏËü²»ÊÇÏµÍ³µ÷ÓÃ£¬²»»áÏÝÈëÄÚºË
-    3¡¢´òÓ¡Ïß³Ìid£¬±ãÓÚ·ÖÎö¶àÏß³ÌÊ±Ðò£¬¼ì²âËÀËø
-    4¡¢ÈÕÖ¾¼¶±ð¡¢Ô´ÎÄ¼þÃû¡¢ÐÐºÅ
+    1ã€ä½¿ç”¨ç®€å•ï¼Œè®°å½•è°ƒç”¨ä¿¡æ¯
 
-* @ optimize
-    1¡¢Ê±¼ä´Á×Ö·û´®£¬·Ö±ð»º´æ£¬Ò»ÃëÄÚµÄÖ»ÐèÖØÐÂ¸ñÊ½»¯Î¢Ãë²¿·Ö
-    2¡¢Ïß³ÌidÔ¤ÏÈ¸ñÊ½»¯Îª×Ö·û´®£¬LogÊ±Ö»Ðè¼òµ¥¿½±´¼¸×Ö½Ú
-
-* @ TODO£º»¹ÒªÖÖ¼ÇÂ¼ÒµÎñÊý¾ÝµÄÈë¿â±íÈÕÖ¾£¬ÄÜ·½±ãÍ³¼Æ¡¢³öbug²¹´íµÈ
+    2ã€TODOï¼šè¿˜è¦ç§è®°å½•ä¸šåŠ¡æ•°æ®çš„å…¥åº“è¡¨æ—¥å¿—ï¼Œèƒ½æ–¹ä¾¿ç»Ÿè®¡ã€å‡ºbugè¡¥é”™ç­‰
 
 * @ author zhoumf
 * @ date 2016-11-23
 ************************************************************************/
 #pragma once
 
+//#include <string>
+
 class AsyncLog;
 class LogFile {
 public:
-    static LogFile* g_log; //ÎªÁËÈÃÎö¹¹º¯ÊýÔÚÂß¼­²ãµ÷ÓÃ£¬°Ñµ¥Àý»»³ÉÁËÖ¸Õë¡£½»¸øÏµÍ³»ØÊÕ¾²Ì¬¶ÔÏó£¬Îö¹¹Ö´ÐÐÌ«Íí£¬AsyncLogµÄ×ÓÏß³Ì½áÊø±ãÌ«Íí£¬½ø³Ì½©ËÀ
+    static LogFile* g_log; //ä¸ºäº†è®©æžæž„å‡½æ•°åœ¨é€»è¾‘å±‚è°ƒç”¨ï¼ŒæŠŠå•ä¾‹æ¢æˆäº†æŒ‡é’ˆã€‚äº¤ç»™ç³»ç»Ÿå›žæ”¶é™æ€å¯¹è±¡ï¼Œæžæž„æ‰§è¡Œå¤ªæ™šï¼ŒAsyncLogçš„å­çº¿ç¨‹ç»“æŸä¾¿å¤ªæ™šï¼Œè¿›ç¨‹åƒµæ­»
     enum LogLv {
         TRACK,
         DEBUG,
@@ -28,19 +23,18 @@ public:
         WARN,
         ERR,
     };
-    LogFile(std::string fileName, LogLv lv, bool isPrint);
+    LogFile(std::string fileName, LogLv lv);
     ~LogFile();
 
-    void SetLog(LogLv lv, bool isPrint){ _level = lv; _isPrint = isPrint; }
+    void SetLog(LogLv lv){ _level = lv; }
     void Log(const char* curFile, const int curLine, LogLv kLv, const char* fmt, ...);
 private:
     FILE*       _fp = NULL;
     AsyncLog*   _async = NULL;
     LogLv       _level = DEBUG;
-    bool        _isPrint = true;
 };
 
-#define _LOG_MAIN_(obj) LogFile::g_log = &obj /*Notice£ºÒªÔÚmainº¯ÊýÀï£¬²»È»³ÌÐòÎ´½áÊøLog¾ÍÎö¹¹ÁË*/
+#define _LOG_MAIN_(obj) LogFile::g_log = &obj /*Noticeï¼šè¦åœ¨mainå‡½æ•°é‡Œï¼Œä¸ç„¶ç¨‹åºæœªç»“æŸLogå°±æžæž„äº†*/
 #define LOG_INFO(...)   LogFile::g_log->Log(__FILE__, __LINE__, LogFile::INFO, __VA_ARGS__)
 #define LOG_WARN(...)   LogFile::g_log->Log(__FILE__, __LINE__, LogFile::WARN, __VA_ARGS__)
 #define LOG_ERROR(...)  LogFile::g_log->Log(__FILE__, __LINE__, LogFile::ERR, __VA_ARGS__)

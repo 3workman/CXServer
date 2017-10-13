@@ -7,8 +7,8 @@ namespace GameApi {
 
 void SplitStr(const std::string& str, std::vector<std::string>& retVec, const char split/* = '|'*/)
 {
-    int beginIdx = 0;
-    int retIdx = str.find_first_of(split, beginIdx);
+    size_t beginIdx = 0;
+    size_t retIdx = str.find_first_of(split, beginIdx);
     while (retIdx != -1)
     {
         if (retIdx > beginIdx)
@@ -25,8 +25,8 @@ void SplitStr(const std::string& str, std::vector<std::string>& retVec, const ch
 }
 void SplitStr(const std::string& str, std::vector<int>& retVec, const char split/*=','*/)
 {
-    int beginIdx = 0;
-    int retIdx = str.find_first_of(split, beginIdx);
+    size_t beginIdx = 0;
+    size_t retIdx = str.find_first_of(split, beginIdx);
     while (retIdx != -1)
     {
         if (retIdx > beginIdx)
@@ -44,8 +44,8 @@ void SplitStr(const std::string& str, std::vector<int>& retVec, const char split
 void SplitStr(const std::string& str, IntPairVec& retVec) // "(2|3)(7|4)(9|6)"
 {
     std::pair<int, int> tmp;
-    int beginIdx = 0;
-    int retIdx = str.find_first_of('(', beginIdx);
+    size_t beginIdx = 0;
+    size_t retIdx = str.find_first_of('(', beginIdx);
     while (retIdx != -1)
     {
         beginIdx = retIdx + 1;
@@ -63,8 +63,8 @@ void SplitStr(const std::string& str, IntPairVec& retVec) // "(2|3)(7|4)(9|6)"
 void SplitStr2(const std::string& str, IntPairVec& retVec) // "2|3,7|4,9|6"
 {
     std::pair<int, int> tmp;
-    int beginIdx = 0;
-    int retIdx = str.find_first_of('|', beginIdx);
+    size_t beginIdx = 0;
+    size_t retIdx = str.find_first_of('|', beginIdx);
     while (retIdx != -1)
     {
         tmp.first = atoi(str.substr(beginIdx, retIdx - beginIdx).c_str());
@@ -89,7 +89,7 @@ static time_t g_time_now = 0;
 time_t TimeNow() { return g_time_now; }
 void RefreshTimeNow() { g_time_now = ::time(NULL); }
 
-time_t TimeMS() {
+uint64 TimeMS() {
 #ifdef WIN32
     struct _timeb tp;
     ::_ftime(&tp);
@@ -154,7 +154,8 @@ bool IsSameDay(time_t sec1, time_t sec2)
 {
     return _GetCurDay(sec1) == _GetCurDay(sec2);
 }
-time_t ParseTime(time_t num) { //20160223145632£∫2016ƒÍ2‘¬23∫≈14:56:32
+time_t ParseTime(time_t num) //20160223145632Ôºö2016Âπ¥2Êúà23Âè∑14:56:32
+{
 #define _Parse_(n) num%(n); num /= (n)
     struct tm t;
     t.tm_sec = _Parse_(100);
@@ -163,7 +164,6 @@ time_t ParseTime(time_t num) { //20160223145632£∫2016ƒÍ2‘¬23∫≈14:56:32
     t.tm_mday = _Parse_(100);
     t.tm_mon = _Parse_(100);
     t.tm_year = _Parse_(10000);
-    if (t.tm_year < 1900) { t.tm_year = TimeYear(); }
     t.tm_year -= 1900;
     t.tm_isdst = 0;
 #undef _Parse_

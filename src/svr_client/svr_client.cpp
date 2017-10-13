@@ -1,54 +1,46 @@
 #include "stdafx.h"
 #include "Player/CPlayer.h"
 #include "RakSleep.h"
+#include "tool/thread.h"
 #include "raknet/client/UdpClient.h"
 
 void test_svr_battle(int playerCnt);
 
 int main(int argc, char* argv[])
 {
-    LogFile log("log/client", LogFile::DEBUG, true);
+    LogFile log("log/client", LogFile::DEBUG);
     _LOG_MAIN_(log);
 
     //test_svr_battle(200);
 
     CPlayer player;
-    player.CallRpc("rpc_battle_login", [&](NetPack& buf){
+    player.CallRpc(rpc_battle_login, [&](NetPack& buf){
         buf.WriteUInt32(1);
     });
-    player.CallRpc("rpc_battle_create_room", [&](NetPack& buf){
-        buf.WriteFloat(1);
-        buf.WriteFloat(1);
-    });
-    //CallRpc("rpc_battle_logout", [&](NetPack& buf){
+    //player.CallRpc(rpc_battle_create_room, [&](NetPack& buf){
+    //    buf.WriteFloat(1);
+    //    buf.WriteFloat(1);
+    //});
+    //CallRpc(rpc_battle_logout, [&](NetPack& buf){
     //});
 
-/*
+    /*
     RunClientIOCP(g_link);
     ON_SCOPE_EXIT([&]{ g_link.CloseClient(0); });
     {
-        // Á¢¼´·¢ËÍÒ»ÌõÊı¾İ£¬¼°Ê±´¥·¢·şÎñÆ÷¶ËµÄAcceptExDoneIOCallback
-        // ²âÊÔ½á¹ûÏÔÊ¾£º¿Í»§¶Ë½ö½öconnectµ«²»·¢ËÍÊı¾İ£¬²»»á´¥·¢·şÎñÆ÷DoneIO»Øµ÷
-        // ÕæÊµ»·¾³ÏÂÊÇ»á·¢Êı¾İµÄ£¬²»»áÖ»Connect
-        // ¿Í»§¶Ëconnect£¬Èı´ÎÎÕÊÖ³É¹¦ºó£¬ÔÚ¶Ô¶Ë±»·ÅÈë¡°ºôÈëÁ¬½ÓÇëÇó¶ÓÁĞ¡±£¬ÉĞÎ´±»ÓÃ»§½ø³Ì½Ó¹Ü£¬µ«clientÕâ±ßÒÑ¾­ÄÜ·¢Êı¾İÁË
-        NetPack msg(rpc_login, 0);
-        g_link.SendMsg(msg.Buffer(), msg.Size());
+    // ç«‹å³å‘é€ä¸€æ¡æ•°æ®ï¼ŒåŠæ—¶è§¦å‘æœåŠ¡å™¨ç«¯çš„AcceptExDoneIOCallback
+    // æµ‹è¯•ç»“æœæ˜¾ç¤ºï¼šå®¢æˆ·ç«¯ä»…ä»…connectä½†ä¸å‘é€æ•°æ®ï¼Œä¸ä¼šè§¦å‘æœåŠ¡å™¨DoneIOå›è°ƒ
+    // çœŸå®ç¯å¢ƒä¸‹æ˜¯ä¼šå‘æ•°æ®çš„ï¼Œä¸ä¼šåªConnect
+    // å®¢æˆ·ç«¯connectï¼Œä¸‰æ¬¡æ¡æ‰‹æˆåŠŸåï¼Œåœ¨å¯¹ç«¯è¢«æ”¾å…¥â€œå‘¼å…¥è¿æ¥è¯·æ±‚é˜Ÿåˆ—â€ï¼Œå°šæœªè¢«ç”¨æˆ·è¿›ç¨‹æ¥ç®¡ï¼Œä½†clientè¿™è¾¹å·²ç»èƒ½å‘æ•°æ®äº†
+    NetPack msg(rpc_login, 0);
+    g_link.SendMsg(msg.Buffer(), msg.Size());
     }
-*/
+    */
 
     char tmpStr[32] = { 0 };
     while (true)
     {
         player.UpdateNet();
-
-        cout << "ÇëÊäÈë·¢ËÍÄÚÈİ..." << endl;
-        cin >> tmpStr;
-        player.CallRpc("rpc_echo", [&](NetPack& buf){
-            buf.WriteString(tmpStr); // buf << tmpStr;
-        }, 
-            [](NetPack& recvBuf){
-            printf("Echo: %s\n", recvBuf.ReadString().c_str());
-        });
 
         RakSleep(2000);
     }
@@ -57,6 +49,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+Thread* g_thread;
 void test_svr_battle(int playerCnt)
 {
     std::vector<CPlayer> vec(playerCnt);
@@ -72,14 +65,14 @@ void test_svr_battle(int playerCnt)
 
             if (!it.m_isLogin) continue;
 
-            it.CallRpc("rpc_echo", [&](NetPack& buf){
-                int idx = sprintf(strbuff, "test svr_battle : PlayerIdx(%d)", it.m_index);
-                string str(strbuff, idx);
-                buf.WriteString(str);
-            },
-                [](NetPack& recvBuf){
-                printf("Echo: %s\n", recvBuf.ReadString().c_str());
-            });
+            //it.CallRpc(rpc_echo, [&](NetPack& buf){
+            //    int idx = sprintf(strbuff, "test svr_battle : PlayerIdx(%d)", it.m_index);
+            //    std::string str(strbuff, idx);
+            //    buf.WriteString(str);
+            //},
+            //    [](NetPack& recvBuf){
+            //    printf("Echo: %s\n", recvBuf.ReadString().c_str());
+            //});
         }
 
         RakSleep(33);

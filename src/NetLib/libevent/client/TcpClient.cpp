@@ -82,15 +82,15 @@ void cb_conn_read(struct bufferevent* bev, void* arg)
     char* pPack = buf.beginRead();
     while (buf.readableBytes() >= c_off)
     {
-        const uint kMsgSize = *((uint16*)pPack);	// ¡¾ÍøÂç°ü£ºÍ·2×Ö½ÚÎªÏûÏ¢Ìå´óĞ¡¡¿
-        const uint kPackSize = kMsgSize + c_off;	// ¡¾ÍøÂç°ü³¤ = ÏûÏ¢Ìå´óĞ¡ + Í·³¤¶È¡¿
-        char* pMsg = pPack + c_off;                 // ¡¾ºóÒÆ2×Ö½ÚµÃ£ºÏûÏ¢ÌåÖ¸Õë¡¿
+        const uint kMsgSize = *((uint16*)pPack);	// ã€ç½‘ç»œåŒ…ï¼šå¤´2å­—èŠ‚ä¸ºæ¶ˆæ¯ä½“å¤§å°ã€‘
+        const uint kPackSize = kMsgSize + c_off;	// ã€ç½‘ç»œåŒ…é•¿ = æ¶ˆæ¯ä½“å¤§å° + å¤´é•¿åº¦ã€‘
+        char* pMsg = pPack + c_off;                 // ã€åç§»2å­—èŠ‚å¾—ï¼šæ¶ˆæ¯ä½“æŒ‡é’ˆã€‘
 
-        if (kPackSize > buf.readableBytes()) break; // ¡¾°üÎ´ÊÕÍê£º½ÓÊÕ×Ö½Ú < °ü´óĞ¡¡¿
+        if (kPackSize > buf.readableBytes()) break; // ã€åŒ…æœªæ”¶å®Œï¼šæ¥æ”¶å­—èŠ‚ < åŒ…å¤§å°ã€‘
 
         client->_HandleServerMsg(pMsg, kMsgSize);
 
-        // ÏûÏ¢´¦ÀíÍê±Ï£¬½ÓÊÕ×Ö½Ú/°üÖ¸Õë¸üĞÂ(´¦ÀíÏÂÒ»¸ö°ü)
+        // æ¶ˆæ¯å¤„ç†å®Œæ¯•ï¼Œæ¥æ”¶å­—èŠ‚/åŒ…æŒ‡é’ˆæ›´æ–°(å¤„ç†ä¸‹ä¸€ä¸ªåŒ…)
         buf.readerMove(n);
         pPack += kPackSize;
     }
@@ -112,7 +112,7 @@ void cb_conn_event(struct bufferevent* bev, short events, void* arg)
     }
     bufferevent_free(bev);
 
-    // ¶ÏÏßÖØÁ¬
+    // æ–­çº¿é‡è¿
     auto timer = evtimer_new(client->_base, [](int fd, short events, void* arg){
         ((TcpClient*)arg)->_Connect();
     }, client);

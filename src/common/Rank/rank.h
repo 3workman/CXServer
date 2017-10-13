@@ -1,9 +1,9 @@
 /***********************************************************************
-* @ ÊµÊ±ÅÅĞĞ°ñ
+* @ å®æ—¶æ’è¡Œæ¦œ
 * @ brief
-    1¡¢´Ó´óµ½Ğ¡ÅÅĞò£¬1ÆğÊ¼
-    2¡¢Êı×é»º´æTop N£¬±ä¶¯Ê±ÉÏÏÂÒÆ¶¯
-    3¡¢ÅÅĞò¶ÔÏóĞëº¬ÓĞint rank£¬int GetRankVal()
+    1ã€ä»å¤§åˆ°å°æ’åºï¼Œ1èµ·å§‹
+    2ã€æ•°ç»„ç¼“å­˜Top Nï¼Œå˜åŠ¨æ—¶ä¸Šä¸‹ç§»åŠ¨
+    3ã€æ’åºå¯¹è±¡é¡»å«æœ‰int rankï¼Œint GetRankVal()
 
 * @ author zhoumf
 * @ date 2016-12-26
@@ -12,7 +12,7 @@
 
 template <class T>
 class Rank {
-    const int       _amount; //ÅÅ¶àÉÙÈË
+    const int       _amount; //æ’å¤šå°‘äºº
     int             _last;
     std::vector<T*> _arr;
 
@@ -26,11 +26,11 @@ public:
         const int oldRank = obj.rank;
 
         int newIdx = SearchInsertIdx(obj.GetRankVal());
-        if (obj.rank > 0) //ÒÑÉÏ°ñ
+        if (obj.rank > 0) //å·²ä¸Šæ¦œ
         {
             MoveToIndex(newIdx, obj.rank);
         }
-        else if (newIdx > 0) //Ö®Ç°Î´ÉÏ°ñ
+        else if (newIdx > 0) //ä¹‹å‰æœªä¸Šæ¦œ
         {
             InsertToIndex(newIdx, obj);
         }
@@ -51,7 +51,7 @@ public:
 private:
     int SearchInsertIdx(int dstVal)
     {
-        //FIXME£º¶ş·Ö²éÕÒĞÂµÄÅÅÎ»
+        //FIXMEï¼šäºŒåˆ†æŸ¥æ‰¾æ–°çš„æ’ä½
         for (int i = 1; i <= _amount; ++i)
         {
             if (_arr[i] == NULL || dstVal > _arr[i]->GetRankVal())
@@ -65,7 +65,7 @@ private:
     {
         T* tmp = _arr[src]; assert(dst > 0 && src > 0);
         if (src > dst) {
-            memmove(&_arr[dst + 1], &_arr[dst], (src - dst) * sizeof(T*)); //dstºóÒÆÒ»²½
+            memmove(&_arr[dst + 1], &_arr[dst], (src - dst) * sizeof(T*)); //dståç§»ä¸€æ­¥
             _arr[dst] = tmp;
 
             for (int i = dst; i <= src; ++i)
@@ -73,7 +73,7 @@ private:
                 if (_arr[i]) _arr[i]->rank = i;
             }
         } else if (src < dst) {
-            memmove(&_arr[src], &_arr[src + 1], (dst - src) * sizeof(T*)); //src+1Ç°ÒÆÒ»²½
+            memmove(&_arr[src], &_arr[src + 1], (dst - src) * sizeof(T*)); //src+1å‰ç§»ä¸€æ­¥
             _arr[dst] = tmp;
 
             for (int i = src; i <= dst; ++i)
@@ -88,7 +88,7 @@ private:
 
         if (idx > _last) _last = idx;
 
-        if (_arr[_amount]) _arr[_amount]->rank = 0; //Î²Ãû±»¼·³ö
+        if (_arr[_amount]) _arr[_amount]->rank = 0; //å°¾åè¢«æŒ¤å‡º
 
         memmove(&_arr[idx + 1], &_arr[idx], (_amount - idx) * sizeof(T*));
         _arr[idx] = &obj;

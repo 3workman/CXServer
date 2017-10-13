@@ -1,14 +1,14 @@
 /***********************************************************************
-* @ ¿Í»§¶ËIOCP
+* @ å®¢æˆ·ç«¯IOCP
 * @ brief
-	1¡¢½«Net/clientÖĞµÄÎÄ¼şÁíÆğ¹¤³Ì£¬¼´¿É²âÊÔ
-	2¡¢¶Ô±Èserver¶ËµÄ´úÂë½á¹¹£¬¼ÓÉîÀí½â
+	1ã€å°†Net/clientä¸­çš„æ–‡ä»¶å¦èµ·å·¥ç¨‹ï¼Œå³å¯æµ‹è¯•
+	2ã€å¯¹æ¯”serverç«¯çš„ä»£ç ç»“æ„ï¼ŒåŠ æ·±ç†è§£
 * @ author zhoumf
 * @ date 2016-7-19
 ************************************************************************/
 #pragma  once
 //////////////////////////////////////////////////////////////////////////
-// Ê¹ÓÃwinsock2  ±ÜÃâÍ¬winsock³åÍ»
+// ä½¿ç”¨winsock2  é¿å…åŒwinsockå†²çª
 //#ifndef WIN32_LEAN_AND_MEAN
 //#define WIN32_LEAN_AND_MEAN
 //#endif
@@ -47,7 +47,7 @@ public:
     typedef std::function<void()> OnConnectFunc;
     typedef std::function<void(const void* pMsg, int size)> HandleMsgFunc;
 
-    //¡¾Notice: ÉèÖÃµÄcallbackÊÇÓÉDoneIOÏß³Ìµ÷ÓÃµÄ£¬ÀïÍ·Òª¿¼ÂÇÏß³Ì°²È«ĞÔ¡¿
+    //ã€Notice: è®¾ç½®çš„callbackæ˜¯ç”±DoneIOçº¿ç¨‹è°ƒç”¨çš„ï¼Œé‡Œå¤´è¦è€ƒè™‘çº¿ç¨‹å®‰å…¨æ€§ã€‘
     bool CreateLinkAndConnect(const OnConnectFunc& onConnect, const HandleMsgFunc& onMsg);
     void CloseLink(int nErrorCode);
     void SendMsg(const void* pMsg, uint16 size);

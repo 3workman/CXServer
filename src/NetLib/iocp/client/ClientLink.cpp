@@ -64,10 +64,10 @@ ClientLink::~ClientLink()
 
 void ClientLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 {
-    //Notice£º¿Í»§¶ËµÄdwNumberOfBytesTransferred¿ÉÄÜÎª0£¬Ê²Ã´Çé¿öµÄ£¿
-    //1¡¢Ó¦¸ÃÊÇConnectExµÄ»Øµ÷£¬·şÎñÆ÷Ã»»ØÕæÕıµÄÊı¾İÄØ
-    //2¡¢clientµÄµÚÒ»´ÎPostRecv£¬ÊÇÔÚOnConnect()Àï
-    //3¡¢serverÄÇ±ßÓĞµã²»Ò»Ñù£¬ÊÇOnConnect()¸Ä×´Ì¬ºó£¬ÔÙ½øµÄOnRead_DoneIO()
+    //Noticeï¼šå®¢æˆ·ç«¯çš„dwNumberOfBytesTransferredå¯èƒ½ä¸º0ï¼Œä»€ä¹ˆæƒ…å†µçš„ï¼Ÿ
+    //1ã€åº”è¯¥æ˜¯ConnectExçš„å›è°ƒï¼ŒæœåŠ¡å™¨æ²¡å›çœŸæ­£çš„æ•°æ®å‘¢
+    //2ã€clientçš„ç¬¬ä¸€æ¬¡PostRecvï¼Œæ˜¯åœ¨OnConnect()é‡Œ
+    //3ã€serveré‚£è¾¹æœ‰ç‚¹ä¸ä¸€æ ·ï¼Œæ˜¯OnConnect()æ”¹çŠ¶æ€åï¼Œå†è¿›çš„OnRead_DoneIO()
 	if (type == IO_Write)
 	{
 		if (_eState == State_Connecting)
@@ -89,7 +89,7 @@ void ClientLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
             if (dwNumberOfBytesTransferred) {
                 OnRead_DoneIO(dwNumberOfBytesTransferred);
             } else {
-                CloseLink(0); //ÊÕµ½0°ü£¬¶Ô¶Ë¹Ø±ÕÁË
+                CloseLink(0); //æ”¶åˆ°0åŒ…ï¼Œå¯¹ç«¯å…³é—­äº†
             }
 		}
 	}
@@ -111,7 +111,7 @@ bool ClientLink::Connect()
 {
     if (_sClient != INVALID_SOCKET)
     {
-        printf("Error_CreateLink£ºsocket being used. \n");
+        printf("Error_CreateLinkï¼šsocket being used. \n");
         return false;
     }
     _sClient = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
@@ -120,8 +120,8 @@ bool ClientLink::Connect()
         return false;
     }
 
-    //¹Ø±ÕNagleËã·¨£¬ÎŞÂÛ¶àĞ¡µÄ°ü¶¼Ö±½Ó·¢
-    //Èç¹û²»¹Ø±Õ£¬clientµÄÍøÂçÑÓÊ±»á²»»á³öÏÖÕğµ´£¿Ò»´ÎÖ»×¼·¢Ò»¸öĞ¡°ü£¬ÆäËüµÄ»á¶Ñ»ıµÈ´ı
+    //å…³é—­Nagleç®—æ³•ï¼Œæ— è®ºå¤šå°çš„åŒ…éƒ½ç›´æ¥å‘
+    //å¦‚æœä¸å…³é—­ï¼Œclientçš„ç½‘ç»œå»¶æ—¶ä¼šä¸ä¼šå‡ºç°éœ‡è¡ï¼Ÿä¸€æ¬¡åªå‡†å‘ä¸€ä¸ªå°åŒ…ï¼Œå…¶å®ƒçš„ä¼šå †ç§¯ç­‰å¾…
     bool noDelay = true;
     if (setsockopt(_sClient, IPPROTO_TCP, TCP_NODELAY, (char*)&noDelay, sizeof(noDelay)) == SOCKET_ERROR)
     {
@@ -183,7 +183,7 @@ void ClientLink::CloseLink(int nErrorCode)
     printf("CloseClient ErrCode:%x(%d) \n", nErrorCode, nErrorCode);
 	_eState = State_Close;
 	shutdown(_sClient, SD_BOTH);
-	closesocket(_sClient); // ¿Í»§¶ËµÄ¹Ø±ÕºÃ±©Á¦~
+	closesocket(_sClient); // å®¢æˆ·ç«¯çš„å…³é—­å¥½æš´åŠ›~
     _sClient = INVALID_SOCKET;
     _recvBuf.clear();
     _sendBuf.clear();
@@ -210,7 +210,7 @@ bool ClientLink::PostSend(char* buffer, DWORD nLen)
 {
 	if (_eState != State_Connected) return false;
 
-	//Notice£º³¤¶È¹ı´óÈûÂúsocket»º³åÇø£¬ÉõÖÁ[TCP Zerowindow]
+	//Noticeï¼šé•¿åº¦è¿‡å¤§å¡æ»¡socketç¼“å†²åŒºï¼Œç”šè‡³[TCP Zerowindow]
 	WSABUF buf;
 	buf.buf = buffer;
 	buf.len = nLen;
@@ -234,9 +234,9 @@ bool ClientLink::PostRecv()
 {
 	if (_eState != State_Connected) return false;
 
-	//cLock lock(_csRead); //½ÓÊÕ²»ÓÃËø£»µ÷PostSend()Ç°lock£¬ÊÇÎªÁË±ÜÃâIO»Øµ÷¡¢Ö÷Ïß³ÌÍ¶µİµÄ³åÍ»
+	//cLock lock(_csRead); //æ¥æ”¶ä¸ç”¨é”ï¼›è°ƒPostSend()å‰lockï¼Œæ˜¯ä¸ºäº†é¿å…IOå›è°ƒã€ä¸»çº¿ç¨‹æŠ•é€’çš„å†²çª
 
-	//Notice£ºbuf³¤¶ÈÌ«¶ÌµÄĞÔÄÜËğÊ§£¨_recvBuf¿ªµÄ×ã¹»´ó8k£©
+	//Noticeï¼šbufé•¿åº¦å¤ªçŸ­çš„æ€§èƒ½æŸå¤±ï¼ˆ_recvBufå¼€çš„è¶³å¤Ÿå¤§8kï¼‰
 	WSABUF buf;
     buf.buf = _recvBuf.beginWrite();
     buf.len = _recvBuf.writableBytes();
@@ -254,21 +254,21 @@ bool ClientLink::PostRecv()
 }
 void ClientLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 {
-	_recvBuf.writerMove(dwBytesTransferred); // IOÍê³É»Øµ÷£¬½ÓÊÕ×Ö½ÚµİÔö
+	_recvBuf.writerMove(dwBytesTransferred); // IOå®Œæˆå›è°ƒï¼Œæ¥æ”¶å­—èŠ‚é€’å¢
     const DWORD c_off = sizeof(uint16);
 	char* pPack = _recvBuf.beginRead();
 	while (_recvBuf.readableBytes() >= c_off)
 	{
-        const DWORD kMsgSize = *((uint16*)pPack);	// ¡¾ÍøÂç°ü£ºÍ·2×Ö½ÚÎªÏûÏ¢Ìå´óĞ¡¡¿
-		const DWORD kPackSize = kMsgSize + c_off;	// ¡¾ÍøÂç°ü³¤ = ÏûÏ¢Ìå´óĞ¡ + Í·³¤¶È¡¿
-		char* pMsg = pPack + c_off;                 // ¡¾ºóÒÆ2×Ö½ÚµÃ£ºÏûÏ¢ÌåÖ¸Õë¡¿
+        const DWORD kMsgSize = *((uint16*)pPack);	// ã€ç½‘ç»œåŒ…ï¼šå¤´2å­—èŠ‚ä¸ºæ¶ˆæ¯ä½“å¤§å°ã€‘
+		const DWORD kPackSize = kMsgSize + c_off;	// ã€ç½‘ç»œåŒ…é•¿ = æ¶ˆæ¯ä½“å¤§å° + å¤´é•¿åº¦ã€‘
+		char* pMsg = pPack + c_off;                 // ã€åç§»2å­—èŠ‚å¾—ï¼šæ¶ˆæ¯ä½“æŒ‡é’ˆã€‘
 
-		if (kPackSize > _recvBuf.readableBytes()) break; // ¡¾°üÎ´ÊÕÍê£º½ÓÊÕ×Ö½Ú < °ü´óĞ¡¡¿
+		if (kPackSize > _recvBuf.readableBytes()) break; // ã€åŒ…æœªæ”¶å®Œï¼šæ¥æ”¶å­—èŠ‚ < åŒ…å¤§å°ã€‘
 
-		// 2¡¢ÏûÏ¢½âÂë¡¢´¦Àí decode, unpack and ungroup
+		// 2ã€æ¶ˆæ¯è§£ç ã€å¤„ç† decode, unpack and ungroup
 		RecvMsg(pMsg, kMsgSize);
 
-		// 3¡¢ÏûÏ¢´¦ÀíÍê±Ï£¬½ÓÊÕ×Ö½Ú/°üÖ¸Õë¸üĞÂ(´¦ÀíÏÂÒ»¸ö°ü)
+		// 3ã€æ¶ˆæ¯å¤„ç†å®Œæ¯•ï¼Œæ¥æ”¶å­—èŠ‚/åŒ…æŒ‡é’ˆæ›´æ–°(å¤„ç†ä¸‹ä¸€ä¸ªåŒ…)
 		_recvBuf.readerMove(kPackSize);
 		pPack += kPackSize;
 	}
@@ -285,7 +285,7 @@ void ClientLink::SendMsg(const void* pMsg, uint16 size)
     _sendBuf.append(size);
     _sendBuf.append(pMsg, size);
 
-	//¿Í»§¶ËÎŞĞèÏñ·şÎñÆ÷ËÆµÄ£¬ÏûÏ¢»ıÀÛ³¬³¤²ÅÍ¶µİ£¬¼ûServLink::SendMsg
+	//å®¢æˆ·ç«¯æ— éœ€åƒæœåŠ¡å™¨ä¼¼çš„ï¼Œæ¶ˆæ¯ç§¯ç´¯è¶…é•¿æ‰æŠ•é€’ï¼Œè§ServLink::SendMsg
 
 	if (_bCanWrite && size > 0)
 	{

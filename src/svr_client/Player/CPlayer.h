@@ -1,6 +1,6 @@
 #pragma once
-#include "../rpc/RpcEnum.h"
-#include "../rpc/RpcQueue.h"
+#include "RpcEnum.h"
+#include "RpcQueue.h"
 #include "config_net.h"
 
 #undef Rpc_Declare
@@ -17,18 +17,20 @@ class CPlayer : boost::noncopyable {
     UdpClient*      _netLink = NULL;
 public:
     uint            m_index = 0;
-    uint32          m_pid = 0;
     bool            m_isLogin = false;
 
     typedef void(CPlayer::*_RpcFunc)(NetPack&, NetPack&);
-    static std::map<int, _RpcFunc>      _rpc; //自己实现的rpc
+    static  _RpcFunc       _rpc[rpc_enum_cnt]; //鑷繁瀹炵幇鐨剅pc
     Rpc_For_Client;
 public:
-    void SendMsg(const NetPack& pack);
-    uint64 CallRpc(const char* name, const ParseRpcParam& sendFun);
-    void CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
+    void    SendMsg(const NetPack& pack);
+    uint64  CallRpc(RpcEnum rid, const ParseRpcParam& sendFun);
+    void    CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
 public:
     CPlayer();
     ~CPlayer();
     void UpdateNet();
+
+private:
+    void RunClientNet();
 };

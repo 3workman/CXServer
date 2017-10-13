@@ -1,20 +1,22 @@
 #pragma once
 #include <iostream>
 #include <assert.h>
-#include <stdint.h>
 #include <set>
 #include <map>
-#include <hash_map>
 #include <list>
 #include <vector>
 #include <queue>
 #include <stack>
 #include <string>
-#include <memory> // std::shared_ptr
-#include "tool/noncopyable.h"
+#include <cstring>
+#include <time.h>
+#include <cmath>
+#include <memory>
+#include <random>
 #include "tool/ScopeGuard.h"
 #include "Log/LogFile.h"
 #include "Rand/rand.h"
+
 
 #define STATIC_ASSERT_ARRAY_LENGTH(arr, len) static_assert(sizeof(arr)/sizeof(arr[0])==(len), #arr)
 #define STATIC_ASSERT_ARRAY_ARRAY(arrA, arrB) static_assert(sizeof(arrA)/sizeof(arrA[0])==sizeof(arrB)/sizeof(arrB[0]), #arrA)
@@ -25,7 +27,7 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
 #define ONE_DAY_SEC   (24*3600)
 
-template <typename T> int SUM_ARR(T* arr, int size){
+template <typename T> inline int SUM_ARR(T* arr, int size){
     int sum(0);
     for (int j = 0; j < size; ++j) sum += arr[j];
     return sum;
@@ -39,7 +41,7 @@ typedef uint64_t	uint64;
 typedef uint32_t	uint32;
 typedef uint16_t	uint16;
 typedef uint8_t		uint8;
-typedef unsigned    uint;
+typedef unsigned 	uint;
 typedef std::vector< std::pair<int, int> > IntPairVec;
 
 #ifdef _WIN32
@@ -50,6 +52,7 @@ typedef std::vector< std::pair<int, int> > IntPairVec;
 #include <windows.h>
 #undef min
 #undef max
+#undef CreateWindow
 
 inline int random() { return Rand::rand(); }
 

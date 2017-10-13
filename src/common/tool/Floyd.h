@@ -1,7 +1,7 @@
 /***********************************************************************
-* @ ×î¶ÌÂ·¾¶Ëã·¨
+* @ æœ€çŸ­è·¯å¾„ç®—æ³•
 * @ brief
-    1¡¢³äµ±ÆäËüÒµÎñÀàµÄ¡¾static¡¿×é¼ş£¬ctorÖĞÉèÖÃÍ¼Êı¾İ
+    1ã€å……å½“å…¶å®ƒä¸šåŠ¡ç±»çš„ã€staticã€‘ç»„ä»¶ï¼Œctorä¸­è®¾ç½®å›¾æ•°æ®
 
 * @ author zhoumf
 * @ date 2016-11-21
@@ -11,7 +11,7 @@
 class Graph{
     enum {
         MAX_NUM = 5,
-        INFINITE_LEN = 99999, //µ±×öÎŞÇî´ó
+        INFINITE_LEN = 99999, //å½“åšæ— ç©·å¤§
     };
     int _curCnt;
     int _arr[MAX_NUM][MAX_NUM];
@@ -29,7 +29,7 @@ Graph::Graph()
 {
     ZeroMemoryThis;
 
-    //³õÊ¼»¯Í¼Êı¾İ
+    //åˆå§‹åŒ–å›¾æ•°æ®
     _curCnt = 4; assert(_curCnt <= MAX_NUM);
     _arr[1][0] = 1;
     _arr[0][2] = 1;
@@ -41,7 +41,7 @@ Graph::Graph()
 void Graph::_Floyd()
 {
     int i, j, k;
-    for (i = 0; i < _curCnt; ++i) //³õÊ¼»¯
+    for (i = 0; i < _curCnt; ++i) //åˆå§‹åŒ–
         for (j = 0; j < _curCnt; ++j)
         {
             if (i == j) {
@@ -53,14 +53,14 @@ void Graph::_Floyd()
 
             Path[i][j] = Distance[i][j] < INFINITE_LEN ? j : -1;
         }
-    //½«¸÷¸ö¶¥µãË³´Î¼ÓÈë£¬²¢ĞŞ¸Ä×î¶ÌÂ·¾¶
+    //å°†å„ä¸ªé¡¶ç‚¹é¡ºæ¬¡åŠ å…¥ï¼Œå¹¶ä¿®æ”¹æœ€çŸ­è·¯å¾„
     for (k = 0; k < _curCnt; ++k)
-        for (i = 0; i < _curCnt; ++i) //ÔÚi£¬jÖ®¼ä¼ÓÈëk
+        for (i = 0; i < _curCnt; ++i) //åœ¨iï¼Œjä¹‹é—´åŠ å…¥k
             for (j = 0; j < _curCnt; ++j)
             {
                 if (Distance[i][k] + Distance[k][j] < Distance[i][j]){
                     Distance[i][j] = Distance[i][k] + Distance[k][j];
-                    Path[i][j] = Path[i][k]; //¸ü¸Äºó¼Ìµã
+                    Path[i][j] = Path[i][k]; //æ›´æ”¹åç»§ç‚¹
                 }
             }
 }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DebugFile.h"
 #include <sstream>
+#include <algorithm>
 #include "mkdir.h"
 
 void cDebugFile::Append(const char *src, size_t cnt)
@@ -14,32 +15,33 @@ void cDebugFile::Append(const char *src, size_t cnt)
     memcpy(&m_Data[m_wpos], src, cnt);
 
     stKeyInfo& info = m_vecKey[m_keyPos];
+    info.size = cnt;
     info.pObj = src;
     info.pOld = &m_Data[m_wpos];
 
     ++m_keyPos;  m_wpos += cnt;
 }
 
-void cDebugFile::Output(string sKeyList /* =  */, eOutPut eOutType /* = All */)
+void cDebugFile::Output(std::string sKeyList /* =  */, eOutPut eOutType /* = All */)
 {
-    std::vector<string> vecKey;
+    std::vector<std::string> vecKey;
 	ParseName(vecKey, sKeyList);
 
-	ostringstream osFile;
-    int64 nResult(0); // >0增加  <0减少  =0不变
+    std::ostringstream osFile;
+    int64 nResult(0); // >0澧炲姞  <0鍑忓皯  =0涓嶅彉
     for (size_t i = 0; i < m_keyPos; ++i)
     {
         stKeyInfo& info = m_vecKey[i];
 
         if (!vecKey.empty()
-            && find(vecKey.begin(), vecKey.end(), info.key) == vecKey.end())
+            && std::find(vecKey.begin(), vecKey.end(), info.key) == vecKey.end())
         {
             continue;
         }
 
         switch (info.type){
 		case v_uint8:{
-				nResult = int16(*(uint8*)info.pObj) - int16(*(uint8*)info.pOld); //可为-255
+				nResult = int16(*(uint8*)info.pObj) - int16(*(uint8*)info.pOld); //鍙负-255
 				if (OnResult(eOutType, nResult, info.key, osFile))
 				{
 					osFile << " = " << *(uint8*)info.pObj << "(" << *(uint8*)info.pOld << ")" << ";\r\n";
@@ -129,12 +131,13 @@ void cDebugFile::Output(string sKeyList /* =  */, eOutPut eOutType /* = All */)
 
     WriteToFile(m_sFileName, osFile);
 }
-void cDebugFile::ParseName(std::vector<string>& refVec, string str)
+void cDebugFile::ParseName(std::vector<std::string>& refVec, std::string str)
 {
-	string strkey;
-	std::vector<string> vecKey;
-	int posList(0), indexList = str.find(",");
-	while (-1 != indexList)
+	std::string strkey;
+	std::vector<std::string> vecKey;
+    size_t posList(0), indexList = str.find(",");
+    
+	while (static_cast<size_t>(-1) != indexList)
 	{
 		strkey = str.substr(posList, indexList);
 		posList = indexList + 1;
@@ -150,19 +153,18 @@ void cDebugFile::ParseName(std::vector<string>& refVec, string str)
 		vecKey.push_back(strkey);
 	}
 }
-void cDebugFile::WriteToFile(string sFileName, ostringstream& osFile)
+void cDebugFile::WriteToFile(std::string sFileName, std::ostringstream& osFile)
 {
     char sfile[64];
     sprintf(sfile, "DebugFile/%s.txt", sFileName.c_str());
     Dir::CreatDir(sfile);
-    FILE* fp = fopen(sfile, "a");
-	if (fp == NULL) return;
+    FILE* fp = fopen(sfile, "a"); if(fp == nullptr) return;
 	fprintf(fp, "%s", osFile.str().c_str());
 	fclose(fp);
 	fp = NULL;
 }
 
-bool cDebugFile::OnResult(eOutPut eType, const int64& result, const string& key, ostringstream& file)
+bool cDebugFile::OnResult(eOutPut eType, const int64& result, const std::string& key, std::ostringstream& file)
 {
 	switch (eType){
 	case cDebugFile::All:

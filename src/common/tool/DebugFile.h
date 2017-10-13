@@ -1,16 +1,16 @@
 /***********************************************************************
-* @ °ó¶¨ÄÚ½¨ĞÍ±äÁ¿£¬ÍË³ö×÷ÓÃÓòºó½«Æä±ä¶¯Çé¿öĞ´ÈëÎÄ¼ş
+* @ ç»‘å®šå†…å»ºå‹å˜é‡ï¼Œé€€å‡ºä½œç”¨åŸŸåå°†å…¶å˜åŠ¨æƒ…å†µå†™å…¥æ–‡ä»¶
 * @ brief
-	1¡¢FIXME¡¾Ä¿Ç°²»Ö§³ÖÎ»Óò±äÁ¿µÄ°ó¶¨¡¿
+	1ã€FIXMEã€ç›®å‰ä¸æ”¯æŒä½åŸŸå˜é‡çš„ç»‘å®šã€‘
 
-	2¡¢ÓÃÀı debugFile << "nCount" << nCount << "nXingHun" << pChar->nXingHun;
-		¡¤ ÏÈÊä"key"ÔÙÊä"value"
-		¡¤ ¾²Ì¬×Ö·û´®£¬×÷"key"´¦Àí£¬µ×²ã²»»áÒÆ¶¯Ö¸Õë
-		¡¤ ±äÁ¿£¬×÷"value"´¦Àí£¬·ÅÈëÒ»¸ö£¬Ö¸ÕëÒÆ¶¯Ò»´Î
+	2ã€ç”¨ä¾‹ debugFile << "nCount" << nCount << "nXingHun" << pChar->nXingHun;
+		Â· å…ˆè¾“"key"å†è¾“"value"
+		Â· é™æ€å­—ç¬¦ä¸²ï¼Œä½œ"key"å¤„ç†ï¼Œåº•å±‚ä¸ä¼šç§»åŠ¨æŒ‡é’ˆ
+		Â· å˜é‡ï¼Œä½œ"value"å¤„ç†ï¼Œæ”¾å…¥ä¸€ä¸ªï¼ŒæŒ‡é’ˆç§»åŠ¨ä¸€æ¬¡
 
-	3¡¢Output()ÖĞ£ºsFileName¿É°üº¬Â·¾¶"ĞÇ»ê/ExchangeTrain"£»sKeyListÓÃÒÔÖ¸¶¨Êä³öÄÇĞ©±äÁ¿
+	3ã€Output()ä¸­ï¼šsFileNameå¯åŒ…å«è·¯å¾„"æ˜Ÿé­‚/ExchangeTrain"ï¼›sKeyListç”¨ä»¥æŒ‡å®šè¾“å‡ºé‚£äº›å˜é‡
 
-	4¡¢¿ÉÓÚÏûÏ¢ÏìÓ¦º¯ÊıÖĞ°ó¶¨¹ØĞÄµÄ±äÁ¿£¬º¯ÊıÖ´ĞĞÍê±Ïºó²é¿´Æä±ä¶¯Çé¿ö
+	4ã€å¯äºæ¶ˆæ¯å“åº”å‡½æ•°ä¸­ç»‘å®šå…³å¿ƒçš„å˜é‡ï¼Œå‡½æ•°æ‰§è¡Œå®Œæ¯•åæŸ¥çœ‹å…¶å˜åŠ¨æƒ…å†µ
 
 * @ author zhoumf
 * @ date 2016-6-30
@@ -20,58 +20,30 @@
 #include <vector>
 #include <assert.h>
 
-using namespace std;
-
-class cDebugFile {
-    enum ValueEnum {
-        v_uint8,
-        v_uint16,
-        v_uint32,
-        v_uint64,
-        v_int8,
-        v_int16,
-        v_int32,
-        v_int64,
-        v_float,
-        v_double,
-        v_string,
-    };
-    struct stKeyInfo {
-        ValueEnum type;
-        const char*  pObj;
-        char*  pOld;
-        string key;
-
-        stKeyInfo() : type(v_int32), pObj(NULL), pOld(NULL) {}
-
-        stKeyInfo(const char* str) : type(v_int32), pObj(NULL), pOld(NULL), key(str) {}
-    };
-    size_t  m_keyPos, m_wpos, m_size;  //Êı¾İĞ´µ½µÄÎ»ÖÃ,×Ü´óĞ¡
-    char*   m_Data = NULL;
-    string  m_sFileName;
-    std::vector<stKeyInfo> m_vecKey;
+class cDebugFile{
 public:
     enum eOutPut{
-        All,        //¼ÇÂ¼ËùÓĞÊı¾İ
-        Change,     //¼ÇÂ¼±ä¶¯µÄ
-        Unchange,   //¼ÇÂ¼Ã»±äµÄ
-        Decrease,   //¼õÉÙ <----
-        Increase,   //Ôö¼Ó ---->
+        All,        //è®°å½•æ‰€æœ‰æ•°æ®
+        Change,     //è®°å½•å˜åŠ¨çš„
+        Unchange,   //è®°å½•æ²¡å˜çš„
+        Decrease,   //å‡å°‘ <----
+        Increase,   //å¢åŠ  ---->
     };
 
-    cDebugFile(string sFileName) : 
+    cDebugFile(std::string sFileName) :
         m_keyPos(0), m_wpos(0), m_size(1024), m_sFileName(sFileName)
 	{
 		m_Data = new char[m_size];
 	}
+
     ~cDebugFile(){ Output(); delete[] m_Data; }
 
-	void Output(string sKeyList = "", eOutPut eType = All);
+    void Output(std::string sKeyList = "", eOutPut eType = All);
 
-    //template<typename T> cDebugFile& operator<<(const T& value){
-    //    Append<T>(value);
-    //    return *this;
-    //}
+    template<typename T> cDebugFile& operator<<(const T& value){
+        Append<T>(value);
+        return *this;
+    }
 
     #define Operator_CheckCode(v) \
         if (m_vecKey.size() <= m_keyPos) {assert(0); return *this;}\
@@ -137,27 +109,74 @@ public:
         Append(str, strlen(str)+1);
         return *this;
     }
-	cDebugFile& operator<<(const char *str) { //ÊäÈëKey
+    cDebugFile& operator<<(const std::string& value) {
+        Operator_CheckCode(v_string)
+        Append((char*)value.c_str(), value.length()+1);
+        return *this;
+    }
+    cDebugFile& operator<<(std::string& value) {
+        Operator_CheckCode(v_string)
+        Append((char*)value.c_str(), value.length()+1);
+        return *this;
+    }
+	cDebugFile& operator<<(const char *str) { //è¾“å…¥Key
 		stKeyInfo info(str);
 		m_vecKey.push_back(info);
         return *this;
     }
-private:
-	bool OnResult(eOutPut eType, const int64& result, const string& key, ostringstream& file);
-	void ParseName(std::vector<string>& refVec, string str);
-	void WriteToFile(string sFileName, ostringstream& osFile);
 
-    template <typename T> void Append(const T& value)
-	{
-        Append((char*)&value, sizeof(value));
-    }
-    void Append(const char *src, size_t cnt);
+private:
+    bool OnResult(eOutPut eType, const int64& result, const std::string& key, std::ostringstream& file);
+
+    void ParseName(std::vector<std::string>& refVec, std::string str);
+    void WriteToFile(std::string sFileName, std::ostringstream& osFile);
+
+    enum eValueType
+    {
+        v_uint8,
+        v_uint16,
+        v_uint32,
+        v_uint64,
+        v_int8,
+        v_int16,
+        v_int32,
+        v_int64,
+        v_float,
+        v_double,
+        v_string,
+    };
+
     void Double(){
         char* temp = new char[m_size *= 2];
-        memcpy(temp, m_Data, m_size / 2 * sizeof(char));
+        memcpy(temp, m_Data, m_size/2 * sizeof(char));
         delete[] m_Data;
         m_Data = temp;
     }
+
+    void Append(const char *src, size_t cnt);
+
+    template <typename T> 
+	void Append(const T& value)
+	{
+        Append((char*)&value, sizeof(value));
+    }
+
+    struct stKeyInfo
+    {
+        eValueType type;
+        size_t size;
+        const char*  pObj;
+        char*  pOld;
+        std::string key;
+
+        stKeyInfo() : type(v_int32), size(4), pObj(NULL), pOld(NULL) {}
+
+		stKeyInfo(const char* str) : type(v_int32), size(4), pObj(NULL), pOld(NULL), key(str) {}
+    };
+    size_t  m_keyPos, m_wpos, m_size;  //æ•°æ®å†™åˆ°çš„ä½ç½®,æ€»å¤§å°
+    char*   m_Data = NULL;
+    std::string  m_sFileName;
+    std::vector<stKeyInfo> m_vecKey;
 };
 
 #ifdef _DEBUG
@@ -179,15 +198,15 @@ private:
 #endif
 
 /************************************************************************/
-// Ê¾Àı
+// ç¤ºä¾‹
 #ifdef _MY_Test
 	void test_DebugFile(){
 		int a = 0;
 		float f = 0.1f;
 		double d = 0.02;
-		cDebugFile file("ÔüÔü/test");
+		cDebugFile file("æ¸£æ¸£/test");
 		file << "a" << a << "f" << f << "d" << d;
-		//DebugFile_Create("ÔüÔü/test");
+		//DebugFile_Create("æ¸£æ¸£/test");
 		//DebugFile_Input("aa", a);
 		a++; f = 0.11f; d = 0.787;
 	}

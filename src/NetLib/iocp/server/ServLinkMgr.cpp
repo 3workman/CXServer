@@ -49,11 +49,11 @@ bool ServLinkMgr::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, 
 	_sListener = socket(AF_INET, SOCK_STREAM, 0);
 	if (_sListener == INVALID_SOCKET)
 	{
-		printf("´´½¨socket´íÎó£¬Çë¼ì²ésocketÊÇ·ñ±»³õÊ¼»¯£¡");
-		return false;
+        printf("åˆ›å»ºsocketé”™è¯¯ï¼Œè¯·æ£€æŸ¥socketæ˜¯å¦è¢«åˆå§‹åŒ–");
+        return false;
 	}
 
-	//FIXME£ºServLinkÓÃµÄSO_LINGERÇ¿ÖÆ¹Ø±Õ£¬Ã»ÓĞTIME_WAIT£¬²»±ØSO_REUSEADDR°É~
+	//FIXMEï¼šServLinkç”¨çš„SO_LINGERå¼ºåˆ¶å…³é—­ï¼Œæ²¡æœ‰TIME_WAITï¼Œä¸å¿…SO_REUSEADDRå§~
 	bool reuseAddr = true;
 	if (setsockopt(_sListener, SOL_SOCKET, SO_REUSEADDR, (char*)&reuseAddr, sizeof(reuseAddr)) == SOCKET_ERROR)
 	{
@@ -68,46 +68,46 @@ bool ServLinkMgr::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, 
 
 	if (0 != ::bind(_sListener, (SOCKADDR *)&addr, sizeof(addr)))
 	{
-		printf("bind´íÎó£¡");
+		printf("bindé”™è¯¯");
 		return false;
 	}
-	if (0 != listen(_sListener, 5)) // Èı´ÎÎÕÊÖÍê³É£¬ºôÈëÁ¬½ÓÇëÇó¶ÓÁĞµÄ×î´ó³¤¶È
+	if (0 != listen(_sListener, 5)) // ä¸‰æ¬¡æ¡æ‰‹å®Œæˆï¼Œå‘¼å…¥è¿æ¥è¯·æ±‚é˜Ÿåˆ—çš„æœ€å¤§é•¿åº¦
 	{
-		printf("listen´íÎó£¬Çë¼ì²é¶Ë¿ÚÊÇ·ñÒÑ¾­±»Ê¹ÓÃ£¡");
+		printf("listené”™è¯¯ï¼Œè¯·æ£€æŸ¥ç«¯å£æ˜¯å¦å·²ç»è¢«ä½¿ç”¨");
 		return false;
 	}
     if (0 == BindIoCompletionCallback((HANDLE)_sListener, ServLink::DoneIO, 0))
 	{
-		printf("BindIoCompletionCallback´íÎó£¬Çë¼ì²éÏµÍ³×ÊÔ´ÊÇ·ñºÄ¾¡£¡");
-		return false;
+        printf("BindIoCompletionCallbacké”™è¯¯ï¼Œè¯·æ£€æŸ¥ç³»ç»Ÿèµ„æºæ˜¯å¦è€—å°½");
+        return false;
 	}
 
-	// ÏÈÍ¶µİ¼¸¸öAcceptEx£¬m_nAccept»áÔÚsClientÍ¶µİÍê±Ïºó¸üĞÂ
+	// å…ˆæŠ•é€’å‡ ä¸ªAcceptExï¼Œm_nAcceptä¼šåœ¨sClientæŠ•é€’å®Œæ¯•åæ›´æ–°
 	_nInvalid = _config.dwMaxLink;
 	_nAccept = 0;
 	_nConnect = 0;
 	//memset(_arrLink, 0, sizeof(_arrLink));
 	//for (int i = 0; i < _nMaxLink; ++i)
 	//{
-	//	_arrLink[i] = new ServLink(this, _config.nSendBuffer); //´´½¨ËùÓĞlink£¬Ì«Õ¼ÄÚ´æÁË£¬¿ÉÒÔÓÅ»¯ÎªÒ»¸ö´øÉÏÏŞµÄ³Ø×Ó
+	//	_arrLink[i] = new ServLink(this, _config.nSendBuffer); //åˆ›å»ºæ‰€æœ‰linkï¼Œå¤ªå å†…å­˜äº†ï¼Œå¯ä»¥ä¼˜åŒ–ä¸ºä¸€ä¸ªå¸¦ä¸Šé™çš„æ± å­
 	//	if (_nAccept < _config.nPreCreate)
 	//	{
 	//		if (!_arrLink[i]->CreateLinkAndAccept())
 	//		{
-	//			printf("´´½¨link´íÎó£¬Çë¼ì²é²ÎÊıÊÇ·ñÕıÈ·£¡");
+	//			printf("åˆ›å»ºlinké”™è¯¯ï¼Œè¯·æ£€æŸ¥å‚æ•°æ˜¯å¦æ­£ç¡®ï¼");
 	//			return false;
 	//		}
 	//	}
 	//}
-	_vecLink.resize(_config.nPreLink); //ÏÈ´´½¨Ò»Åú£¬MaintainÀïÂıÂı²¹
+	_vecLink.resize(_config.nPreLink); //å…ˆåˆ›å»ºä¸€æ‰¹ï¼ŒMaintainé‡Œæ…¢æ…¢è¡¥
 	for (auto& it : _vecLink)
 	{
 		it = new ServLink(this);
 		if (_nAccept < _config.nPreAccept)
 		{
-			if (!it->CreateLinkAndAccept())  //¡¾ÀïÃæ»á´´½¨¿Í»§¶Ësocket£¬²¢AcceptEx(m_hListener, sClient...)¡¿
+			if (!it->CreateLinkAndAccept())  //ã€é‡Œé¢ä¼šåˆ›å»ºå®¢æˆ·ç«¯socketï¼Œå¹¶AcceptEx(m_hListener, sClient...)ã€‘
 			{
-				printf("´´½¨link´íÎó£¬Çë¼ì²é²ÎÊıÊÇ·ñÕıÈ·£¡");
+				printf("åˆ›å»ºlinké”™è¯¯ï¼Œè¯·æ£€æŸ¥å‚æ•°æ˜¯å¦æ­£ç¡®ï¼");
 				return false;
 			}
 		}
@@ -164,14 +164,14 @@ bool ServLinkMgr::_AssistLoop()
 
 		for (auto& it : _vecLink)
 		{
-			if (it->IsConnected()) it->ServerRun_SendIO(); //¡¾brief.7¡¿Áí±ÙÏß³Ì¶¨ÆÚ·¢ËÍËùÓĞbuffer
+			if (it->IsConnected()) it->ServerRun_SendIO(); //ã€brief.7ã€‘å¦è¾Ÿçº¿ç¨‹å®šæœŸå‘é€æ‰€æœ‰buffer
 		}
 
 		elapsedTime += tempElapse;
 
-		if (elapsedTime > CHECK_INTERVAL) { // ¶àÉÙºÁÃë¼ì²éÒ»´Î
+		if (elapsedTime > CHECK_INTERVAL) { // å¤šå°‘æ¯«ç§’æ£€æŸ¥ä¸€æ¬¡
 			elapsedTime = 0;
-			Maintain(_timeNow); //¼ì²éÎ¬»¤serverLink
+			Maintain(_timeNow); //æ£€æŸ¥ç»´æŠ¤serverLink
 		}
 	}
 	return true;
@@ -183,12 +183,12 @@ void ServLinkMgr::Maintain(time_t timenow)
 		if (it->IsSocket())
 			it->Maintain(timenow);
 		else if (_nAccept < _config.nPreAccept)
-			it->CreateLinkAndAccept(); //FIXME£ºÕâÀïÊÇ´¿´â¸´ÓÃ¾ÉServLinkµÄÄÚ´æ¿é£¬Ã»¾­¹ıc++µÄ¹¹ÔìÎö¹¹¹ı³Ì£¬²»Âú×ãc++·¶Ê½£¬ÈİÒ×³öbug
+			it->CreateLinkAndAccept(); //FIXMEï¼šè¿™é‡Œæ˜¯çº¯ç²¹å¤ç”¨æ—§ServLinkçš„å†…å­˜å—ï¼Œæ²¡ç»è¿‡c++çš„æ„é€ ææ„è¿‡ç¨‹ï¼Œä¸æ»¡è¶³c++èŒƒå¼ï¼Œå®¹æ˜“å‡ºbug
 	}
-	// »¹²»¹»£¬²¹ĞÂµÄ
+	// è¿˜ä¸å¤Ÿï¼Œè¡¥æ–°çš„
 	while (_nAccept < _config.nPreAccept && _vecLink.size() < _config.dwMaxLink)
 	{
-		if (ServLink* pLink = new ServLink(this)) //TODO£º¿ÉÒÔ×ö¸ö¶ÔÏó³ØÓÅ»¯ÏÂ
+		if (ServLink* pLink = new ServLink(this)) //TODOï¼šå¯ä»¥åšä¸ªå¯¹è±¡æ± ä¼˜åŒ–ä¸‹
 		{
 			_vecLink.push_back(pLink);
 			pLink->CreateLinkAndAccept();

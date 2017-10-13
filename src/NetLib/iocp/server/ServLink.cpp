@@ -5,25 +5,25 @@
 
 #pragma comment(lib,"Mswsock.lib")
 
-#define MAX_Connect_Seconds	60 // ¼¸ÃëÁ¬½Ó²»ÉÏ£¬Ìßµô
-#define MAX_Silent_Seconds	5  // ¼¸ÃëÃ»ÊÕµ½Êı¾İ£¬¼ì²éÊÇ·ñ·¢Éúsocket close
-#define MAX_Invalid_Seconds 5  // Á´½ÓÎŞĞ§³ÖĞø¼¸Ãë£¬closesocket¡¾±¾³ÌĞòÖĞĞè¶Ï¿ªÁ´½ÓÊ±£¬ÏÈshutdown³ÉÎŞĞ§Á´½Ó£¬ÔÙ²ÅÕæÕı»ØÊÕsocket¡¿
+#define MAX_Connect_Seconds	60 // å‡ ç§’è¿æ¥ä¸ä¸Šï¼Œè¸¢æ‰
+#define MAX_Silent_Seconds	5  // å‡ ç§’æ²¡æ”¶åˆ°æ•°æ®ï¼Œæ£€æŸ¥æ˜¯å¦å‘ç”Ÿsocket close
+#define MAX_Invalid_Seconds 5  // é“¾æ¥æ— æ•ˆæŒç»­å‡ ç§’ï¼Œclosesocketã€æœ¬ç¨‹åºä¸­éœ€æ–­å¼€é“¾æ¥æ—¶ï¼Œå…ˆshutdownæˆæ— æ•ˆé“¾æ¥ï¼Œå†æ‰çœŸæ­£å›æ”¶socketã€‘
 
 // closesocket && shutdown
 /*
-	1¡¢Ê×ÏÈĞèÒªÇø·ÖÒ»ÏÂ¹Ø±ÕsocketºÍ¹Ø±ÕTCPÁ¬½ÓµÄÇø±ğ£º
-		¡¤¹Ø±ÕTCPÁ¬½ÓÊÇÖ¸TCPĞ­Òé²ãµÄ¶«Î÷£¬¾ÍÊÇÁ½¸öTCP¶ËÖ®¼ä½»»»ÁËÒ»Ğ©Ğ­Òé°ü£¨FIN£¬RSTµÈ£©
-		¡¤¶ø¹Ø±ÕsocketÊÇÖ¸¹Ø±ÕÓÃ»§Ó¦ÓÃ³ÌĞòÖĞµÄsocket¾ä±ú£¬ÊÍ·ÅÏà¹Ø×ÊÔ´¡£µ«ÊÇµ±ÓÃ»§¹Ø±Õsocket¾ä±úÊ±»áÒşº¬µÄ´¥·¢TCPÁ¬½ÓµÄ¹Ø±Õ¹ı³Ì
+	1ã€é¦–å…ˆéœ€è¦åŒºåˆ†ä¸€ä¸‹å…³é—­socketå’Œå…³é—­TCPè¿æ¥çš„åŒºåˆ«ï¼š
+		Â·å…³é—­TCPè¿æ¥æ˜¯æŒ‡TCPåè®®å±‚çš„ä¸œè¥¿ï¼Œå°±æ˜¯ä¸¤ä¸ªTCPç«¯ä¹‹é—´äº¤æ¢äº†ä¸€äº›åè®®åŒ…ï¼ˆFINï¼ŒRSTç­‰ï¼‰
+		Â·è€Œå…³é—­socketæ˜¯æŒ‡å…³é—­ç”¨æˆ·åº”ç”¨ç¨‹åºä¸­çš„socketå¥æŸ„ï¼Œé‡Šæ”¾ç›¸å…³èµ„æºã€‚ä½†æ˜¯å½“ç”¨æˆ·å…³é—­socketå¥æŸ„æ—¶ä¼šéšå«çš„è§¦å‘TCPè¿æ¥çš„å…³é—­è¿‡ç¨‹
 
-	2¡¢TCPÁ¬½ÓµÄ¹Ø±Õ¹ı³ÌÓĞÁ½ÖÖ£¬Ò»ÖÖÊÇÓÅÑÅ¹Ø±Õ£¨graceful close£©£¬Ò»ÖÖÊÇÇ¿ÖÆ¹Ø±Õ£¨hard close»òabortive close£©
-		¡¤ÓÅÑÅ¹Ø±ÕÊÇÖ¸£¬Èç¹û·¢ËÍ»º´æÖĞ»¹ÓĞÊı¾İÎ´·¢³öÔòÆä·¢³öÈ¥£¬²¢ÇÒÊÕµ½ËùÓĞÊı¾İµÄACKÖ®ºó£¬·¢ËÍFIN°ü£¬¿ªÊ¼¹Ø±Õ¹ı³Ì
-		¡¤Ç¿ÖÆ¹Ø±ÕÊÇÖ¸£¬Èç¹û»º´æÖĞ»¹ÓĞÊı¾İ£¬ÔòÕâĞ©Êı¾İ¶¼½«±»¶ªÆú£¬È»ºó·¢ËÍRST°ü£¬Ö±½ÓÖØÖÃTCPÁ¬½Ó
+	2ã€TCPè¿æ¥çš„å…³é—­è¿‡ç¨‹æœ‰ä¸¤ç§ï¼Œä¸€ç§æ˜¯ä¼˜é›…å…³é—­ï¼ˆgraceful closeï¼‰ï¼Œä¸€ç§æ˜¯å¼ºåˆ¶å…³é—­ï¼ˆhard closeæˆ–abortive closeï¼‰
+		Â·ä¼˜é›…å…³é—­æ˜¯æŒ‡ï¼Œå¦‚æœå‘é€ç¼“å­˜ä¸­è¿˜æœ‰æ•°æ®æœªå‘å‡ºåˆ™å…¶å‘å‡ºå»ï¼Œå¹¶ä¸”æ”¶åˆ°æ‰€æœ‰æ•°æ®çš„ACKä¹‹åï¼Œå‘é€FINåŒ…ï¼Œå¼€å§‹å…³é—­è¿‡ç¨‹
+		Â·å¼ºåˆ¶å…³é—­æ˜¯æŒ‡ï¼Œå¦‚æœç¼“å­˜ä¸­è¿˜æœ‰æ•°æ®ï¼Œåˆ™è¿™äº›æ•°æ®éƒ½å°†è¢«ä¸¢å¼ƒï¼Œç„¶åå‘é€RSTåŒ…ï¼Œç›´æ¥é‡ç½®TCPè¿æ¥
 
-	3¡¢shutdown()ÓÃÓÚ¹Ø±ÕTCPÁ¬½Ó£¬µ«²¢²»¹Ø±Õsocket¾ä±ú£¬µÚ¶ş¸ö²ÎÊıÖ¸¶¨¹Ø±ÕµÄÊÇ£º·¢ËÍ/½ÓÊÜÍ¨µÀ
+	3ã€shutdown()ç”¨äºå…³é—­TCPè¿æ¥ï¼Œä½†å¹¶ä¸å…³é—­socketå¥æŸ„ï¼Œç¬¬äºŒä¸ªå‚æ•°æŒ‡å®šå…³é—­çš„æ˜¯ï¼šå‘é€/æ¥å—é€šé“
 
-	4¡¢closesocket()ÓÃÓÚ¹Ø±Õsocket¾ä±ú£¬²¢ÊÍ·ÅÏà¹Ø×ÊÔ´£¬socketÑ¡Ïî£ºSO_LINGER ¾ö¶¨Æä´¥·¢µÄTCP¹Ø±ÕÊÇÓÅÑÅ/Ç¿ÖÆ
+	4ã€closesocket()ç”¨äºå…³é—­socketå¥æŸ„ï¼Œå¹¶é‡Šæ”¾ç›¸å…³èµ„æºï¼Œsocketé€‰é¡¹ï¼šSO_LINGER å†³å®šå…¶è§¦å‘çš„TCPå…³é—­æ˜¯ä¼˜é›…/å¼ºåˆ¶
 
-	5¡¢ÎªÊ²Ã´ÒªÏÈshutdownÔÙµÈ´ıºóclosesocket£¿Îª±£Ö¤»º³åÊı¾İ·¢³öÈ¥Âğ
+	5ã€ä¸ºä»€ä¹ˆè¦å…ˆshutdownå†ç­‰å¾…åclosesocketï¼Ÿä¸ºä¿è¯ç¼“å†²æ•°æ®å‘å‡ºå»å—
 */
 
 const DWORD IN_BUFFER_SIZE = 1024 * 4;
@@ -32,27 +32,27 @@ uint16 ServLink::s_nID = 0;
 
 ServLink::ServLink(ServLinkMgr* pMgr)
 	: _sendBuf(IN_BUFFER_SIZE)
-	//, _recvBuf(IN_BUFFER_SIZE * 2) //_recvBuf¿ªÁ½±¶´óĞ¡£¬±ÜÃâ½ÓÊÕ»º³å²»¹»£¬¼ûPostRecv()µÄNotice
+	//, _recvBuf(IN_BUFFER_SIZE * 2) //_recvBufå¼€ä¸¤å€å¤§å°ï¼Œé¿å…æ¥æ”¶ç¼“å†²ä¸å¤Ÿï¼Œè§PostRecv()çš„Notice
     , _recvBuf(IN_BUFFER_SIZE)
 	, _pMgr(pMgr)
-    , _nLinkID(++s_nID) // LinkID´Ó1¿ªÊ¼
+    , _nLinkID(++s_nID) // LinkIDä»1å¼€å§‹
 {
 	_ovSend.eType = IO_Write;
 	_ovRecv.eType = IO_Read;
 }
 
-/*  ×¢Òâ£ºÔÚDoneIOµÄÏß³Ì²»ÄÜµ÷ÓÃclose£¬·ñÔò»áËÀËø£¬Ö»¿ÉÒÔÔÚ·şÎñÆ÷µÄmaintainÏß³Ìclose
-²âÊÔÏÔÊ¾£º
-¡¤¿Í»§¶Ë½ö½öconnectµ«²»·¢ËÍÊı¾İ£¬²»»á´¥·¢DoneIO»Øµ÷ ¡ª¡ª Ö»ÊÇ½øÈë¡°ºôÈëÁ¬½ÓÇëÇó¶ÓÁĞ¡±£¬Maintain()¼ì²éÖĞÒòMAX_Connect_Seconds³¬Ê±±»shutdownÎªÎŞĞ§µÄ
-¡¤¿Í»§¶ËÖ÷¶¯close¡¢¹Ø½ø³Ì£¬ÓĞDoneIO»Øµ÷£¬ÇÒ¡°dwNumberOfBytesTransferred = 0¡±
+/*  æ³¨æ„ï¼šåœ¨DoneIOçš„çº¿ç¨‹ä¸èƒ½è°ƒç”¨closeï¼Œå¦åˆ™ä¼šæ­»é”ï¼Œåªå¯ä»¥åœ¨æœåŠ¡å™¨çš„maintainçº¿ç¨‹close
+æµ‹è¯•æ˜¾ç¤ºï¼š
+Â·å®¢æˆ·ç«¯ä»…ä»…connectä½†ä¸å‘é€æ•°æ®ï¼Œä¸ä¼šè§¦å‘DoneIOå›è°ƒ â€”â€” åªæ˜¯è¿›å…¥â€œå‘¼å…¥è¿æ¥è¯·æ±‚é˜Ÿåˆ—â€ï¼ŒMaintain()æ£€æŸ¥ä¸­å› MAX_Connect_Secondsè¶…æ—¶è¢«shutdownä¸ºæ— æ•ˆçš„
+Â·å®¢æˆ·ç«¯ä¸»åŠ¨closeã€å…³è¿›ç¨‹ï¼Œæœ‰DoneIOå›è°ƒï¼Œä¸”â€œdwNumberOfBytesTransferred = 0â€
 
-ÍøÉÏµÄÀı×Ó¡°dwNumberOfBytesTransferred = 0¡±
-¡¤ÔÚ²âÊÔÖĞÒ²·¢ÏÖ£¬µ÷ÓÃWSARecvµÄÊ±ºòÈç¹û»º³åÇøÌ«Ğ¡µÄ»°£¬µ±ÓĞ´óÊı¾İµ½À´Ê±£¬Ò²»áÊÕµ½dwBytesÎª0µÄ°ü
-¡¤´ËÊ±WSAGetLastError() == WSA_IO_PENDING
-¡¤whireshark×¥°ü¿´ÁËÏÂ£¬ÊÕµ½Îª³¤¶ÈÎª0µÄÊı¾İÊ±ºò£¬»á³öÏÖ[TCP Zerowindow]
+ç½‘ä¸Šçš„ä¾‹å­â€œdwNumberOfBytesTransferred = 0â€
+Â·åœ¨æµ‹è¯•ä¸­ä¹Ÿå‘ç°ï¼Œè°ƒç”¨WSARecvçš„æ—¶å€™å¦‚æœç¼“å†²åŒºå¤ªå°çš„è¯ï¼Œå½“æœ‰å¤§æ•°æ®åˆ°æ¥æ—¶ï¼Œä¹Ÿä¼šæ”¶åˆ°dwBytesä¸º0çš„åŒ…
+Â·æ­¤æ—¶WSAGetLastError() == WSA_IO_PENDING
+Â·whiresharkæŠ“åŒ…çœ‹äº†ä¸‹ï¼Œæ”¶åˆ°ä¸ºé•¿åº¦ä¸º0çš„æ•°æ®æ—¶å€™ï¼Œä¼šå‡ºç°[TCP Zerowindow]
 */
 void CALLBACK ServLink::DoneIO(DWORD dwErrorCode,
-    DWORD dwNumberOfBytesTransferred, //Êµ¼Ê²Ù×÷µÄ×Ö½ÚÊı¡¾´Ë×Ö½ÚÊı±»¿½±´½øÍø¿¨£¬Íø¿¨ÂıÂı·¢¡¿
+    DWORD dwNumberOfBytesTransferred, //å®é™…æ“ä½œçš„å­—èŠ‚æ•°ã€æ­¤å­—èŠ‚æ•°è¢«æ‹·è´è¿›ç½‘å¡ï¼Œç½‘å¡æ…¢æ…¢å‘ã€‘
     LPOVERLAPPED lpOverlapped)
 {
     if (lpOverlapped == NULL)
@@ -73,7 +73,7 @@ void CALLBACK ServLink::DoneIO(DWORD dwErrorCode,
 }
 void ServLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 {
-	//¡¾ÓÅ»¯MaintainÀïµÄÂÖÑ¯FD_CLOSE¡¿
+	//ã€ä¼˜åŒ–Maintainé‡Œçš„è½®è¯¢FD_CLOSEã€‘
 	if (0 == dwNumberOfBytesTransferred) {
 		WSANETWORKEVENTS events;
 		if (WSAEnumNetworkEvents(_sClient, _hEventClose, &events) == 0) {
@@ -87,29 +87,29 @@ void ServLink::DoneIOCallback(DWORD dwNumberOfBytesTransferred, EnumIO type)
 		return;
 	}
 
-	if (type == IO_Write){ // ´¦ÀíĞ´IOµÄÍê³É»Øµ÷
+	if (type == IO_Write){ // å¤„ç†å†™IOçš„å®Œæˆå›è°ƒ
 
-		if (_eState == STATE_CONNECTED) OnSend_DoneIO(dwNumberOfBytesTransferred); // ÈÔÁ¬½ÓÊ±£¬Òª´¦Àí·¢ËÍ»º³åµÄ¸üĞÂ(ÓĞ¶«Î÷ÒÑ·¢×ßÁË)
+		if (_eState == STATE_CONNECTED) OnSend_DoneIO(dwNumberOfBytesTransferred); // ä»è¿æ¥æ—¶ï¼Œè¦å¤„ç†å‘é€ç¼“å†²çš„æ›´æ–°(æœ‰ä¸œè¥¿å·²å‘èµ°äº†)
 
-	}else if (type == IO_Read){  // ´¦Àí¶ÁIOµÄÍê³É»Øµ÷
+	}else if (type == IO_Read){  // å¤„ç†è¯»IOçš„å®Œæˆå›è°ƒ
 
 		if (_bInvalid) {
 			Err("DoneIOCallback IO_Read Invalid! State:", _eState);
 			return;
 		}
 
-		if (_eState == STATE_ACCEPTING)  // ¡¾1¡¢AcceptExÍê³Éºó£¬»Øµ÷ÖÁ´Ë¡¿
+		if (_eState == STATE_ACCEPTING)  // ã€1ã€AcceptExå®Œæˆåï¼Œå›è°ƒè‡³æ­¤ã€‘
 		{
 			UpdateAcceptAddr();
 			if (ServLinkMgr::IsValidIP(_szIP)){
-				OnAccept();             // ¡¾2¡¢AcceptExÍê³Éºó£¬°ó¶¨¿Í»§socketµ½Íê³É¶Ë¿Ú£¬×´Ì¬¸üĞÂÎªÁ¬½Ó¡¿
+				OnAccept();             // ã€2ã€AcceptExå®Œæˆåï¼Œç»‘å®šå®¢æˆ·socketåˆ°å®Œæˆç«¯å£ï¼ŒçŠ¶æ€æ›´æ–°ä¸ºè¿æ¥ã€‘
 			} else {
 				OnInvalidMessage(Net_InvalidIP, 0, true);
 				return;
 			}
 		}
 
-		if (_eState == STATE_CONNECTED){ // ¡¾3¡¢AcceptExÍê³Éºó °ó¶¨¿Í»§socket³É¹¦£¬»Øµ÷ÖÁ´Ë¡¿
+		if (_eState == STATE_CONNECTED){ // ã€3ã€AcceptExå®Œæˆå ç»‘å®šå®¢æˆ·socketæˆåŠŸï¼Œå›è°ƒè‡³æ­¤ã€‘
 			OnRead_DoneIO(dwNumberOfBytesTransferred);
 		} else {
 			Err("DoneIOCallback NotConnect");
@@ -120,7 +120,7 @@ bool ServLink::CreateLinkAndAccept()
 {
 	if (_sClient != INVALID_SOCKET)
 	{
-		printf("Error_CreateLink£ºsocket being used. ID:%d \n", _nLinkID);
+		printf("Error_CreateLinkï¼šsocket being used. ID:%d \n", _nLinkID);
 		return false;
 	}
 
@@ -194,7 +194,7 @@ void ServLink::UpdateAcceptAddr()
 
 	char* pBuf = _recvBuf.beginWrite();
 	GetAcceptExSockaddrs(
-		pBuf,	//´«µİ¸øAcceptExµÄÄÇ¿éÄÚ´æ
+		pBuf,	//ä¼ é€’ç»™AcceptExçš„é‚£å—å†…å­˜
 		IN_BUFFER_SIZE - (sizeof(sockaddr_in)+16) * 2,
 		sizeof(sockaddr_in)+16,
 		sizeof(sockaddr_in)+16,
@@ -255,10 +255,10 @@ bool ServLink::CloseLink()
 		Err("Error_CloseUnknow", 0);
 	}
 	/*
-		1¡¢ÉèÖÃ l_onoffÎª0£¬Ôò¸ÃÑ¡Ïî¹Ø±Õ£¬l_lingerµÄÖµ±»ºöÂÔ£¬µÈÓÚÄÚºËÈ±Ê¡Çé¿ö
-		   closeµ÷ÓÃ»áÁ¢¼´·µ»Ø¸øµ÷ÓÃÕß£¬Èç¹û¿ÉÄÜ½«»á´«ÊäÈÎºÎÎ´·¢ËÍµÄÊı¾İ
-		2¡¢ÉèÖÃ l_onoffÎª·Ç0£¬l_lingerÎª0£¬ÔòÌ×½Ó¿Ú¹Ø±ÕÊ±
-		   TCP½«¶ªÆú±£ÁôÔÚÌ×½Ó¿Ú·¢ËÍ»º³åÇøÖĞµÄÈÎºÎÊı¾İ²¢·¢ËÍÒ»¸öRST¸ø¶Ô·½£¬¶ø²»ÊÇÍ¨³£µÄËÄ´ÎÎÕÊÖÖÕÖ¹£¬Õâ±ÜÃâÁËTIME_WAIT×´Ì¬
+		1ã€è®¾ç½® l_onoffä¸º0ï¼Œåˆ™è¯¥é€‰é¡¹å…³é—­ï¼Œl_lingerçš„å€¼è¢«å¿½ç•¥ï¼Œç­‰äºå†…æ ¸ç¼ºçœæƒ…å†µ
+		   closeè°ƒç”¨ä¼šç«‹å³è¿”å›ç»™è°ƒç”¨è€…ï¼Œå¦‚æœå¯èƒ½å°†ä¼šä¼ è¾“ä»»ä½•æœªå‘é€çš„æ•°æ®
+		2ã€è®¾ç½® l_onoffä¸ºé0ï¼Œl_lingerä¸º0ï¼Œåˆ™å¥—æ¥å£å…³é—­æ—¶
+		   TCPå°†ä¸¢å¼ƒä¿ç•™åœ¨å¥—æ¥å£å‘é€ç¼“å†²åŒºä¸­çš„ä»»ä½•æ•°æ®å¹¶å‘é€ä¸€ä¸ªRSTç»™å¯¹æ–¹ï¼Œè€Œä¸æ˜¯é€šå¸¸çš„å››æ¬¡æ¡æ‰‹ç»ˆæ­¢ï¼Œè¿™é¿å…äº†TIME_WAITçŠ¶æ€
 	*/
 	struct linger li = { 1, 0 };	// Default: SO_DONTLINGER
 	if (setsockopt(_sClient, SOL_SOCKET, SO_LINGER, (char *)&li, sizeof(li)) == SOCKET_ERROR)
@@ -278,13 +278,13 @@ bool ServLink::CloseLink()
 	_eState = STATE_DEAD;
 
     _pMgr->_ReportErrorMsg(_player, Message_NoError, 0);
-    _player = NULL; //Notice£º¹Ø±ÕÁ´½ÓÊ±,½«¶ÔÓ¦µÄ½ÇÉ«Çå³ı,·ÀÖ¹¹ØÁªµ½´íÎóµÄ½ÇÉ«ÉÏ
+    _player = NULL; //Noticeï¼šå…³é—­é“¾æ¥æ—¶,å°†å¯¹åº”çš„è§’è‰²æ¸…é™¤,é˜²æ­¢å…³è”åˆ°é”™è¯¯çš„è§’è‰²ä¸Š
 
 	return true;
 }
 const NetCfgServer& ServLink::Config(){ return _pMgr->_config; }
 
-//Notice£ºÔÚDoneIOµÄÏß³Ì²»ÄÜµ÷ÓÃclose£¬·ñÔò»áËÀËø£¬Ö»¿ÉÒÔÔÚ·şÎñÆ÷µÄmaintainÏß³Ìclose
+//Noticeï¼šåœ¨DoneIOçš„çº¿ç¨‹ä¸èƒ½è°ƒç”¨closeï¼Œå¦åˆ™ä¼šæ­»é”ï¼Œåªå¯ä»¥åœ¨æœåŠ¡å™¨çš„maintainçº¿ç¨‹close
 void ServLink::Maintain(time_t timenow)
 {
 	/* Check if client is an abuser. Abusing clients are:
@@ -292,15 +292,15 @@ void ServLink::Maintain(time_t timenow)
 	2. Clients that connect, send something, and remain connected for too long.
 	(there are other kinds of abusive clients, but only these two kinds need to be looked for at a periodic manner.)*/
 
-	if (_bInvalid && (timenow - _timeInvalid > 1)) // ºÜÆæ¹ÖµÄ"> 1" ~‡å£¿
+	if (_bInvalid && (timenow - _timeInvalid > 1)) // å¾ˆå¥‡æ€ªçš„"> 1" ~å›§ï¼Ÿ
 	{
-		//Ã»ÓĞµÇÂ½£¬Ã»ÓĞÓÎÏ·£¬Ã»ÓĞÁ¬½ÓµÄÊ±ºò²ÅÄÜCloseLink
-		//»¹ÓĞÒ»Ìõ£¬²¢ÇÒÔÚ1·ÖÖÓÒÔÉÏÃ»ÓĞ·¢ËÍÏûÏ¢²ÅÄÜCloseLink
+		//æ²¡æœ‰ç™»é™†ï¼Œæ²¡æœ‰æ¸¸æˆï¼Œæ²¡æœ‰è¿æ¥çš„æ—¶å€™æ‰èƒ½CloseLink
+		//è¿˜æœ‰ä¸€æ¡ï¼Œå¹¶ä¸”åœ¨1åˆ†é’Ÿä»¥ä¸Šæ²¡æœ‰å‘é€æ¶ˆæ¯æ‰èƒ½CloseLink
 		if (!IsConnected())
 		{
 			CloseLink();
 		}
-		else if (timenow - _timeInvalid > MAX_Invalid_Seconds) // ÍâÍøÈı·ÖÖÓ
+		else if (timenow - _timeInvalid > MAX_Invalid_Seconds) // å¤–ç½‘ä¸‰åˆ†é’Ÿ
 		{
 			if (IsConnected()) Err("TimeInvalid 180s", 0);
 
@@ -321,7 +321,7 @@ void ServLink::Maintain(time_t timenow)
 			(char*)&nSeconds,
 			&nBytes))
 		{
-			// ²âÊÔ½á¹ûÏÔÊ¾£º¿Í»§¶Ë½ö½öconnectµ«²»·¢ËÍÊı¾İ£¬²»»á´¥·¢DoneIO»Øµ÷
+			// æµ‹è¯•ç»“æœæ˜¾ç¤ºï¼šå®¢æˆ·ç«¯ä»…ä»…connectä½†ä¸å‘é€æ•°æ®ï¼Œä¸ä¼šè§¦å‘DoneIOå›è°ƒ
 			// Client has been connected for nSeconds so far
 			if (nSeconds > MAX_Connect_Seconds)
 			{
@@ -338,11 +338,11 @@ void ServLink::Maintain(time_t timenow)
 			printf("DeadTime%d - %d \n", RecvIOElapsed(timenow), _nLinkID);
 			OnInvalidMessage(Net_IdleTooLong, 0, true);
 		}
-        /*¡¾¼ûDoneIOCallbackÖĞµÄÓÅ»¯¡¿
+        /*ã€è§DoneIOCallbackä¸­çš„ä¼˜åŒ–ã€‘
 		else if (RecvIOElapsed(timenow) > MAX_Silent_Seconds && _hEventClose)
 		{
-			// Ä¿Ç°ÊÇDoneIO¡°dwNumberOfBytesTransferred = 0¡±Ôòshutdown³ÉÎŞĞ§µÄ£¬µÈ´ıºóCloseLink
-			// ÓĞĞ©Çé¿öÊÇ£ºËäÈ»Êı¾İÎª0ÁË£¬µ«ÊÇÍøÂç²»Ò»¶¨¾Í¶Ï¿ª£¬ÅĞ0¶Ï¿ª»áÎóÉË
+			// ç›®å‰æ˜¯DoneIOâ€œdwNumberOfBytesTransferred = 0â€åˆ™shutdownæˆæ— æ•ˆçš„ï¼Œç­‰å¾…åCloseLink
+			// æœ‰äº›æƒ…å†µæ˜¯ï¼šè™½ç„¶æ•°æ®ä¸º0äº†ï¼Œä½†æ˜¯ç½‘ç»œä¸ä¸€å®šå°±æ–­å¼€ï¼Œåˆ¤0æ–­å¼€ä¼šè¯¯ä¼¤
 			WSANETWORKEVENTS events;
 			if (WSAEnumNetworkEvents(_sClient, _hEventClose, &events) == 0)
 			{
@@ -359,8 +359,8 @@ void ServLink::Maintain(time_t timenow)
 }
 
 /*
-	Ã¿´Î·¢°ü::WSASend()¶¼»áDoneIO»Øµ÷ÖÁ´Ë£ºÇå³ıÒÑ·¢ËÍµÄ×Ö½Ú(ÒÑ¿½ÈëÍø¿¨ÁË)
-	ServerRun_SendIOµÄÑ­»·¿ÉÄÜ»áÂı£¬ËùÒÔÔÚOnSend_DoneIOÀï²¹·¢Ê£Óà²¿·Ö
+	æ¯æ¬¡å‘åŒ…::WSASend()éƒ½ä¼šDoneIOå›è°ƒè‡³æ­¤ï¼šæ¸…é™¤å·²å‘é€çš„å­—èŠ‚(å·²æ‹·å…¥ç½‘å¡äº†)
+	ServerRun_SendIOçš„å¾ªç¯å¯èƒ½ä¼šæ…¢ï¼Œæ‰€ä»¥åœ¨OnSend_DoneIOé‡Œè¡¥å‘å‰©ä½™éƒ¨åˆ†
 */
 void ServLink::OnSend_DoneIO(DWORD dwNumberOfBytesTransferred)
 {
@@ -370,20 +370,20 @@ void ServLink::OnSend_DoneIO(DWORD dwNumberOfBytesTransferred)
 
     assert(_sendBuf.readableBytes() >= dwNumberOfBytesTransferred);
 
-	_sendBuf.readerMove(dwNumberOfBytesTransferred); //·ñÔò£¬ÒÆ¶¯ÏûÏ¢Ö¸Õë£¬¼ÌĞø·¢ËÍ¶àÓà²¿·Ö
+	_sendBuf.readerMove(dwNumberOfBytesTransferred); //å¦åˆ™ï¼Œç§»åŠ¨æ¶ˆæ¯æŒ‡é’ˆï¼Œç»§ç»­å‘é€å¤šä½™éƒ¨åˆ†
 
 	/*
-		PostSend()Ö»ÓĞÈıµ÷ÓÃ´¦£ºÒµÎñ²ãSendMsg¡¢¸¨ÖúÏß³ÌServerRun_SendIO¡¢DoneIO»Øµ÷µÄ²¹·¢
-		²¹·¢»á²»»á½µµÍĞÔÄÜ£¿±Ï¾¹PostSend()ÊÇÒ»¸ö¸öÀ´µÄ£¬ÆäËüÁ½ÒªµÈ~
-		ÓĞÁË¸¨ÖúÏß³ÌServerRun_SendIO()£¬ÕâÀïµÄ²¹·¢Ã²ËÆ¿ÉÒÔÊ¡µô
-		·ñÔò£¬±Ø²»¿ÉÉÙ£¬±ÈÈç£ºÒµÎñ²ã·¢ÁË×îºóÒ»Ìõmsg£¬µ«Ò»´Îio²¢Î´·¢Íê
+		PostSend()åªæœ‰ä¸‰è°ƒç”¨å¤„ï¼šä¸šåŠ¡å±‚SendMsgã€è¾…åŠ©çº¿ç¨‹ServerRun_SendIOã€DoneIOå›è°ƒçš„è¡¥å‘
+		è¡¥å‘ä¼šä¸ä¼šé™ä½æ€§èƒ½ï¼Ÿæ¯•ç«ŸPostSend()æ˜¯ä¸€ä¸ªä¸ªæ¥çš„ï¼Œå…¶å®ƒä¸¤è¦ç­‰~
+		æœ‰äº†è¾…åŠ©çº¿ç¨‹ServerRun_SendIO()ï¼Œè¿™é‡Œçš„è¡¥å‘è²Œä¼¼å¯ä»¥çœæ‰
+		å¦åˆ™ï¼Œå¿…ä¸å¯å°‘ï¼Œæ¯”å¦‚ï¼šä¸šåŠ¡å±‚å‘äº†æœ€åä¸€æ¡msgï¼Œä½†ä¸€æ¬¡ioå¹¶æœªå‘å®Œ
 	*/
 	if (DWORD nLeft = (DWORD)_sendBuf.readableBytes())
 	{
 		PostSend(_sendBuf.beginRead(), nLeft);
 	}
 }
-void ServLink::ServerRun_SendIO() //¡¾brief.7¡¿Áí±ÙÏß³Ì¶¨ÆÚ·¢ËÍËùÓĞbuffer
+void ServLink::ServerRun_SendIO() //ã€brief.7ã€‘å¦è¾Ÿçº¿ç¨‹å®šæœŸå‘é€æ‰€æœ‰buffer
 {
 	cLock lock(_csLock);
 
@@ -395,16 +395,16 @@ void ServLink::ServerRun_SendIO() //¡¾brief.7¡¿Áí±ÙÏß³Ì¶¨ÆÚ·¢ËÍËùÓĞbuffer
 }
 bool ServLink::PostSend(char* buffer, DWORD nLen)
 {
-	//Notice£º³¤¶È¹ı´óÈûÂúsocket»º³åÇø£¬ÉõÖÁ[TCP Zerowindow]
+	//Noticeï¼šé•¿åº¦è¿‡å¤§å¡æ»¡socketç¼“å†²åŒºï¼Œç”šè‡³[TCP Zerowindow]
 	WSABUF wbuf;
 	wbuf.buf = buffer;
 	wbuf.len = nLen;
 	DWORD dwBytes(0);
-	//¶àÏß³ÌBUG£¬ÔÚ´ËÖ®Ç°²»ÄÜ¸Ä±ä±ê¼Ç×´Ì¬
+	//å¤šçº¿ç¨‹BUGï¼Œåœ¨æ­¤ä¹‹å‰ä¸èƒ½æ”¹å˜æ ‡è®°çŠ¶æ€
 	int ret = WSASend(_sClient, &wbuf, 1, &dwBytes, 0, &_ovSend, 0);
 
-	// ·¢ËÍÖĞ²»ÔÊĞíÔÙ·¢ËÍ£¬Ò»´ÎIOÍê³É(DoneIO»Øµ÷)ÖÃÎªtrue
-	// ÀÛ¼Æ·¢ËÍ£¬ÈôÖĞ¼äÄ³¸öÖ»·¢ËÍÁË²¿·ÖÊı¾İ£¬¾ÍÊı¾İ´íÂÒÁË
+	// å‘é€ä¸­ä¸å…è®¸å†å‘é€ï¼Œä¸€æ¬¡IOå®Œæˆ(DoneIOå›è°ƒ)ç½®ä¸ºtrue
+	// ç´¯è®¡å‘é€ï¼Œè‹¥ä¸­é—´æŸä¸ªåªå‘é€äº†éƒ¨åˆ†æ•°æ®ï¼Œå°±æ•°æ®é”™ä¹±äº†
 	_bCanWrite = false;
 
 	if (SOCKET_ERROR == ret)
@@ -423,12 +423,12 @@ bool ServLink::PostRecv()
 {
 	if (_eState == STATE_CONNECTED)
 	{
-		//memset((char *)&_ovRecv, 0, sizeof(OVERLAPPED)); //Çå¿ÕovÍ·Ã²ËÆÃ»±ØÒª
+		//memset((char *)&_ovRecv, 0, sizeof(OVERLAPPED)); //æ¸…ç©ºovå¤´è²Œä¼¼æ²¡å¿…è¦
 
         _recvBuf.ensureWritableBytes(IN_BUFFER_SIZE);
 
-		//Notice£ºlenÊÇ¹Ì¶¨µÄ£¬Èç¹ûbufÖ¸ÏòµÄÄÚ´æ¿éÊµ¼ÊÃ»ÕâÃ´´ó£¬ÓĞÄÚ´æÔ½½ç·çÏÕ£¨ËùÒÔ_recvBuf¿ªÁËÁ½±¶´óĞ¡£©
-		//Notice£º³¤¶ÈÌ«¶ÌµÄĞÔÄÜËğÊ§
+		//Noticeï¼šlenæ˜¯å›ºå®šçš„ï¼Œå¦‚æœbufæŒ‡å‘çš„å†…å­˜å—å®é™…æ²¡è¿™ä¹ˆå¤§ï¼Œæœ‰å†…å­˜è¶Šç•Œé£é™©ï¼ˆæ‰€ä»¥_recvBufå¼€äº†ä¸¤å€å¤§å°ï¼‰
+		//Noticeï¼šé•¿åº¦å¤ªçŸ­çš„æ€§èƒ½æŸå¤±
 		WSABUF wbuf;
 		//wbuf.len = IN_BUFFER_SIZE;   //dont read so much...
         wbuf.len = _recvBuf.writableBytes();
@@ -452,39 +452,39 @@ void ServLink::OnRead_DoneIO(DWORD dwBytesTransferred)
 {
 	LastRecvIOTime(_pMgr->_timeNow);
 
-	_recvBuf.writerMove(dwBytesTransferred); // IOÍê³É»Øµ÷£¬½ÓÊÕ×Ö½ÚµİÔö
+	_recvBuf.writerMove(dwBytesTransferred); // IOå®Œæˆå›è°ƒï¼Œæ¥æ”¶å­—èŠ‚é€’å¢
 	const DWORD c_off = sizeof(uint16);
 	char* pPack = _recvBuf.beginRead();
 	while (_recvBuf.readableBytes() >= c_off)
 	{
-        const DWORD kMsgSize = *((uint16*)pPack);	// ¡¾ÍøÂç°ü£ºÍ·2×Ö½ÚÎªÏûÏ¢Ìå´óĞ¡¡¿
-		const DWORD kPackSize = kMsgSize + c_off;	// ¡¾ÍøÂç°ü³¤ = ÏûÏ¢Ìå´óĞ¡ + Í·³¤¶È¡¿
-		char* pMsg = pPack + c_off;                 // ¡¾ºóÒÆ2×Ö½ÚµÃ£ºÏûÏ¢ÌåÖ¸Õë¡¿
+        const DWORD kMsgSize = *((uint16*)pPack);	// ã€ç½‘ç»œåŒ…ï¼šå¤´2å­—èŠ‚ä¸ºæ¶ˆæ¯ä½“å¤§å°ã€‘
+		const DWORD kPackSize = kMsgSize + c_off;	// ã€ç½‘ç»œåŒ…é•¿ = æ¶ˆæ¯ä½“å¤§å° + å¤´é•¿åº¦ã€‘
+		char* pMsg = pPack + c_off;                 // ã€åç§»2å­—èŠ‚å¾—ï¼šæ¶ˆæ¯ä½“æŒ‡é’ˆã€‘
 
-		// 1¡¢¼ì²éÏûÏ¢´óĞ¡
-		if (kMsgSize >= Config().nMaxPackage) //ÏûÏ¢Ì«´ó
+		// 1ã€æ£€æŸ¥æ¶ˆæ¯å¤§å°
+		if (kMsgSize >= Config().nMaxPackage) //æ¶ˆæ¯å¤ªå¤§
 		{
 			_recvBuf.clear();
-			printf("TooHugePacket: Msg size(%d) Msg ID(%d)", kMsgSize, *((uint16*)pMsg)); // ¡¾ÏûÏ¢Ìå£ºÍ·2×Ö½ÚÎªÏûÏ¢ID¡¿
+			printf("TooHugePacket: Msg size(%d) Msg ID(%d)", kMsgSize, *((uint16*)pMsg)); // ã€æ¶ˆæ¯ä½“ï¼šå¤´2å­—èŠ‚ä¸ºæ¶ˆæ¯IDã€‘
 			OnInvalidMessage(Message_TooHugePacket, 0, true);
 		}
-		// 2¡¢ÊÇ·ñ½Óµ½ÍêÕû°ü
-		if (kPackSize > _recvBuf.readableBytes()) break; // ¡¾°üÎ´ÊÕÍê£º½ÓÊÕ×Ö½Ú < °ü´óĞ¡¡¿
+		// 2ã€æ˜¯å¦æ¥åˆ°å®Œæ•´åŒ…
+		if (kPackSize > _recvBuf.readableBytes()) break; // ã€åŒ…æœªæ”¶å®Œï¼šæ¥æ”¶å­—èŠ‚ < åŒ…å¤§å°ã€‘
 
-		// 3¡¢ÏûÏ¢½âÂë¡¢´¦Àí decode, unpack and ungroup
+		// 3ã€æ¶ˆæ¯è§£ç ã€å¤„ç† decode, unpack and ungroup
 		RecvMsg(pMsg, kMsgSize);
 
-		// 4¡¢ÏûÏ¢´¦ÀíÍê±Ï£¬½ÓÊÕ×Ö½Ú/°üÖ¸Õë¸üĞÂ(´¦ÀíÏÂÒ»¸ö°ü)
+		// 4ã€æ¶ˆæ¯å¤„ç†å®Œæ¯•ï¼Œæ¥æ”¶å­—èŠ‚/åŒ…æŒ‡é’ˆæ›´æ–°(å¤„ç†ä¸‹ä¸€ä¸ªåŒ…)
 		_recvBuf.readerMove(kPackSize);
 		pPack += kPackSize;
 	}
 
-	/* 5¡¢Î´´¦ÀíµÄ»º´æÄÚÈİ(·ÇÍêÕû°ü)£¬Ç°ÒÆ(Å×Æú´¦ÀíµôµÄÄÇĞ©pack)
+	/* 5ã€æœªå¤„ç†çš„ç¼“å­˜å†…å®¹(éå®Œæ•´åŒ…)ï¼Œå‰ç§»(æŠ›å¼ƒå¤„ç†æ‰çš„é‚£äº›pack)
 	if (pPack != _recvBuf && _nRecvSize > 0)
 	{
-		memmove(_recvBuf, pPack, _nRecvSize); // net::Buffer¿É½ÚÊ¡memmove£¬Ö»ÔÚÄÚ´æ²»×ãÊ±£¬²Å»á½«Êı¾İÒÆ¶¯ÖÁÍ·²¿£¬¼ûBuffer::makeSpace
+		memmove(_recvBuf, pPack, _nRecvSize); // net::Bufferå¯èŠ‚çœmemmoveï¼Œåªåœ¨å†…å­˜ä¸è¶³æ—¶ï¼Œæ‰ä¼šå°†æ•°æ®ç§»åŠ¨è‡³å¤´éƒ¨ï¼Œè§Buffer::makeSpace
 	}
-	return _recvBuf + _nRecvSize; // 6¡¢·µ»Ø¿ÉÓÃ»º³åÇø(Ç°ÃæµÄÒÑ±»Ğ´ÁË)*/
+	return _recvBuf + _nRecvSize; // 6ã€è¿”å›å¯ç”¨ç¼“å†²åŒº(å‰é¢çš„å·²è¢«å†™äº†)*/
 
     PostRecv();
 }
@@ -496,10 +496,10 @@ int ServLink::RecvMsg(char* pMsg, DWORD size)
 
 	HandleClientMessage(pMsg, size);
 
-	//¡¾brief.4¡¿ÏŞÖÆclient·¢°üÆµÂÊ
+	//ã€brief.4ã€‘é™åˆ¶clientå‘åŒ…é¢‘ç‡
 	++_recvPacket;
-	if (Config().nRecvPacketCheckTime && Config().nRecvPacketLimit &&		// ÅäÖÃÓĞĞ§
-		_pMgr->_timeNow - _recvPacketTime >= Config().nRecvPacketCheckTime) // µ½¼ì²éÊ±¼äÁË
+	if (Config().nRecvPacketCheckTime && Config().nRecvPacketLimit &&		// é…ç½®æœ‰æ•ˆ
+		_pMgr->_timeNow - _recvPacketTime >= Config().nRecvPacketCheckTime) // åˆ°æ£€æŸ¥æ—¶é—´äº†
 	{
 		if (_recvPacket < Config().nRecvPacketLimit){
 			_recvPacketTime = _pMgr->_timeNow;
@@ -539,7 +539,7 @@ void ServLink::OnInvalidMessage(InvalidMessageEnum e, int nErrorCode, bool bToCl
 }
 void ServLink::HandleClientMessage(void* pMsg, int size)
 {
-    //Notice£ºÕâÀïµÄstMsg*»¹ÊÇÍøÂçbufferÀïµÄ£¬µÃ¿½±´Ò»·İµ½Ö÷Ñ­»·µÄÏûÏ¢ÄÚ´æ³ØÖĞ£¬ÔÚÄÇ±ß²ÅÕæÕıHandleMsg£¬ServLinkÖ»¸ºÔğÊÕÍøÂç°ü£¬×ª¸øÒµÎñ²ã
+    //Noticeï¼šè¿™é‡Œçš„stMsg*è¿˜æ˜¯ç½‘ç»œbufferé‡Œçš„ï¼Œå¾—æ‹·è´ä¸€ä»½åˆ°ä¸»å¾ªç¯çš„æ¶ˆæ¯å†…å­˜æ± ä¸­ï¼Œåœ¨é‚£è¾¹æ‰çœŸæ­£HandleMsgï¼ŒServLinkåªè´Ÿè´£æ”¶ç½‘ç»œåŒ…ï¼Œè½¬ç»™ä¸šåŠ¡å±‚
     if (_player == NULL)
     {
         if (!_pMgr->_BindLinkAndPlayer(_player, this, pMsg, size))
@@ -552,12 +552,12 @@ void ServLink::HandleClientMessage(void* pMsg, int size)
 
 bool ServLink::SendMsg(const void* pMsg, uint16 msgSize)
 {
-    /*¡¾ÓÅ»¯¡¿
-    1¡¢µ±Ç°ÊµÏÖ£ºÈôÁ¬½Ó¶Ï¿ª£¬ÒµÎñ²ãÈÔµ÷ÓÃsend£¬Õâ·İÊı¾İ¾ÍÅ×ÆúÁË
-    2¡¢ÄÜ·ñ¸üÓÅÑÅµÄ´¦Àí£ºÏÈ»º´æµ½_sendBuf£¬´ıÁ¬½Ó»Ø¸´ÔÙ¼ÌĞø·¢¡­¡­golangÊÇÕâÑù×öµÄ
-    3¡¢Ä¿Ç°ServLinkÍ¬ËüÄÚ²¿µÄsocket¹ØÁªÌ«½ôÃÜ£¬ÄÑÒÔ²ğ·Ö£¬·ñÔò±ãÄÜÑ§go£º¶ÏÏßÖØÁ¬ServLink²»±ä£¬×Ô¶¯Ìæ»»ÄÚ²¿socket
-    4¡¢²»¹ıproactorÄ£Ê½£¬Òì²½½Ó¿Ú£¬ÏëÒª²ğ·Öµ¥¶ÀµÄsocket£¬ºÜ²»ºÃÕû°¡~‡å
-    5¡¢golangµÄtcp_conn.go¡¢tcp_server.goÅäºÏÆğÀ´£¬ÄÜ×öµ½Ğ­Òé²ãÃæµÄ×Ô¶¯ÖØÁ¬£¬±Èc++±ã½İ¶àÁË */
+    /*ã€ä¼˜åŒ–ã€‘
+    1ã€å½“å‰å®ç°ï¼šè‹¥è¿æ¥æ–­å¼€ï¼Œä¸šåŠ¡å±‚ä»è°ƒç”¨sendï¼Œè¿™ä»½æ•°æ®å°±æŠ›å¼ƒäº†
+    2ã€èƒ½å¦æ›´ä¼˜é›…çš„å¤„ç†ï¼šå…ˆç¼“å­˜åˆ°_sendBufï¼Œå¾…è¿æ¥å›å¤å†ç»§ç»­å‘â€¦â€¦golangæ˜¯è¿™æ ·åšçš„
+    3ã€ç›®å‰ServLinkåŒå®ƒå†…éƒ¨çš„socketå…³è”å¤ªç´§å¯†ï¼Œéš¾ä»¥æ‹†åˆ†ï¼Œå¦åˆ™ä¾¿èƒ½å­¦goï¼šæ–­çº¿é‡è¿ServLinkä¸å˜ï¼Œè‡ªåŠ¨æ›¿æ¢å†…éƒ¨socket
+    4ã€ä¸è¿‡proactoræ¨¡å¼ï¼Œå¼‚æ­¥æ¥å£ï¼Œæƒ³è¦æ‹†åˆ†å•ç‹¬çš„socketï¼Œå¾ˆä¸å¥½æ•´å•Š~å›§
+    5ã€golangçš„tcp_conn.goã€tcp_server.goé…åˆèµ·æ¥ï¼Œèƒ½åšåˆ°åè®®å±‚é¢çš„è‡ªåŠ¨é‡è¿ï¼Œæ¯”c++ä¾¿æ·å¤šäº† */
     if (_bInvalid) return false;
 
 	if (msgSize >= IN_BUFFER_SIZE)
@@ -568,11 +568,11 @@ bool ServLink::SendMsg(const void* pMsg, uint16 msgSize)
 
 	cLock lock(_csLock);
 
-	//¡¾brief.6¡¿TODO£ºÏŞÖÆbufÄÜÔö³¤µ½µÄ×î´ó³¤¶È£¬±ÜÃâÕûÌåÑÓÊ±µÄÄÚ´æÕ¼ÓÃ£»¸øappend¼Ó¸öbool·µ»ØÖµ
+	//ã€brief.6ã€‘TODOï¼šé™åˆ¶bufèƒ½å¢é•¿åˆ°çš„æœ€å¤§é•¿åº¦ï¼Œé¿å…æ•´ä½“å»¶æ—¶çš„å†…å­˜å ç”¨ï¼›ç»™appendåŠ ä¸ªboolè¿”å›å€¼
 	_sendBuf.append(msgSize);
     _sendBuf.append(pMsg, msgSize);
 
-	//¡¾brief.7¡¿²¢°üÓÅ»¯£¬Í¬Ê±ÒªÔÚÆäËüÏß³Ì¶¨ÆÚ·¢ËÍËùÓĞÊı¾İ£¬±ÜÃâÏûÏ¢ÑÓÊ±
+	//ã€brief.7ã€‘å¹¶åŒ…ä¼˜åŒ–ï¼ŒåŒæ—¶è¦åœ¨å…¶å®ƒçº¿ç¨‹å®šæœŸå‘é€æ‰€æœ‰æ•°æ®ï¼Œé¿å…æ¶ˆæ¯å»¶æ—¶
 	if (_sendBuf.readableBytes() < _sendBuf.size() / 4) return true;
 
 	if (_bCanWrite && msgSize > 0)

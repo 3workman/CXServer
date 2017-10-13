@@ -1,44 +1,44 @@
 /***********************************************************************
-* @ Òì²½ÈÕÖ¾
+* @ å¼‚æ­¥æ—¥å¿—
 * @ brief
-    1¡¢Ç°¶ËAppend()½Ó¿Ú£¬ÓÃÒÔÊäÈëÊý¾Ý£¬buf±»Ð´ÂúÊ±´¥·¢ºóÌ¨writeLoop
-    2¡¢ºóÌ¨writeLoopÆ½Ê±×èÈûÔÚ"::SleepConditionVariableCS"´¦£¬µÈ´ý"::WakeConditionVariable"µÄ»½ÐÑ
-    3¡¢"::SleepConditionVariableCS"³¬Ê±£¬¼°Ê±¼Çlog
-    4¡¢ÈôÇ¿É±Log½ø³Ì£¬¿ÉÄÜbufÖÐµÄÊý¾Ý»¹Ã»±»Ð´
-    5¡¢±£Ö¤_curBuf¡¢_nextBuf¡¢spareBuf1¡¢spareBuf2Ò»Ö±ÔÚbufVecµÄÍ·²¿
-    6¡¢×îºÃ±ðÉùÃ÷³ÉÈ«¾Öor¾²Ì¬£¬·ñÔòÖ÷Ïß³Ì½áÊø²Å´¥·¢Îö¹¹£¬×ÓÏß³Ì½áÊøÌ«Íí£¬½ø³Ì½©ËÀ
+    1ã€å‰ç«¯Append()æŽ¥å£ï¼Œç”¨ä»¥è¾“å…¥æ•°æ®ï¼Œbufè¢«å†™æ»¡æ—¶è§¦å‘åŽå°writeLoop
+    2ã€åŽå°writeLoopå¹³æ—¶é˜»å¡žåœ¨"::SleepConditionVariableCS"å¤„ï¼Œç­‰å¾…"::WakeConditionVariable"çš„å”¤é†’
+    3ã€"::SleepConditionVariableCS"è¶…æ—¶ï¼ŒåŠæ—¶è®°log
+    4ã€è‹¥å¼ºæ€Logè¿›ç¨‹ï¼Œå¯èƒ½bufä¸­çš„æ•°æ®è¿˜æ²¡è¢«å†™
+    5ã€ä¿è¯_curBufã€_nextBufã€spareBuf1ã€spareBuf2ä¸€ç›´åœ¨bufVecçš„å¤´éƒ¨
+    6ã€æœ€å¥½åˆ«å£°æ˜Žæˆå…¨å±€oré™æ€ï¼Œå¦åˆ™ä¸»çº¿ç¨‹ç»“æŸæ‰è§¦å‘æžæž„ï¼Œå­çº¿ç¨‹ç»“æŸå¤ªæ™šï¼Œè¿›ç¨‹åƒµæ­»
 
 * @ race condition
-    1¡¢×ÓÏß³ÌµÄ´´½¨£¬±ØÐëÔÚAsyncLog¹¹ÔìÍê±ÏÖ®ºó
-        µÚÒ»°æÓÃµÄthread¶ÔÏó£¬·Å³õÊ¼»¯ÁÐ±íÖÐ£¬ÓÐ·çÏÕ
-        µÚÒ»°æ»¹Åöµ½¸öbug£¬_runningÉùÃ÷ÔÚ_threadÖ®ºó£¬_threadÏÈ³õÊ¼»¯£¬½øÈë_WriteLoop¾ÍÖ±½Ó²»Ñ­»·ÁË~‡å
-        ÔÚ³õÊ¼»¯ÁÐ±íÖÐµ÷ÓÃº¯Êý£¬²»ÊÇºÃÏ°¹ß~~/(¨Òo¨Ò)/~~
+    1ã€å­çº¿ç¨‹çš„åˆ›å»ºï¼Œå¿…é¡»åœ¨AsyncLogæž„é€ å®Œæ¯•ä¹‹åŽ
+        ç¬¬ä¸€ç‰ˆç”¨çš„threadå¯¹è±¡ï¼Œæ”¾åˆå§‹åŒ–åˆ—è¡¨ä¸­ï¼Œæœ‰é£Žé™©
+        ç¬¬ä¸€ç‰ˆè¿˜ç¢°åˆ°ä¸ªbugï¼Œ_runningå£°æ˜Žåœ¨_threadä¹‹åŽï¼Œ_threadå…ˆåˆå§‹åŒ–ï¼Œè¿›å…¥_WriteLoopå°±ç›´æŽ¥ä¸å¾ªçŽ¯äº†~å›§
+        åœ¨åˆå§‹åŒ–åˆ—è¡¨ä¸­è°ƒç”¨å‡½æ•°ï¼Œä¸æ˜¯å¥½ä¹ æƒ¯~~/(ã„’oã„’)/~~
 
-    2¡¢AsyncLog¶ÔÏóÎö¹¹Ê±£¬±ØÐë±£Ö¤×ÓÏß³ÌÖ´ÐÐÍê±Ïºó£¬ÔÙ²ÅÖ´ÐÐ_mutex¡¢_curBuf...¹²Ïí×ÊÔ´µÄ»ØÊÕ
-        ·ñÔò£¬×ÓÏß³Ì»½ÐÑÊ±£¬¿ÉÄÜ·ÃÎÊµ½ÎÞÐ§Êý¾Ý¡¢ÄÚ´æ ¡ª¡ª ËùÒÔStop()ÖÐ±ØÐëÊ¹ÓÃ_thread->join();
+    2ã€AsyncLogå¯¹è±¡æžæž„æ—¶ï¼Œå¿…é¡»ä¿è¯å­çº¿ç¨‹æ‰§è¡Œå®Œæ¯•åŽï¼Œå†æ‰æ‰§è¡Œ_mutexã€_curBuf...å…±äº«èµ„æºçš„å›žæ”¶
+        å¦åˆ™ï¼Œå­çº¿ç¨‹å”¤é†’æ—¶ï¼Œå¯èƒ½è®¿é—®åˆ°æ— æ•ˆæ•°æ®ã€å†…å­˜ â€”â€” æ‰€ä»¥Stop()ä¸­å¿…é¡»ä½¿ç”¨_thread->join();
 
-    3¡¢¹¹Ôì¡¢Îö¹¹µÄ¶àÏß³Ì°²È«ÐÔ£¬Ó¦¸ÃÊÇÒ»Àà´óÎÊÌâÁË£¬±àÂëÊ±Òª¶îÍâ×¢Òâ£¡£¡£¡
-        ctor/dtorÖÐÍ¾£¬±ÜÃâ¶ÔÏó±»ÆäËüÏß³Ì·ÃÎÊ
-        ¹²Ïí×ÊÔ´£¬Ó¦µÈµ½ËùÓÐ³ÖÓÐÏß³Ì½âÒýÓÃºó£¬ÓÉ×îºóÒ»¸öÏß³Ì¸ºÔð»ØÊÕ
+    3ã€æž„é€ ã€æžæž„çš„å¤šçº¿ç¨‹å®‰å…¨æ€§ï¼Œåº”è¯¥æ˜¯ä¸€ç±»å¤§é—®é¢˜äº†ï¼Œç¼–ç æ—¶è¦é¢å¤–æ³¨æ„ï¼ï¼ï¼
+        ctor/dtorä¸­é€”ï¼Œé¿å…å¯¹è±¡è¢«å…¶å®ƒçº¿ç¨‹è®¿é—®
+        å…±äº«èµ„æºï¼Œåº”ç­‰åˆ°æ‰€æœ‰æŒæœ‰çº¿ç¨‹è§£å¼•ç”¨åŽï¼Œç”±æœ€åŽä¸€ä¸ªçº¿ç¨‹è´Ÿè´£å›žæ”¶
 
-    4¡¢ºóÌ¨_WriteLoop×öIOÊ±£¬ÌøÖÁÖ÷Ïß³Ì£¬AppendÊý¾Ý£¬²¢´¥·¢dtor»òÖ÷¶¯µ÷Stop£¬_running false£»
-        ÔÙ»Øµ½ºóÌ¨Ïß³ÌÊ±£¬_WriteLoopÑ­»·ÖÐ¶Ï£¬_bufVecÖÐµÄÊý¾Ý¾Í¶ªÊ§ÁË
+    4ã€åŽå°_WriteLoopåšIOæ—¶ï¼Œè·³è‡³ä¸»çº¿ç¨‹ï¼ŒAppendæ•°æ®ï¼Œå¹¶è§¦å‘dtoræˆ–ä¸»åŠ¨è°ƒStopï¼Œ_running falseï¼›
+        å†å›žåˆ°åŽå°çº¿ç¨‹æ—¶ï¼Œ_WriteLoopå¾ªçŽ¯ä¸­æ–­ï¼Œ_bufVecä¸­çš„æ•°æ®å°±ä¸¢å¤±äº†
 
-* @ Ìõ¼þ±äÁ¿
-    1¡¢Ìõ¼þ±äÁ¿±ØÐëÔÚ mutex Ëø×¡µÄÊ±ºò wait£¨±ØÐëËø×¡ÊÇwait±¾Éí½ÓÊÜmutexµÄ•rºò¡£wait×Ô¼º•þreleaseËü£©
-        ´«µÝ½øwait()µÄmutex¶ÔÌõ¼þ±äÁ¿½øÐÐ±£»¤
-        ²ÂÏë£ºÈç¹ûÏß³Ì±»¹ÒÆðºó£¬mutex»¹±»Ëø×Å£¬ÄÇÆäËüÏß³Ì±»µ÷¶ÈÊ±ÅÜµ½ÁÙ½çÇø¾Í»á¹ÒÆðÁË£¬¸úÌõ¼þ±äÁ¿waitµÄÄ¿µÄ²»·û
+* @ æ¡ä»¶å˜é‡
+    1ã€æ¡ä»¶å˜é‡å¿…é¡»åœ¨ mutex é”ä½çš„æ—¶å€™ waitï¼ˆå¿…é¡»é”ä½æ˜¯waitæœ¬èº«æŽ¥å—mutexçš„æ™‚å€™ã€‚waitè‡ªå·±æœƒreleaseå®ƒï¼‰
+        ä¼ é€’è¿›wait()çš„mutexå¯¹æ¡ä»¶å˜é‡è¿›è¡Œä¿æŠ¤
+        çŒœæƒ³ï¼šå¦‚æžœçº¿ç¨‹è¢«æŒ‚èµ·åŽï¼Œmutexè¿˜è¢«é”ç€ï¼Œé‚£å…¶å®ƒçº¿ç¨‹è¢«è°ƒåº¦æ—¶è·‘åˆ°ä¸´ç•ŒåŒºå°±ä¼šæŒ‚èµ·äº†ï¼Œè·Ÿæ¡ä»¶å˜é‡waitçš„ç›®çš„ä¸ç¬¦
 
-    2¡¢µÈ´ýº¯ÊýÀïÃæÒª´«ÈëÒ»¸ö»¥³âÁ¿£¬µ÷ÓÃÊ±Ëü»á·¢ÉúÈçÏÂ±ä»¯£º
-        ÏÈ°Ñµ±Ç°Ïß³Ì·Åµ½µÈ´ýÌõ¼þµÄÏß³ÌÁÐ±íÉÏ£¬È»ºó¶Ô»¥³âÁ¿½âËø£¬ÔÙ¹ÒÆð£¨½âËøºóÆäËûÏß³Ì²ÅÓÐ»ú»á»ñµÃÕâ¸öËø£©
-        µ±Ä³¸öÏß³Ìµ÷ÓÃÍ¨Öªº¯ÊýÊ±£¬µÈ´ýº¯ÊýÊÕµ½Í¨Öªºó£¬ÓÖ°Ñ»¥³âÁ¿¼ÓËø£¬È»ºó¼ÌÐøÏòÏÂ²Ù×÷ÁÙ½çÇø¡£
+    2ã€ç­‰å¾…å‡½æ•°é‡Œé¢è¦ä¼ å…¥ä¸€ä¸ªäº’æ–¥é‡ï¼Œè°ƒç”¨æ—¶å®ƒä¼šå‘ç”Ÿå¦‚ä¸‹å˜åŒ–ï¼š
+        å…ˆæŠŠå½“å‰çº¿ç¨‹æ”¾åˆ°ç­‰å¾…æ¡ä»¶çš„çº¿ç¨‹åˆ—è¡¨ä¸Šï¼Œç„¶åŽå¯¹äº’æ–¥é‡è§£é”ï¼Œå†æŒ‚èµ·ï¼ˆè§£é”åŽå…¶ä»–çº¿ç¨‹æ‰æœ‰æœºä¼šèŽ·å¾—è¿™ä¸ªé”ï¼‰
+        å½“æŸä¸ªçº¿ç¨‹è°ƒç”¨é€šçŸ¥å‡½æ•°æ—¶ï¼Œç­‰å¾…å‡½æ•°æ”¶åˆ°é€šçŸ¥åŽï¼ŒåˆæŠŠäº’æ–¥é‡åŠ é”ï¼Œç„¶åŽç»§ç»­å‘ä¸‹æ“ä½œä¸´ç•ŒåŒºã€‚
 
-    3¡¢Ìõ¼þ±äÁ¿µÄµÈ´ýº¯ÊýÓÃwhileÑ­»·°üÎ§¡£Ô­Òò£º
-        µÈ´ýµÄÌõ¼þ±äÁ¿ÊÕµ½Í¨Öª£¬ËüÏÂÒ»²½¾ÍÊÇÒªËø×¡Õâ¸ö»¥³âÁ¿£¬µ«ÔÚÕâ¸ö¼«Ð¡µÄÊ±¼ä²îÀïÃæ£¬ÆäËûÏß³ÌÇÀÏÈ»ñÈ¡ÁËÕâ»¥³âÁ¿²¢½øÈëÁÙ½çÇø°ÑÄ³¸ö×´Ì¬¸Ä±äÁË¡£
-        ´ËÊ±Õâ¸öÌõ¼þ±äÁ¿Ó¦¸Ã¼ÌÐøÅÐ¶Ï±ðÈË¸Õ¸ÕÇÀÏÈÐÞ¸ÄµÄ×´Ì¬£¬¼´¼ÌÐøÖ´ÐÐwhileµÄÅÐ¶Ï¡£
-        »¹ÓÐÒ»¸öÔ­ÒòÊ±·ÀÖ¹Ðé¼ÙÍ¨Öª£¬ÊÕµ½Ðé¼ÙÍ¨Öªºó£¬Ö»ÒªwhileÀïÃæµÄÌõ¼þÎªÕæ£¬¾Í¼ÌÐøÐÝÃß£¡
+    3ã€æ¡ä»¶å˜é‡çš„ç­‰å¾…å‡½æ•°ç”¨whileå¾ªçŽ¯åŒ…å›´ã€‚åŽŸå› ï¼š
+        ç­‰å¾…çš„æ¡ä»¶å˜é‡æ”¶åˆ°é€šçŸ¥ï¼Œå®ƒä¸‹ä¸€æ­¥å°±æ˜¯è¦é”ä½è¿™ä¸ªäº’æ–¥é‡ï¼Œä½†åœ¨è¿™ä¸ªæžå°çš„æ—¶é—´å·®é‡Œé¢ï¼Œå…¶ä»–çº¿ç¨‹æŠ¢å…ˆèŽ·å–äº†è¿™äº’æ–¥é‡å¹¶è¿›å…¥ä¸´ç•ŒåŒºæŠŠæŸä¸ªçŠ¶æ€æ”¹å˜äº†ã€‚
+        æ­¤æ—¶è¿™ä¸ªæ¡ä»¶å˜é‡åº”è¯¥ç»§ç»­åˆ¤æ–­åˆ«äººåˆšåˆšæŠ¢å…ˆä¿®æ”¹çš„çŠ¶æ€ï¼Œå³ç»§ç»­æ‰§è¡Œwhileçš„åˆ¤æ–­ã€‚
+        è¿˜æœ‰ä¸€ä¸ªåŽŸå› æ—¶é˜²æ­¢è™šå‡é€šçŸ¥ï¼Œæ”¶åˆ°è™šå‡é€šçŸ¥åŽï¼Œåªè¦whileé‡Œé¢çš„æ¡ä»¶ä¸ºçœŸï¼Œå°±ç»§ç»­ä¼‘çœ ï¼
 
-    4¡¢pthread_cond_signalµÄÊ±¼ä¿ÉÄÜÔçÓÚpthread_cond_wait£¬ÕâÑùpthread_cond_wait¾Í»áÒ»Ö±µÈÏÂÈ¥
+    4ã€pthread_cond_signalçš„æ—¶é—´å¯èƒ½æ—©äºŽpthread_cond_waitï¼Œè¿™æ ·pthread_cond_waitå°±ä¼šä¸€ç›´ç­‰ä¸‹åŽ»
 
 * @ author zhoumf
 * @ date 2016-8-17
@@ -46,15 +46,15 @@
 #pragma once
 #include "tool/cLock.h"
 #include "Buffer/buffer.h"
-#include <thread>
 #include <condition_variable>
+#include <thread>
 
 class AsyncLog{
 public:
     typedef net::Buffer Buffer;
     typedef std::shared_ptr<Buffer> BufferPtr;
     typedef std::vector<BufferPtr> BufferVec;
-    typedef std::function<void(const BufferVec&)> WriteLogFunc; //Notice£ºÉùÃ÷³Éstd::function¿ÉÓÃ´ø²¶»ñµÄlambda
+    typedef std::function<void(const BufferVec&)> WriteLogFunc; //Noticeï¼šå£°æ˜Žæˆstd::functionå¯ç”¨å¸¦æ•èŽ·çš„lambda
     //typedef void(*WriteLogFunc)(const BufferVec&);
 
     AsyncLog(size_t maxSize, const WriteLogFunc& func);
@@ -62,16 +62,16 @@ public:
 
     void Append(const void* data, size_t len);
 
-    void Stop(); //Notice£ºÕâÍæÒâÉùÃ÷³ÉÈ«¾Öor¾²Ì¬Ê±£¬ÒªÕÒ»ú»áÖ÷¶¯Stop£¬·ñÔòÖ÷Ïß³Ì½áÊø£¬×ÓÏß³ÌÎ´±»»ØÊÕ£¬½ø³Ì½©ËÀ
+    void Stop(); //Noticeï¼šè¿™çŽ©æ„å£°æ˜Žæˆå…¨å±€oré™æ€æ—¶ï¼Œè¦æ‰¾æœºä¼šä¸»åŠ¨Stopï¼Œå¦åˆ™ä¸»çº¿ç¨‹ç»“æŸï¼Œå­çº¿ç¨‹æœªè¢«å›žæ”¶ï¼Œè¿›ç¨‹åƒµæ­»
 private:
     void _WriteLoop();
 private:
     cMutex                  _mutex;
     std::condition_variable _cond;
 
-    //Notice£ºÒò×ÓÏß³Ìº¯ÊýÒÀÀµ_running£¬ËùÒÔËüÒªÉùÃ÷ÔÚ_threadÖ®Ç°£¬È·±£ÕýÈ·µÄ³õÊ¼»¯Ë³Ðò
+    //Noticeï¼šå› å­çº¿ç¨‹å‡½æ•°ä¾èµ–_runningï¼Œæ‰€ä»¥å®ƒè¦å£°æ˜Žåœ¨_threadä¹‹å‰ï¼Œç¡®ä¿æ­£ç¡®çš„åˆå§‹åŒ–é¡ºåº
     bool _running = true;
-    std::thread* _thread = NULL; //ÓÐÁËc++11£¬Ö¸Õë³ÉÔ±×îºÃÉùÃ÷Ê±¼´Ö¸¶¨NULL£¬·ÀÖ¹ctorÖÐÂ©µô£¬³öÏÖÒ°Ö¸Õë
+    std::thread* _thread = NULL; //æœ‰äº†c++11ï¼ŒæŒ‡é’ˆæˆå‘˜æœ€å¥½å£°æ˜Žæ—¶å³æŒ‡å®šNULLï¼Œé˜²æ­¢ctorä¸­æ¼æŽ‰ï¼Œå‡ºçŽ°é‡ŽæŒ‡é’ˆ
 
     size_t    _maxSize;
     BufferPtr _curBuf;
@@ -83,13 +83,13 @@ private:
 
 
 /************************************************************************/
-// Ê¾Àý
+// ç¤ºä¾‹
 #ifdef _MY_Test
 void test_AsyncLog(){
-    cout << "¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ªÒì²½ÈÕÖ¾¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª" << endl;
+    cout << "â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”å¼‚æ­¥æ—¥å¿—â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”" << endl;
 	AsyncLog log(1, [](const AsyncLog::BufferVec& vec){
         printf("Start IO\n");
-        Sleep(3000); //Bug£ºÕâÀïÌøµ½Ö÷Ïß³Ì£¬Ö´ÐÐÁË"Ex Append"ºó´¥·¢AsyncLogµÄdtor£¬»á¶ªÒ»²¨Êý¾Ý£¬×¢ÊÍ¡¾race condition 4¡¿¿ÉÑéÖ¤
+        Sleep(3000); //Bugï¼šè¿™é‡Œè·³åˆ°ä¸»çº¿ç¨‹ï¼Œæ‰§è¡Œäº†"Ex Append"åŽè§¦å‘AsyncLogçš„dtorï¼Œä¼šä¸¢ä¸€æ³¢æ•°æ®ï¼Œæ³¨é‡Šã€race condition 4ã€‘å¯éªŒè¯
 
         printf("Log :\n    ");
         static int i = 0; string str;

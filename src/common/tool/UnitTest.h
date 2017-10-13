@@ -19,10 +19,10 @@ namespace unittest
 
 		UnitTest(const char* file, int line, TestFunc testFunc);
 
-		static void RunAllTests(); // main()ÖĞµ÷ÓÃ
+		static void RunAllTests(); // main()ä¸­è°ƒç”¨
 	};
 }
-#define TEST_CASE(Name)     /* cppÀïĞ´²âÊÔÓÃÀı */		\
+#define TEST_CASE(Name)     /* cppé‡Œå†™æµ‹è¯•ç”¨ä¾‹ */		\
 		static void Func_##Name();						\
 		static unittest::UnitTest						\
 		Obj_##Name(__FILE__, __LINE__, Func_##Name);	\

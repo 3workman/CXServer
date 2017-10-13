@@ -5,7 +5,7 @@
 void DataSend::Set(uint index, int value){
     if (index < DATA_SEND_SIZE)
     {
-        if (value != m_data[index] || value == 0) //Çå0Ò»¶¨¼Ç±ä¶¯
+        if (value != m_data[index] || value == 0) //æ¸…0ä¸€å®šè®°å˜åŠ¨
         {
             m_bits |= (1 << index);
             m_data[index] = value;
@@ -24,7 +24,7 @@ void DataSend::ReadDif(ByteBuffer& bf, bool bReadAll){
 }
 void DataSend::WriteDif(ByteBuffer& bf){
     uint8 index; int32 value;
-    const int size = bf.size() / (sizeof(uint8) + sizeof(int32));
+    const int size = (int)bf.size() / (sizeof(uint8) + sizeof(int32));
     for (int i = 0; i < size; ++i)
     {
         bf >> index >> value;
@@ -37,10 +37,11 @@ bool ArrayData::Change(uint n, int v) {
     if (n < DATA_SIZE)
     {
         if (m_data[n] == v) return false;
-        if (m_data[n] = v)
-            m_bits |= (1 << n);   // ½«nÎªÖÃ1
+        m_data[n] = v;
+        if (m_data[n])
+            m_bits |= (1 << n);   // å°†nä¸ºç½®1
         else
-            m_bits &= ~(1 << n);  // ½«nÎ»ÖÃ0
+            m_bits &= ~(1 << n);  // å°†nä½ç½®0
         return true;
     }
     return false;
@@ -55,14 +56,14 @@ bool ArrayData::Clear() {
 }
 int Msg_ArrayData::GetLength() const {
     int cnt = 0;
-    for (int i = 0; i < ArrayData::DATA_SIZE; ++i)
+    for (uint i = 0; i < ArrayData::DATA_SIZE; ++i)
     {
         if (bits & (1 << i)) ++cnt;
     }
     return offsetof(Msg_ArrayData, data) + sizeof(data[0])*cnt;
 }
 void Msg_ArrayData::FillMsg(DataTyp typ, const ArrayData& refArr) {
-    for (int cnt = 0, i = 0; i < ArrayData::DATA_SIZE; ++i){
+    for (uint cnt = 0, i = 0; i < ArrayData::DATA_SIZE; ++i){
         if (refArr.m_data[i]){
             this->data[cnt++] = refArr.m_data[i];
         }
@@ -88,7 +89,7 @@ void Msg_ArrayData::FillArray(ArrayData& refArr) const {
     }else{
         refArr.m_bits |= this->bits;
     }
-    for (int cnt = 0, i = 0; i < ArrayData::DATA_SIZE; ++i){
+    for (uint cnt = 0, i = 0; i < ArrayData::DATA_SIZE; ++i){
         if (this->bits & (1 << i)){
             refArr.m_data[i] = this->data[cnt++];
         }

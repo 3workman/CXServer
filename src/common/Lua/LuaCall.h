@@ -1,17 +1,17 @@
 /***********************************************************************
-* @ ÓëLua½»»¥
+* @ ä¸Luaäº¤äº’
 * @ brief
-    1¡¢Lua/C++ ¼äµÄ½»»¥£¬ÒÑ½Ó¿Ú²ÎÊı´«µİµÄ·½Ê½£¬½ûÖ¹±£´æ¶Ô·½Éú³ÉµÄÊı¾İ
+    1ã€Lua/C++ é—´çš„äº¤äº’ï¼Œå·²æ¥å£å‚æ•°ä¼ é€’çš„æ–¹å¼ï¼Œç¦æ­¢ä¿å­˜å¯¹æ–¹ç”Ÿæˆçš„æ•°æ®
 
-    2¡¢´«µİ¶ÔÏóÖ¸Õë¸ø½Å±¾ ---- luabridge::push(m_pL, pChar)
+    2ã€ä¼ é€’å¯¹è±¡æŒ‡é’ˆç»™è„šæœ¬ ---- luabridge::push(m_pL, pChar)
 
-    3¡¢»ñÈ¡½Å±¾·µ»ØµÄÖ¸Õë ---- NetPack* buf = luabridge::Userdata::get<NetPack>(L, 1, false);
-        * ´Ó Lua ÄÃÖ¸Õë·çÏÕºÜ¸ß£¬ËüÊÇ Lua Éú³ÉµÄ£¬ÉúÃüÖÜÆÚÓÉºóÕß´¦Àí£¬C++ µ÷ÓÃÊ±±£²»×¼±»gc»òÊÇÊ²Ã´µÄ
+    3ã€è·å–è„šæœ¬è¿”å›çš„æŒ‡é’ˆ ---- NetPack* buf = luabridge::Userdata::get<NetPack>(L, 1, false);
+        * ä» Lua æ‹¿æŒ‡é’ˆé£é™©å¾ˆé«˜ï¼Œå®ƒæ˜¯ Lua ç”Ÿæˆçš„ï¼Œç”Ÿå‘½å‘¨æœŸç”±åè€…å¤„ç†ï¼ŒC++ è°ƒç”¨æ—¶ä¿ä¸å‡†è¢«gcæˆ–æ˜¯ä»€ä¹ˆçš„
 
 * @ Notice
-    1¡¢Ïñlua¡¢erlangÕâÀà¶¯Ì¬ÓïÑÔ£¬º¯ÊıµØÖ·²»¹Ì¶¨µÄ£¬ÖØÔØºó¾Í±äÁË
-
-    2¡¢Èô»º´æ¹ıº¯ÊıµØÖ·(Èç luaTable['name'] = this.function)£¬½Å±¾ÖØÔØÊ±ĞëÇå¿Õ¡¢ÖØĞÂÉú³É
+    1ã€åƒluaã€erlangè¿™ç±»åŠ¨æ€è¯­è¨€ï¼Œå‡½æ•°åœ°å€ä¸å›ºå®šçš„ï¼Œé‡è½½åå°±å˜äº†
+    
+    2ã€è‹¥ç¼“å­˜è¿‡å‡½æ•°åœ°å€(å¦‚ luaTable['name'] = this.function)ï¼Œè„šæœ¬é‡è½½æ—¶é¡»æ¸…ç©ºã€é‡æ–°ç”Ÿæˆ
 
 * @ author zhoumf
 * @ date 2017-7-24
@@ -52,7 +52,7 @@ public:
     void		GC();
     bool		Call(const char* szFunc, const char *sig, ...);
     bool		_Call(const char* szFunc, const char *sig, va_list vl);
-    bool		DoFile(const char* szFile); //¸÷Ä£¿é³õÊ¼»¯Ê±ÔØÈëÒ»´Î½Å±¾¼´¿É
+    bool		DoFile(const char* szFile); //å„æ¨¡å—åˆå§‹åŒ–æ—¶è½½å…¥ä¸€æ¬¡è„šæœ¬å³å¯
     void        ReloadFile(const char* szFile = NULL);
     void		PrintStack();
 
@@ -74,7 +74,7 @@ public:
     bool		CallSend();
 };
 /*
-    Notice£ºÓĞĞèÒªµÄ»°£¬¿É·ÖÎª¼¸´óÒµÎñµ¥Ôª£¬Ã¿µ¥ÔªÒ»¸ölua_State
+    Noticeï¼šæœ‰éœ€è¦çš„è¯ï¼Œå¯åˆ†ä¸ºå‡ å¤§ä¸šåŠ¡å•å…ƒï¼Œæ¯å•å…ƒä¸€ä¸ªlua_State
     extern LuaCall* G_LuaPlayer;
     extern LuaCall* G_LuaActivity;
 */

@@ -1,13 +1,13 @@
 /***********************************************************************
-* @ ×ÊÔ´»ØÊÕ£¬defer
+* @ èµ„æºå›æ”¶ï¼Œdefer
 * @ brief
-    1¡¢ÈÃ×ÊÔ´´´½¨¡¢»ØÊÕµÄ´úÂëÁÙ½üÔÚÒ»Æğ£¬±ÜÃâ¶à·ÖÖ¦³ö¿ÚÏÂµÄ×ÊÔ´Ğ¹Â¶
+    1ã€è®©èµ„æºåˆ›å»ºã€å›æ”¶çš„ä»£ç ä¸´è¿‘åœ¨ä¸€èµ·ï¼Œé¿å…å¤šåˆ†æå‡ºå£ä¸‹çš„èµ„æºæ³„éœ²
 
-    2¡¢ÓÃÀı£º
+    2ã€ç”¨ä¾‹ï¼š
         File* file = CreateFile(...);
-        ON_SCOPE_EXIT([&]{ CloseFile(file); }); // Lambda±í´ïÊ½£¬ÒıÓÃ´«µİ
+        ON_SCOPE_EXIT([&]{ CloseFile(file); }); // Lambdaè¡¨è¾¾å¼ï¼Œå¼•ç”¨ä¼ é€’
 
-    3¡¢rollbackÄ£Ê½
+    3ã€rollbackæ¨¡å¼
         CRollBack onFailRollback([&]{ "rollback code" });
         {
             // do something that could fail return
@@ -20,6 +20,7 @@
 ************************************************************************/
 #pragma once
 #include <functional>
+#include "boost/core/noncopyable.hpp"
 
 class ScopeGuard : boost::noncopyable{
     std::function<void()> _onExitScope;

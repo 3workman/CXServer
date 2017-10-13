@@ -6,7 +6,7 @@ enum ServiceEnum {
     Service_Test_Vec,
     Service_Test_Map,
 
-    Service_Sync_Position,
+    Service_Room_GameLoop,
 
     _Service_Max
 };

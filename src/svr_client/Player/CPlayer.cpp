@@ -2,23 +2,33 @@
 #include "CPlayer.h"
 #include "raknet/client/UdpClient.h"
 
-std::map<int, CPlayer::_RpcFunc> CPlayer::_rpc;
+CPlayer::_RpcFunc CPlayer::_rpc[rpc_enum_cnt] = {0};
 NetCfgClient CPlayer::_netCfg;
 
 void CPlayer::UpdateNet(){ _netLink->Update(); }
 
 CPlayer::CPlayer()
 {
-    if (_rpc.empty())
+    //if (_rpc.empty())
     {
 #undef Rpc_Declare
-#define Rpc_Declare(typ) _rpc[sRpcClientPlayer.RpcNameToId(#typ)] = &Player::HandleRpc_##typ;
+#define Rpc_Declare(typ) _rpc[typ] = &Player::HandleRpc_##typ;
         Rpc_For_Client;
     }
 
     _netLink = new UdpClient(_netCfg);
+
+    RunClientNet();
+}
+CPlayer::~CPlayer()
+{
+    _netLink->Stop();
+    delete _netLink;
+}
+void CPlayer::RunClientNet()
+{
     _netLink->SetOnConnect([&](){
-        this->CallRpc("rpc_battle_login", [](NetPack& buf){
+        this->CallRpc(rpc_battle_login, [](NetPack& buf){
             buf.WriteUInt32(1);
         },
             [&](NetPack& recvBuf){
@@ -31,18 +41,13 @@ CPlayer::CPlayer()
         sRpcClientPlayer._Handle(this, msg);
     });
 }
-CPlayer::~CPlayer()
+uint64 CPlayer::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun)
 {
-    _netLink->Stop();
-    delete _netLink;
+    return sRpcClientPlayer._CallRpc(rid, sendFun, std::bind(&CPlayer::SendMsg, this, std::placeholders::_1));
 }
-uint64 CPlayer::CallRpc(const char* name, const ParseRpcParam& sendFun)
+void CPlayer::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {
-    return sRpcClientPlayer._CallRpc(name, sendFun, std::bind(&CPlayer::SendMsg, this, std::placeholders::_1));
-}
-void CPlayer::CallRpc(const char* name, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
-{
-    uint64 reqKey = CallRpc(name, sendFun);
+    uint64 reqKey = CallRpc(rid, sendFun);
 
     sRpcClientPlayer.RegistResponse(reqKey, recvFun);
 }

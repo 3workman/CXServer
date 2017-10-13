@@ -10,41 +10,43 @@
 #elif defined(_USE_LIBEVENT)
 #include "libevent/server/TcpServer.h"
 #endif
+//#define _USE_CROSS
+#ifdef _USE_CROSS
 #include "Cross/CrossAgent.h"
+#endif
 #include "RakSleep.h"
 #include "Service/ServiceMgr.h"
 #include "Timer/TimerWheel.h"
 #include "tool/GameApi.h"
 #include "Buffer/NetPack.h"
+#include "Player/Player.h"
 #include "Log/LogFile.h"
-#include "tool/UnitTest.h"
+#include <gtest/gtest.h>
 #include "tool/Input.h"
+#include "DebugRenderer/DebugRenderer.hpp"
 
 bool BindPlayerLink(void*& refPlayer, NetLinkPtr p, const void* pMsg, int size)
 {
     NetPack msg(pMsg, size);
-    switch (msg.OpCode()){
-    case 1:
-    case 2:
+    switch (msg.OpCode()) {
+    case rpc_battle_login:
+    case rpc_battle_reconnect:
     {
         uint32 pid = msg.ReadUInt32();
-        if (Player* player = Player::FindByPid(pid)) {
-            player->SetNetLink(p);
-            player->m_isLogin = true;
-            refPlayer = player;
-            printf("Player login idx(%d) pid(%d) \n", player->m_index, pid);
-        } else {
-            assert(0);
-            return false;
-        }
+        Player* player = Player::FindByPid(pid);
+        if (player == NULL) player = new Player(pid);
+        player->SetNetLink(p);
+        player->m_isLogin = true;
+        refPlayer = player;
     } return true;
     default: assert(0); return false;
     }
 }
+
 void HandleClientMsg(void* player, const void* pMsg, int size)
 {
-    //Notice£ºRakNetÊÇÔÚUpdateÀïÖğ¸ö´¦ÀíÊÕ°ü£¬µ¥Ïß³ÌµÄ¡£ËùÒÔÄÜÖ±½Óµ÷ÓÃÏìÓ¦º¯Êı
-    //Notice£ºIOCPÊÇ¶àÏß³ÌÊÕ£¬ĞëÏÈ·Å½øÖ÷Ñ­»·¶ÓÁĞ£¬mainloopÊ±ÔÙÏìÓ¦
+    //Noticeï¼šRakNetæ˜¯åœ¨Updateé‡Œé€ä¸ªå¤„ç†æ”¶åŒ…ï¼Œå•çº¿ç¨‹çš„ã€‚æ‰€ä»¥èƒ½ç›´æ¥è°ƒç”¨å“åº”å‡½æ•°
+    //Noticeï¼šIOCPæ˜¯å¤šçº¿ç¨‹æ”¶ï¼Œé¡»å…ˆæ”¾è¿›ä¸»å¾ªç¯é˜Ÿåˆ—ï¼Œmainloopæ—¶å†å“åº”
 #ifdef _USE_RAKNET
     NetPack msg(pMsg, size);
     sRpcClient._Handle((Player*)player, msg);
@@ -52,16 +54,17 @@ void HandleClientMsg(void* player, const void* pMsg, int size)
     sRpcClient.Insert((Player*)player, pMsg, size);
 #endif
 }
-void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
+
+void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode)
 {
     if (Player* player = (Player*)pUser)
     {
-        //TODO:ÕâÀï¿ÉÒÔ¸ù¾İ´íÎóÀàĞÍÇø·Ö´¦Àí£¬±ÈÈç£º¸Ä°üµÄÖ±½ÓÌßµô
+        //TODO:è¿™é‡Œå¯ä»¥æ ¹æ®é”™è¯¯ç±»å‹åŒºåˆ†å¤„ç†ï¼Œæ¯”å¦‚ï¼šæ”¹åŒ…çš„ç›´æ¥è¸¢æ‰
         if (player->m_isLogin) {
             player->m_isLogin = false;
             sTimerMgr.AddTimer([=]{
                 if (!player->m_isLogin) delete player;
-            }, 60); //ÆÚ¼äÔÊĞí¶ÏÏßÖØÁ¬
+            }, 60); //æœŸé—´å…è®¸æ–­çº¿é‡è¿
         } else
             delete player;
     }
@@ -69,16 +72,22 @@ void ReportErrorMsg(void* pUser, int InvalidEnum, int nErrorCode, int nParam)
 
 int main(int argc, char* argv[])
 {
-    setvbuf(stdout, NULL, _IOLBF, 2); //ÉèÖÃstdoutµÄ»º³åÀàĞÍÎªĞĞ»º³å£¬ÖØ¶¨ÏòÎÄ¼ş¸üÓÑºÃ
+    setvbuf(stdout, NULL, _IOLBF, 2); //è®¾ç½®stdoutçš„ç¼“å†²ç±»å‹ä¸ºè¡Œç¼“å†²ï¼Œé‡å®šå‘æ–‡ä»¶æ›´å‹å¥½
 
-    LogFile log("log/battle", LogFile::TRACK, true);
+    LogFile log("log/battle", LogFile::TRACK);
     _LOG_MAIN_(log);
 
     // unit test
-    unittest::UnitTest::RunAllTests();
+    //TestLua2(L);
+    //TestLua3(L);
+    //testing::InitGoogleTest(&argc, argv);
+    //if (RUN_ALL_TESTS() == 0)
+    //    printf("All tests pased\n");
+    //else
+    //    printf("some tests failed\n");
 
 
-    NetCfgServer cfg; //ÍøÂç£¬³õÊ¼»¯
+    NetCfgServer cfg; //ç½‘ç»œï¼Œåˆå§‹åŒ–
 #ifdef _USE_RAKNET
     UdpServer svr(cfg);
 #elif defined(_USE_IOCP)
@@ -88,30 +97,34 @@ int main(int argc, char* argv[])
 #endif
     svr.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 
-    sCrossAgent.RunClient();
-
+#ifdef _USE_CROSS
+    sCrossAgent.RunClient(); //åŒGoé€šä¿¡
+#endif
+    DebugRenderer::CreateWindow();
+    
     uint64 timeOld(0), timeNow = GameApi::TimeMS();
     while (true) {
         timeOld = timeNow;
         timeNow = GameApi::TimeMS();
         uint time_elapse = uint(timeNow - timeOld);
-
+        
         GameApi::RefreshTimeNow();
         ServiceMgr::RunAllService(time_elapse, timeNow);
         sTimerMgr.Refresh(time_elapse, timeNow);
 
-
-#ifdef _USE_RAKNET  //ÍøÂç£¬¸üĞÂ
+#ifdef _USE_RAKNET  //ç½‘ç»œï¼Œæ›´æ–°
         svr.Update();
 #elif defined(_USE_IOCP) || defined(_USE_HANDY) || defined(_USE_LIBEVENT)
         sRpcClient.Update();
 #endif
+#ifdef _USE_CROSS
         sRpcCross.Update();
+#endif
 
         uint tickDiff = uint(GameApi::TimeMS() - timeNow);
-        if (tickDiff < 20) RakSleep(20 - tickDiff); //TODO: bug
+        if(tickDiff < 20) RakSleep(20 - tickDiff); // TODO: bug
 
         Input::CheckKeyboardInput();
     }
-	return 0;
+    return 0;
 }
