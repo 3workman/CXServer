@@ -20,7 +20,7 @@ public:
     bool            m_isLogin = false;
 
     typedef void(CPlayer::*_RpcFunc)(NetPack&, NetPack&);
-    static  _RpcFunc       _rpc[rpc_enum_cnt]; //自己实现的rpc
+    static  _RpcFunc       _rpc[RpcEnumCnt]; //自己实现的rpc
     Rpc_For_Client;
 public:
     void    SendMsg(const NetPack& pack);

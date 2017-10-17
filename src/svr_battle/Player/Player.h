@@ -68,7 +68,7 @@ public:
     static flatbuffers::FlatBufferBuilder& BackBuild() { return sRpcClient.BackBuilder; }
 public:
     typedef void(Player::*_RpcFunc)(NetPack&, NetPack&);
-    static  _RpcFunc      _rpc[rpc_enum_cnt]; //自己实现的rpc
+    static  _RpcFunc      _rpc[RpcEnumCnt]; //自己实现的rpc
     Rpc_For_Player;
     
 public:

@@ -20,7 +20,7 @@ class CrossAgent {
     uint32          _connId = 0;
 public:
     typedef void(CrossAgent::*_RpcFunc)(NetPack&, NetPack&);
-    static  _RpcFunc          _rpc[rpc_enum_cnt]; //自己实现的rpc
+    static  _RpcFunc          _rpc[RpcEnumCnt]; //自己实现的rpc
     Rpc_For_Cross;
 public:
     void    SendMsg(const NetPack& pack);

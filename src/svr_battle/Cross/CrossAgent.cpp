@@ -13,7 +13,7 @@
 
 using namespace std;
 
-CrossAgent::_RpcFunc CrossAgent::_rpc[rpc_enum_cnt] = { 0 };
+CrossAgent::_RpcFunc CrossAgent::_rpc[RpcEnumCnt] = { 0 };
 
 void CrossAgent::RunClient()
 {

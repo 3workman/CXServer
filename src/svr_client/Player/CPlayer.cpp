@@ -2,7 +2,7 @@
 #include "CPlayer.h"
 #include "raknet/client/UdpClient.h"
 
-CPlayer::_RpcFunc CPlayer::_rpc[rpc_enum_cnt] = {0};
+CPlayer::_RpcFunc CPlayer::_rpc[RpcEnumCnt] = {0};
 NetCfgClient CPlayer::_netCfg;
 
 void CPlayer::UpdateNet(){ _netLink->Update(); }

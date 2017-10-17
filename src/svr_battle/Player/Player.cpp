@@ -26,7 +26,7 @@ static Byte g_compress_buf[1024] = { 0 };
 static const uint G_Compress_Limit_Size = 128;
 static const uint G_Compress_Flag = 0x80000000;
 
-Player::_RpcFunc Player::_rpc[rpc_enum_cnt] = {0};
+Player::_RpcFunc Player::_rpc[RpcEnumCnt] = {0};
 std::map<uint32, Player*> Player::G_PlayerList;
 
 Player::Player(uint32 pid) : m_pid(pid)
