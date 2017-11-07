@@ -91,14 +91,11 @@ void RefreshTimeNow() { g_time_now = ::time(NULL); }
 
 uint64 TimeMS() {
 #ifdef WIN32
-    struct _timeb tp;
-    ::_ftime(&tp);
-    return tp.time * 1000 + tp.millitm;
+    struct _timeb tp; ::_ftime(&tp);
 #else
-    struct timeb tp;
-    ftime(&tp);
-    return tp.time * 1000 + tp.millitm;
+    struct timeb tp; ftime(&tp);
 #endif
+    return tp.time * 1000 + tp.millitm;
 }
 
 int TimeHour() {

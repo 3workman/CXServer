@@ -26,7 +26,7 @@ struct NodeLink {
 struct TimerNode {
     Pool_Obj_Define(TimerNode, 32)
     NodeLink link; //must in the head
-    uint32 timeDead;
+    time_t timeDead;
     uint32 interval; //间隔多久
     int loop;        //总共循环多久
     std::function<void()> func;
@@ -64,6 +64,7 @@ class CTimerMgr {
 
     stWheel* _wheels[WHEEL_NUM];
     NodeLink _readyNode;
+    uint32   _time_elapse = 0;
 
     CTimerMgr();
     ~CTimerMgr();

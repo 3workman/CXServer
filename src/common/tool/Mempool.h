@@ -209,7 +209,7 @@ public:
 		if (!temp) return false;
 
         T* pObj = (T*)malloc(m_cnt * sizeof(T)); //开辟新内存块，存对象，可散列
-        if (!pObj) return false;
+        if (!pObj) { free(temp); return false; }
 
 		memcpy(temp, m_arrPtr, m_cnt * sizeof(T*));
 		free(m_arrPtr);	m_arrPtr = temp;

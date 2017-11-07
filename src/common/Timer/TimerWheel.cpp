@@ -35,7 +35,7 @@ void TimerNode::_Callback(){
 }
 TimerNode* CTimerMgr::AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec /* = 0 */, int totalSec /* = 0 */) {
     TimerNode* node = new TimerNode(f, cdSec * 1000, totalSec * 1000);
-    node->timeDead = (uint32)GameApi::TimeMS() + delaySec * 1000;
+    node->timeDead = GameApi::TimeMS() + delaySec * 1000;
     _AddTimerNode(delaySec * 1000, node);
     return node;
 }
@@ -75,8 +75,10 @@ void CTimerMgr::RemoveTimer(TimerNode* node) {
 
     delete node;
 }
-void CTimerMgr::Refresh(uint32 time_elapse, const time_t timenow) {
-    uint32 tickCnt = time_elapse / TIME_TICK_LEN;
+void CTimerMgr::Refresh(uint32 elapse, const time_t timenow) {
+    _time_elapse += elapse;
+    uint32 tickCnt = _time_elapse / TIME_TICK_LEN;
+    _time_elapse %= TIME_TICK_LEN;
     for (uint32 i = 0; i < tickCnt; ++i) { //扫过的slot均超时
         bool isCascade = false;
         stWheel* wheel = _wheels[0];

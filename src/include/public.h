@@ -23,9 +23,7 @@
 
 #define ZeroMemoryThis          memset(this, 0, sizeof(*this))
 #define ZeroMemoryArray(arr)    memset(arr, 0, sizeof(arr))
-
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
-#define ONE_DAY_SEC   (24*3600)
+#define ARRAY_SIZE(x)           (sizeof(x) / sizeof(*x))
 
 template <typename T> inline int SUM_ARR(T* arr, int size){
     int sum(0);
@@ -57,15 +55,5 @@ typedef std::vector< std::pair<int, int> > IntPairVec;
 inline int random() { return Rand::rand(); }
 
 #else
-//【溢出Bug】uint timenow = GetTickCount();
-// uint32的毫秒计数，最多到49.7天，系统长期运行后，计时器归0，许多逻辑就错乱了
-//inline long GetTickCount()
-//{
-//    struct timespec spec;
-//    clock_gettime(CLOCK_REALTIME, &spec);
-//
-//    time_t s = spec.tv_sec;
-//    long ms = std::round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
-//    return s * 1000 + ms;
-//}
+
 #endif

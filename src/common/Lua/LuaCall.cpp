@@ -7,7 +7,7 @@ using namespace std;
 #define LUA_PATH  "../lua/"
 #define LUA_PATH2 "package.path = '../lua/?.lua;'..package.path"
 
-LuaCall* G_Lua = new LuaCall("test.lua");
+LuaCall* G_Lua = new LuaCall("init.lua");
 
 LuaCall::LuaCall(const char* szFile) : m_szFile(szFile)
 {
