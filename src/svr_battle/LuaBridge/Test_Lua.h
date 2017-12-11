@@ -2,6 +2,8 @@
 #include "Lua/tolua.h"
 #include "public.h"
 
+using namespace std;
+
 void TestLua1(lua_State *L)
 {
     //luaopen_base(L);    

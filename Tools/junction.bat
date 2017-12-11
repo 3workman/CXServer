@@ -13,9 +13,5 @@ junction.exe ../../GameClient/Assets/flat ../proto_file/output_cs
 
 cd ../../GoServer/bin
 Call generate.exe
-cd ../../CXServer/Tools
-junction.exe ../../GameClient/Assets/generate ../../GoServer/src/generate_out/rpc/enum/cs
-junction.exe ../src/common/enum ../../GoServer/src/generate_out/rpc/enum/cpp
-
 
 pause
