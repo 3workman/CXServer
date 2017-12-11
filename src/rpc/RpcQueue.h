@@ -18,13 +18,12 @@
 #pragma once
 #include "tool/SafeQueue.h"
 #include "Buffer/NetPack.h"
-#include "Csv/CSVparser.hpp"
-#include "enum/generate_rpc_enum.h"
+#include "generate_rpc_enum.h"
 
 typedef std::function<void(NetPack&)> ParseRpcParam;
 typedef std::function<void(const NetPack&)> SendMsgFunc;
 
-template <typename Typ> // 类型Typ须含有：_rpc列表，SendMsg()
+template <typename Typ> // 类型Typ须含有：_rpcfunc列表，SendMsg()
 class RpcQueue {
     typedef std::pair<Typ*, NetPack*> RpcPair;
 
@@ -45,15 +44,15 @@ public:
     void Update() //主循环，每帧调一次
     {
         RpcPair data;
-        if (m_queue.pop(data)) {
+        while (m_queue.pop(data)) {
             _Handle(data.first, *data.second);
             delete data.second;
         }
     }
     void _Handle(Typ* pObj, NetPack& buf)
     {
-        uint16 opCode = buf.OpCode(); if (opCode >= ARRAY_SIZE(Typ::_rpc)) { assert(0); return; }
-        if (auto func = Typ::_rpc[opCode]) {
+        uint16 opCode = buf.OpCode(); if (opCode >= ARRAY_SIZE(Typ::_rpcfunc)) { assert(0); return; }
+        if (auto func = Typ::_rpcfunc[opCode]) {
             m_BackBuffer.ResetHead(buf);
             (pObj->*func)(buf, m_BackBuffer);
             if(m_BackBuffer.OpCode()) SendBackBuffer(pObj);
@@ -88,7 +87,7 @@ public:
         
         static uint32 _auto_req_idx = 0;
         // Server and Client have the same Rpc
-        assert(Typ::_rpc[rid] == NULL);
+        assert(Typ::_rpcfunc[rid] == NULL);
 
         m_SendBuffer.OpCode(rid);
         m_SendBuffer.ReqIdx(++_auto_req_idx);
@@ -101,5 +100,3 @@ public:
         return ret;
     }
 };
-#define sRpcClient RpcQueue<Player>::Instance()
-#define sRpcCross RpcQueue<CrossAgent>::Instance()

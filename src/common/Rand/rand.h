@@ -1,6 +1,6 @@
 #pragma once
 
-class Rand {
+class Rand { // [left, right)
     Rand();
     static Rand _assist_obj; //没什么用的静态对象，只是为了触发ctor里的srand()
     //static Rand& Instance(){ static Rand T; return T; }

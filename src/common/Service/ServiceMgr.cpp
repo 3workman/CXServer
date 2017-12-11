@@ -2,7 +2,6 @@
 #include "ServiceMgr.h"
 #include "Service.h"
 
-
 uint _Service_Patch(void* p) { return printf("Service Path(%p)...\n", p); }
 uint _Service_List(void* p) { printf("Service List(%p)...\n", p); return 2000; }
 uint _Service_Vec(void* p) { printf("Service Vec(%p)...\n", p); return 2000; }

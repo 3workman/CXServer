@@ -17,7 +17,7 @@ void PlayerRoomData::NotifyClientJoinRoom()
     {
         pRoom->JoinRoom(m_player); //后台必须先加进来，否则两个人同时进房间，有bug：不知道彼此加入
 
-        m_player.CallRpc("rpc_client_stop_wait_and_load_battle_scene", [&](NetPack& buf){
+        m_player.CallRpc(rpc_client_stop_wait_and_load_battle_scene, [&](NetPack& buf){
 
             auto& build = m_player.SendBuild();
             std::vector<flatbuffers::Offset<flat::PlayerBaseData>> vec;
@@ -27,7 +27,7 @@ void PlayerRoomData::NotifyClientJoinRoom()
                     ptr->m_pid,
                     build.CreateString(ptr->m_name),
                     ptr->m_index,
-                    ptr->m_Room.m_teamId
+                    ptr->m_room.m_teamId
                     );
                 vec.push_back(data);
             }

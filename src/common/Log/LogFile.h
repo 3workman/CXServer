@@ -41,7 +41,7 @@ private:
 #ifdef _DEBUG
 #define LOG_TRACK(...)  { \
     char str[128]; \
-    sprintf(str, "%s-%s", __FILE__, __FUNCTION__); \
+    sprintf(str, "%s %s", __FILE__, __FUNCTION__); \
     LogFile::g_log->Log(str, __LINE__, LogFile::TRACK, __VA_ARGS__); \
 }
 #define LOG_DEBUG(...)  LogFile::g_log->Log(__FILE__, __LINE__, LogFile::DEBUG, __VA_ARGS__)

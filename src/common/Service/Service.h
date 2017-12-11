@@ -111,7 +111,8 @@ public:
         }
     }
 	void RunSevice(uint /*time_elapse*/, time_t timenow){
-        if (m_runIt == m_list.end()) m_runIt = ++m_list.begin(); //【跳过头结点】
+        if (m_runIt == m_list.end() || m_runIt == m_list.begin())
+            m_runIt = ++m_list.begin(); //【跳过头结点】
         m_bRun = true;
         while (m_runIt != m_list.end()) {
             if (m_runIt->first <= timenow) {
@@ -139,20 +140,22 @@ public:
         for (int i = 0; i < (int)m_vec.size(); ++i) {
             if (m_vec[i].second == pObj) {
                 m_vec.erase(m_vec.begin() + i);
-                if (i < m_runPos) --m_runPos;
+                if (i <= m_runPos) --m_runPos;
                 break;
             }
         }
     }
     void RunSevice(uint /*time_elapse*/, time_t timenow) {
+        if (m_runPos < 0 || m_runPos >= (int)m_vec.size())
+            m_runPos = 0;
         m_bRun = true;
-        while (m_runPos != m_vec.size()) {
+        while (m_runPos < (int)m_vec.size()) {
             TimerPair& it = m_vec[m_runPos];
             if (it.first <= timenow) {
                 void* runObj = it.second;
                 uint nextTime = m_func(runObj);//里头可能把自己删掉，m_runIt指向改变
                 if (it.second == runObj) it.first = timenow + nextTime;
-                if (++m_runPos == m_vec.size()) m_runPos = 0;
+                if (++m_runPos >= (int)m_vec.size()) m_runPos = 0;
             }
             else
                 break;

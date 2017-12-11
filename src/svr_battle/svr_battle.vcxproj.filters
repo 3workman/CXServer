@@ -18,14 +18,17 @@
     <ClCompile Include="Player\Player.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="Player\PlayerDataSend.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
     <ClCompile Include="LuaBridge\LuaBuffer.cpp">
       <Filter>LuaBridge</Filter>
     </ClCompile>
     <ClCompile Include="LuaBridge\LuaPlayer.cpp">
       <Filter>LuaBridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rpc\RpcClient.cpp">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="Zookeeper\Zookeeper.cpp">
+      <Filter>Zookeeper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -43,6 +46,12 @@
     </Filter>
     <Filter Include="LuaBridge">
       <UniqueIdentifier>{aad58536-1e64-41e7-ace2-379b09bb159b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Zookeeper">
+      <UniqueIdentifier>{e98c588f-5f86-47dc-ad7a-1a60b183392a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{3e3b774d-a5f8-45f3-9255-39ca9c258b5b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,11 +73,20 @@
     <ClInclude Include="Player\Player.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="Player\PlayerDataSend.h">
-      <Filter>Player</Filter>
-    </ClInclude>
     <ClInclude Include="LuaBridge\Test_Lua.h">
       <Filter>LuaBridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\RpcClient.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="Zookeeper\Zookeeper.h">
+      <Filter>Zookeeper</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\ConstDef.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\LoadCsv.hpp">
+      <Filter>Config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

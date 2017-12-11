@@ -9,7 +9,6 @@
 #pragma once
 #include "bytebuffer.h"
 #include "../tool/Mempool.h"
-#include "boost/uuid/uuid.hpp"
 #include "flatbuffers/flatbuffers.h"
 
 template<typename T> using FlatVector = std::vector<flatbuffers::Offset<T>>;
@@ -71,7 +70,6 @@ public:
     void    WriteString(const std::string& val) { append(val); }
     void    WriteString(const char* val) { append(val); }
     void    WriteBuf(const void* buf, size_t len) { append(buf, len); }
-    void    WriteUuid(const boost::uuids::uuid& uuid) { append(uuid.data, uuid.static_size); }
 
     bool    ReadBool() { return read<bool>(); }
     int8    ReadInt8() { return read<int8>(); }
@@ -88,15 +86,6 @@ public:
         return read<std::string>();
         //return std::move(str);
         //return str; // c++11 右值引用，移动构造
-    }
-    boost::uuids::uuid ReadUuid() {
-        using namespace boost::uuids;
-        // according to boost doc, uuid::static_size is always 16 bytes
-        char bytes[uuid::static_size];
-        read(bytes, uuid::static_size);
-        boost::uuids::uuid uuid;
-        memcpy(&uuid, bytes, uuid::static_size);
-        return uuid;
     }
     void MoveToBuf(flatbuffers::FlatBufferBuilder& builder) {
         if (builder.GetSize()) {

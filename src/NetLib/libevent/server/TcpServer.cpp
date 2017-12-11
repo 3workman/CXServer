@@ -47,6 +47,8 @@ void TcpServer::_loop()
     WSADATA wsa_data;
     WSAStartup(0x0201, &wsa_data);
 #endif
+    evthread_use_pthreads(); //使libevent线程安全
+
     event_base* base = event_base_new();
     if (!base) {
         fprintf(stderr, "Could not initialize libevent!\n");

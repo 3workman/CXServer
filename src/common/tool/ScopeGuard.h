@@ -20,16 +20,17 @@
 ************************************************************************/
 #pragma once
 #include <functional>
-#include "boost/core/noncopyable.hpp"
+#include "noncopyable.h"
 
 class ScopeGuard : boost::noncopyable{
-    std::function<void()> _onExitScope;
+    const std::function<void()>& _onExitScope;
 public:
     explicit ScopeGuard(const std::function<void()>& func) : _onExitScope(func){}
     ~ScopeGuard(){ _onExitScope(); }
 };
+
 class CRollBack : boost::noncopyable{
-    std::function<void()> _onExitScope;
+    const std::function<void()>& _onExitScope;
     bool _valid;
 public:
     explicit CRollBack(const std::function<void()>& func)

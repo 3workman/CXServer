@@ -12,7 +12,7 @@
 #pragma once
 
 #include <functional>
-#include "../tool/Mempool.h"
+#include "tool/Mempool.h"
 
 const char WHEEL_BIT[] = {8, 6, 6, 6, 5}; //用了累计位移，总和超32，位操作会(未定义行为)
 #define WHEEL_NUM sizeof(WHEEL_BIT)/sizeof(WHEEL_BIT[0])

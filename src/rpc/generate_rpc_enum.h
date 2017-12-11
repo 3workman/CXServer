@@ -42,38 +42,38 @@
 	_Declare(rpc_game_agree_join_team, 38)\
 	_Declare(rpc_game_send_team_chat, 39)\
 	_Declare(rpc_login_account_login, 40)\
-	_Declare(rpc_login_reg_account, 41)\
-	_Declare(rpc_login_check_account, 42)\
-	_Declare(rpc_login_change_password, 43)\
-	_Declare(rpc_login_bind_info, 44)\
-	_Declare(rpc_login_get_account_by_bind_info, 45)\
-	_Declare(rpc_login_get_gamesvr_lst, 46)\
-	_Declare(rpc_sdk_echo, 47)\
-	_Declare(rpc_battle_login, 48)\
-	_Declare(rpc_battle_logout, 49)\
-	_Declare(rpc_battle_reconnect, 50)\
-	_Declare(rpc_battle_exit_room, 51)\
-	_Declare(rpc_battle_direct_join_room, 52)\
-	_Declare(rpc_battle_handle_move_input, 53)\
-	_Declare(rpc_battle_handle_fire_input, 54)\
-	_Declare(rpc_battle_handle_trigger_enter, 55)\
-	_Declare(rpc_battle_handle_trigger_exit, 56)\
-	_Declare(rpc_battle_forward_anim_state, 57)\
-	_Declare(rpc_battle_pick_weapon, 58)\
-	_Declare(rpc_battle_drop_weapon, 59)\
-	_Declare(rpc_battle_handle_player_data, 60)\
-	_Declare(rpc_client_notify_player_join_room, 61)\
-	_Declare(rpc_client_spawn_player, 62)\
-	_Declare(rpc_client_notify_player_exit_room, 63)\
-	_Declare(rpc_client_stop_wait_and_load_battle_scene, 64)\
-	_Declare(rpc_client_sync_map, 65)\
-	_Declare(rpc_client_sync_objs_position, 66)\
-	_Declare(rpc_client_sync_objs_position_facing, 67)\
-	_Declare(rpc_client_sync_objs_position_rotation, 68)\
-	_Declare(rpc_client_sync_hero_attrs, 69)\
-	_Declare(rpc_client_sync_boss_attrs, 70)\
-	_Declare(rpc_client_sync_minion_attrs, 71)\
-	_Declare(rpc_client_sync_dummytarget_attrs, 72)\
+	_Declare(rpc_login_bind_info_login, 41)\
+	_Declare(rpc_login_reg_account, 42)\
+	_Declare(rpc_login_check_account, 43)\
+	_Declare(rpc_login_change_password, 44)\
+	_Declare(rpc_login_bind_info, 45)\
+	_Declare(rpc_login_get_account_by_bind_info, 46)\
+	_Declare(rpc_login_get_gamesvr_lst, 47)\
+	_Declare(rpc_sdk_echo, 48)\
+	_Declare(rpc_file_update_list, 49)\
+	_Declare(rpc_battle_login, 50)\
+	_Declare(rpc_battle_logout, 51)\
+	_Declare(rpc_battle_reconnect, 52)\
+	_Declare(rpc_battle_exit_room, 53)\
+	_Declare(rpc_battle_direct_join_room, 54)\
+	_Declare(rpc_battle_handle_move_input, 55)\
+	_Declare(rpc_battle_handle_fire_input, 56)\
+	_Declare(rpc_battle_handle_trigger_enter, 57)\
+	_Declare(rpc_battle_handle_trigger_exit, 58)\
+	_Declare(rpc_battle_forward_anim_state, 59)\
+	_Declare(rpc_battle_pick_weapon, 60)\
+	_Declare(rpc_battle_drop_weapon, 61)\
+	_Declare(rpc_battle_handle_player_data, 62)\
+	_Declare(rpc_client_sync_player_join_info, 63)\
+	_Declare(rpc_client_spawn_player, 64)\
+	_Declare(rpc_client_notify_player_exit_room, 65)\
+	_Declare(rpc_client_stop_wait_and_load_battle_scene, 66)\
+	_Declare(rpc_client_sync_map, 67)\
+	_Declare(rpc_client_sync_objs_position, 68)\
+	_Declare(rpc_client_sync_objs_position_facing, 69)\
+	_Declare(rpc_client_sync_objs_position_rotation, 70)\
+	_Declare(rpc_client_sync_generic_attrs, 71)\
+	_Declare(rpc_client_handle_spawn_attrs, 72)\
 	_Declare(rpc_client_spawn_object, 73)\
 	_Declare(rpc_client_sync_anim_state, 74)\
 	_Declare(rpc_client_sync_pickup_weapon, 75)\
@@ -82,8 +82,12 @@
 	_Declare(rpc_client_sync_trigger_exit, 78)\
 	_Declare(rpc_client_destroy_object, 79)\
 	_Declare(rpc_client_lua_test, 80)\
-	_Declare(rpc_file_update_list, 81)\
-	_Declare(RpcEnumCnt, 82)\
+	_Declare(rpc_client_sync_buff_add, 81)\
+	_Declare(rpc_client_sync_buff_del, 82)\
+	_Declare(rpc_svr_node_join, 83)\
+	_Declare(rpc_zoo_register, 84)\
+	_Declare(rpc_login_get_accountid, 85)\
+	_Declare(RpcEnumCnt, 86)\
 	
 
 

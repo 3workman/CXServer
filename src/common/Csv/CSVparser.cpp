@@ -112,12 +112,12 @@ namespace csv {
       return Parser::getRow(rowPosition);
   }
 
-  unsigned int Parser::rowCount(void) const
+  size_t Parser::rowCount(void) const
   {
       return _content.size();
   }
 
-  unsigned int Parser::columnCount(void) const
+  size_t Parser::columnCount(void) const
   {
       return _header.size();
   }
@@ -199,7 +199,7 @@ namespace csv {
 
   Row::~Row(void) {}
 
-  unsigned int Row::size(void) const
+  size_t Row::size(void) const
   {
     return _values.size();
   }

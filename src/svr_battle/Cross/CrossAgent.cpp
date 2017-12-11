@@ -1,76 +1,29 @@
 #include "stdafx.h"
-#include "Player/Player.h"
 #include "CrossAgent.h"
-#ifdef _WIN32
-#include "iocp/client/ClientLink.h"
-#else
-//#include "handy/client/TcpClient.h"
-#include "libevent/client/TcpClient.h"
-#endif
+#include "Player/Player.h"
 #include "Timer/TimerWheel.h"
 #include "Room/Room.h"
 #include "Log/LogFile.h"
 
-using namespace std;
-
-CrossAgent::_RpcFunc CrossAgent::_rpc[RpcEnumCnt] = { 0 };
-
-void CrossAgent::RunClient()
-{
-    _netLink->CreateLinkAndConnect([&]() {
-        _OnConnect();
-    }, [&](const void* p, int size) {
-        sRpcCross.Insert(this, p, size);
-    });
-
-    //// 等待ConnectEx三次握手完成的回调，之后才能发数据
-    //while (!_netLink->IsClose() && !_netLink->IsConnect()) Sleep(200);
-}
-void CrossAgent::_OnConnect()
-{
-    //Notice: 这里不能用CallRpc，多线程呐~
-    _netLink->SendMsg(&_connId, sizeof(_connId)); //第一条消息：上报connId
-    NetPack regMsg(16);
-    regMsg.OpCode(rpc_regist);
-    regMsg << "battle" << (uint32)1;
-    SendMsg(regMsg);
-}
-
 CrossAgent::CrossAgent()
 {
-    //if (_rpc.empty())
+    if (!_rpcfunc[rpc_svr_accept])
     {
 #undef Rpc_Declare
-#define Rpc_Declare(typ) _rpc[typ] = &CrossAgent::HandleRpc_##typ;
+#define Rpc_Declare(typ) _rpcfunc[typ] = (RpcClient::_RpcFunc)&CrossAgent::HandleRpc_##typ;
         Rpc_For_Cross;
     }
-    _netLink = new TcpClient(_config);
-}
-CrossAgent::~CrossAgent()
-{
-    delete _netLink;
-}
-uint64 CrossAgent::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun)
-{
-    return sRpcCross._CallRpc(rid, sendFun, std::bind(&CrossAgent::SendMsg, this, std::placeholders::_1));
-}
-void CrossAgent::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
-{
-    uint64 reqKey = CallRpc(rid, sendFun);
 
-    sRpcCross.RegistResponse(reqKey, recvFun);
-}
-void CrossAgent::SendMsg(const NetPack& pack)
-{
-    _netLink->SendMsg(pack.contents(), pack.size());
+    auto ptr = NetMeta::GetMeta("cross");
+    _config.svrIp = ptr->ip.c_str();
+    _config.svrPort = ptr->tcp_port;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // rpc
-Rpc_Realize(rpc_svr_accept)
-{
-    _connId = req.ReadUInt32();
-}
+#undef Rpc_Realize
+#define Rpc_Realize(typ) void CrossAgent::HandleRpc_##typ(NetPack& req, NetPack& ack)
+
 Rpc_Realize(rpc_battle_handle_player_data)//回复<pid>列表
 {
     uint8 cnt = req.ReadUInt8();
@@ -87,8 +40,8 @@ Rpc_Realize(rpc_battle_handle_player_data)//回复<pid>列表
 
         ack << pid;
 
-        if (player->m_roomId) {
-            LOG_TRACK("PlayerId(%d) is already in room(%d)", pid, player->m_roomId);
+        if (player->m_room.m_roomId) {
+            LOG_TRACK("PlayerId(%d) is already in room(%d)", pid, player->m_room.m_roomId);
             continue;
         }
 

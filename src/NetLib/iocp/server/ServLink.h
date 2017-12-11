@@ -168,11 +168,11 @@ public:
 
 	//心跳验证
 	time_t m_dwLastHeart;
-	void OnHeartMsg(){ m_dwLastHeart = GameApi::TimeMS(); }
+	void OnHeartMsg(){ m_dwLastHeart = GameApi::TimeSecond(); }
 	void CheckHeart()
 	{
-        time_t now = GameApi::TimeMS();
-		if (now - m_dwLastHeart > 60000)
+        time_t now = GameApi::TimeSecond();
+		if (now - m_dwLastHeart > 60)
 		{
 			OnInvalidMessage(Net_HeartKick, 0, true);
 		}

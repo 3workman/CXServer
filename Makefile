@@ -16,7 +16,7 @@ stdafx = $(solution_dir)src/include/stdafx.h
 inc_third = ThirdParty/raknet/Source ThirdParty/googletest/include \
 			ThirdParty/flatbuffers/include proto_file/output_cpp \
 			ThirdParty/zlib ThirdParty/lua-5.3.4/src ThirdParty/LuaBridge/Source \
-			ThirdParty/handy
+			ThirdParty/handy ThirdParty/libevent/include
 inc_logic = src/common src/include src/rpc src/NetLib src/$(target)
 inc_dir = $(patsubst %, -I$(solution_dir)%, $(inc_third) $(inc_logic))
 

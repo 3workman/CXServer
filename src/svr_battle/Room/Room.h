@@ -27,5 +27,5 @@ public:
     bool TryToJoinWaitLst(const std::vector<Player*>& lst);
     void _FlushWaitLst(const std::map<uint8, uint>& teamInfos);
 
-    void SyncPlayerPosition();
+    void Update(float dt);
 };

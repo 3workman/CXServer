@@ -11,15 +11,15 @@ namespace GameApi {
     // "2|3,7|4,9|6"，分割为数值对
     void SplitStr2(const std::string& str, IntPairVec& retVec);
 
-    //每帧一次Refresh，业务去缓存数据，避免多次调用底层api
-    time_t TimeNow(); //second
-    void RefreshTimeNow();
+    //每帧一次Refresh，业务取缓存数据，避免多次调用底层api
+    time_t TimeSecond();
+    void RefreshTimeSecond();
 
     /*
         【溢出Bug】uint timenow = GetTickCount();
         uint32的毫秒计数，最多到49.7天，系统长期运行后，计时器归0，许多逻辑就错乱了
     */
-    uint64 TimeMS();
+    time_t TimeMS();
 
     int TimeHour();
     int TimeMonth();

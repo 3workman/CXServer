@@ -8,12 +8,35 @@ passwd="890104"
 Init() {
     # 构建配置环境，连接csv、ThirdParty等
     ln -s $root/svr ~/bin/svr
+    mkdir -p $root/GoServer/bin/db
     ln -s $root/CXServer/data/csv $root/GoServer/bin/csv
+    ln -s $root/CXServer/data/csv $root/GameClient/csv
+    ln -s $root/CXServer/proto_file/output_cs $root/GameClient/Assets/flat
     ln -s $root/CXServer/ThirdParty/googletest/libgtest.a $root/CXServer/ThirdParty/libgtest.a
     ln -s $root/CXServer/ThirdParty/handy/libhandy.a $root/CXServer/ThirdParty/libhandy.a
+    ln -s $root/CXServer/ThirdParty/libevent/libevent.a $root/CXServer/ThirdParty/libevent.a
     ln -s $root/CXServer/ThirdParty/lua-5.3.4/src/liblua.a $root/CXServer/ThirdParty/liblua.a
     ln -s $root/CXServer/ThirdParty/raknet/Lib/LibStatic/libRakNetLibStatic.a $root/CXServer/ThirdParty/libRakNet.a
     ln -s $root/CXServer/ThirdParty/zlib/libz.a $root/CXServer/ThirdParty/libz.a
+}
+InitDB() {
+MongoDB='mongo'
+$MongoDB <<EOF
+use admin;
+db.createUser({user:"root",pwd:"zhoumf233*",roles:["root"]});
+db.auth("root","zhoumf233*");
+use account;
+db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
+db.Account.ensureIndex({"name":1},{"unique":true})
+db.Account.ensureIndex({"bindinfo.phone":1})
+db.Account.ensureIndex({"bindinfo.email":1})
+use sdk;
+db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
+use soulnet;
+db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
+db.Player.ensureIndex({"accountid":1},{"unique":true})
+exit;
+EOF
 }
 RunSvr() {
     # rm -f core
@@ -45,12 +68,26 @@ Sdk() {
     cd $root/GoServer/bin
     RunSvr sdk $1
 }
+Login() {
+    cd $root/GoServer/bin
+    RunSvr login $1
+}
 File() {
     cd $root/GoServer/bin
     RunSvr file $1
 }
+Zookeeper() {
+    cd $root/GoServer/bin
+    # rm -f core
+    # rm -rf ./log
+    if [ $1 ] && [ $1 = "-d" ]; then
+        nohup ./zookeeper > $root/zookeeper.out 2>&1 &
+    else
+        ./zookeeper
+    fi
+}
 DB() {
-    nohup echo $passwd | sudo -S mongod --dbpath $root/GoServer/bin/db > $root/db.out 2>&1 &
+    nohup echo $passwd | sudo -S mongod --auth --dbpath $root/GoServer/bin/db > $root/db.out 2>&1 &
 }
 # --------------------------------------------------------------------------
 KillAll() {
@@ -59,7 +96,9 @@ KillAll() {
     killall -9 svr_cross
     killall -9 svr_game
     killall -9 svr_sdk
+    killall -9 svr_login
     killall -9 svr_file
+    killall -9 zookeeper
 }
 RunOne() {
     if [ $2 ] && [ $2 != "-d" ]; then
@@ -70,11 +109,14 @@ RunOne() {
             1|"center")     Center $2;;     #
             2|"cross")      Cross $2;;      #
             3|"sdk")        Sdk $2;;        #
-            4|"file")       File $2;;       #
+            4|"login")      Login $2;;      #
             5|"game")       Game $2;;       # link: cross center sdk
             6|"battle")     Battle $2;;     # link: cross
+            7|"file")       File $2;;       #
+            8|"zoo")        Zookeeper $2;;  #
             "kill")         KillAll;;
             "init")         Init;;
+            "initdb")       InitDB;;
             *) echo "Input a key, like:\n svr game [-d] \n svr 1 [-d]";;
         esac
     fi

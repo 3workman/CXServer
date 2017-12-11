@@ -22,7 +22,7 @@ public:
     ~UdpServer();
     void Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, ReportErrorFunc reportErrorMsg);
     void Update();
-    void CloseLink(const RakNet::SystemAddress& addr);
+    void CloseLink(const RakNet::RakNetGUID& guid);
 
     UdpClientAgent* FindClientAgent(const RakNet::RakNetGUID& guid);
     UdpClientAgent* AddClientAgent(const RakNet::RakNetGUID& guid);

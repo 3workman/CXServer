@@ -11,7 +11,7 @@ STATIC_ASSERT_ARRAY_LENGTH(g_handler, Trigger::MAX_ENUM);
 
 Trigger::Trigger()
 {
-    // 读表
+    // 璇昏〃
 }
 bool Trigger::Check(Player* player, const int triggerId)
 {
@@ -34,7 +34,7 @@ bool Trigger::Check(Player* player, const std::vector<int>& triggerIds)
 
 
 //----------------------------------------------------------
-//各类判断函数
+//鍚勭被鍒ゆ柇鍑芥暟
 #undef Realize
 #define Realize(typ) bool Trigger::_Is_##typ(Player* player, int32 val1, int32 val2)
 Realize(UpLevel)
@@ -44,7 +44,7 @@ Realize(UpLevel)
 }
 Realize(DuringTime)
 {
-    int64 timeNow = GameApi::TimeNow();
+    int64 timeNow = GameApi::TimeSecond();
 
     return timeNow >= GameApi::ParseTime(val1) && timeNow < GameApi::ParseTime(val2);
 }

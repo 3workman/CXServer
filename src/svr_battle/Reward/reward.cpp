@@ -21,14 +21,14 @@ bool Reward::Change(Player& player, Type typ, const int diff)
 }
 bool Reward::Change(Player& player, const IntPairVec& resource)
 {
-    //ÅúÁ¿²Ù×÷£¬µÚÒ»´ÎÖ»ÊÇ¼ì²é
+    //æ‰¹é‡æ“ä½œï¼Œç¬¬ä¸€æ¬¡åªæ˜¯æ£€æŸ¥
     _isCheck = true; _isWrite = false;
     for (auto& it : resource)
     {
         if (!_Change(player, (Type)it.first, it.second)) return false;
     }
 
-    //¼ì²éÈ«Í¨¹ı£¬ÕæÕı¸ÄĞ´Êı¾İ
+    //æ£€æŸ¥å…¨é€šè¿‡ï¼ŒçœŸæ­£æ”¹å†™æ•°æ®
     _isCheck = false; _isWrite = true;
     for (auto& it : resource) _Change(player, (Type)it.first, it.second);
     return true;
@@ -45,7 +45,7 @@ bool Reward::_Change(Player& player, Type typ, int diff)
 }
 
 //----------------------------------------------------------
-//¸÷Àà×ÊÔ´±ä¸üº¯Êı
+//å„ç±»èµ„æºå˜æ›´å‡½æ•°
 bool Reward::ChangeItem(Player& player, int itemId, int diff)
 {
     //if (_isCheck) {
@@ -69,13 +69,13 @@ Realize(Gold)
 {
     if (_isCheck)
     {
-        int playerGold = 100; //È¡Íæ¼ÒÊı¾İ
+        int playerGold = 100; //å–ç©å®¶æ•°æ®
         if (playerGold + diff < 0)
             return false;
     }
     if (_isWrite)
     {
-        //±ä¸üÍæ¼ÒÊı¾İ
+        //å˜æ›´ç©å®¶æ•°æ®
     }
     return true;
 }

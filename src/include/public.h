@@ -24,6 +24,7 @@
 #define ZeroMemoryThis          memset(this, 0, sizeof(*this))
 #define ZeroMemoryArray(arr)    memset(arr, 0, sizeof(arr))
 #define ARRAY_SIZE(x)           (sizeof(x) / sizeof(*x))
+#define BIND_THIS(func)         std::bind(&func, this, std::placeholders::_1)
 
 template <typename T> inline int SUM_ARR(T* arr, int size){
     int sum(0);
@@ -41,6 +42,11 @@ typedef uint16_t	uint16;
 typedef uint8_t		uint8;
 typedef unsigned 	uint;
 typedef std::vector< std::pair<int, int> > IntPairVec;
+
+// define smart pointer types for easier typing
+template<typename T> using shared = std::shared_ptr<T>;
+template<typename T> using unique = std::unique_ptr<T>;
+template<typename T> using weak = std::weak_ptr<T>;
 
 #ifdef _WIN32
 

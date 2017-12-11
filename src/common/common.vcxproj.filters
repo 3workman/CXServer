@@ -25,9 +25,6 @@
     <Filter Include="Buffer">
       <UniqueIdentifier>{8c68f065-a506-4b7d-b000-a37422bddc25}</UniqueIdentifier>
     </Filter>
-    <Filter Include="def">
-      <UniqueIdentifier>{513edd0d-90de-42d7-a555-819373544b60}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Csv">
       <UniqueIdentifier>{44527399-bd59-4789-9878-c159169aa80f}</UniqueIdentifier>
     </Filter>
@@ -120,9 +117,6 @@
     <ClInclude Include="Buffer\DataSend.h">
       <Filter>Buffer</Filter>
     </ClInclude>
-    <ClInclude Include="def\ConstDef.h">
-      <Filter>def</Filter>
-    </ClInclude>
     <ClInclude Include="Csv\CSVparser.hpp">
       <Filter>Csv</Filter>
     </ClInclude>
@@ -190,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="Log\RuntimeCast.cpp">
       <Filter>Log</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\compress.cpp">
+      <Filter>tool</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

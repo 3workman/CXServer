@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "config_net.h"
 #include "Player/Player.h"
 #ifdef _USE_RAKNET
 #include "raknet/server/UdpServer.h"
@@ -10,10 +9,7 @@
 #elif defined(_USE_LIBEVENT)
 #include "libevent/server/TcpServer.h"
 #endif
-//#define _USE_CROSS
-#ifdef _USE_CROSS
-#include "Cross/CrossAgent.h"
-#endif
+#include "Zookeeper/Zookeeper.h"
 #include "RakSleep.h"
 #include "Service/ServiceMgr.h"
 #include "Timer/TimerWheel.h"
@@ -21,9 +17,8 @@
 #include "Buffer/NetPack.h"
 #include "Player/Player.h"
 #include "Log/LogFile.h"
-#include <gtest/gtest.h>
 #include "tool/Input.h"
-#include "DebugRenderer/DebugRenderer.hpp"
+#include "Config/LoadCsv.hpp"
 
 bool BindPlayerLink(void*& refPlayer, NetLinkPtr p, const void* pMsg, int size)
 {
@@ -49,9 +44,9 @@ void HandleClientMsg(void* player, const void* pMsg, int size)
     //Notice：IOCP是多线程收，须先放进主循环队列，mainloop时再响应
 #ifdef _USE_RAKNET
     NetPack msg(pMsg, size);
-    sRpcClient._Handle((Player*)player, msg);
+    Player::_rpc._Handle((Player*)player, msg);
 #elif defined(_USE_IOCP) || defined(_USE_HANDY) || defined(_USE_LIBEVENT)
-    sRpcClient.Insert((Player*)player, pMsg, size);
+    Player::_rpc.Insert((Player*)player, pMsg, size);
 #endif
 }
 
@@ -77,6 +72,9 @@ int main(int argc, char* argv[])
     LogFile log("log/battle", LogFile::TRACK);
     _LOG_MAIN_(log);
 
+    LoadAllCsv();
+    NetMeta::G_Local_Meta = NetMeta::GetMeta("battle");
+
     // unit test
     //TestLua2(L);
     //TestLua3(L);
@@ -85,7 +83,6 @@ int main(int argc, char* argv[])
     //    printf("All tests pased\n");
     //else
     //    printf("some tests failed\n");
-
 
     NetCfgServer cfg; //网络，初始化
 #ifdef _USE_RAKNET
@@ -97,29 +94,24 @@ int main(int argc, char* argv[])
 #endif
     svr.Start(BindPlayerLink, HandleClientMsg, ReportErrorMsg);
 
-#ifdef _USE_CROSS
-    sCrossAgent.RunClient(); //同Go通信
-#endif
-    DebugRenderer::CreateWindow();
-    
+    //sZookeeper.RunClient(); //注册到Zookeeper
+
     uint64 timeOld(0), timeNow = GameApi::TimeMS();
     while (true) {
         timeOld = timeNow;
         timeNow = GameApi::TimeMS();
         uint time_elapse = uint(timeNow - timeOld);
         
-        GameApi::RefreshTimeNow();
+        GameApi::RefreshTimeSecond();
         ServiceMgr::RunAllService(time_elapse, timeNow);
         sTimerMgr.Refresh(time_elapse, timeNow);
 
 #ifdef _USE_RAKNET  //网络，更新
         svr.Update();
 #elif defined(_USE_IOCP) || defined(_USE_HANDY) || defined(_USE_LIBEVENT)
-        sRpcClient.Update();
+        Player::_rpc.Update();
 #endif
-#ifdef _USE_CROSS
-        sRpcCross.Update();
-#endif
+        RpcClient::_rpc.Update();
 
         uint tickDiff = uint(GameApi::TimeMS() - timeNow);
         if(tickDiff < 20) RakSleep(20 - tickDiff); // TODO: bug

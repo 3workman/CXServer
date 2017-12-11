@@ -1,28 +1,60 @@
 #pragma once
 
+#pragma pack(push,1)
+struct NetMeta
+{
+    std::string module;
+    int         svr_id;
+    std::string svr_name;
+    std::string version;
+    std::string ip;
+    std::string out_ip;
+    uint16      tcp_port;
+    uint16      http_port;
+    int         max_conn;
+    std::string connect;
+    //éœ€åŠ¨æ€åŒæ­¥çš„æ•°æ®
+    bool is_closed = false;
+
+    static const char* GetFormat() {
+        return "sisssshhis";
+    }
+    static std::vector<NetMeta> _table;
+    static const NetMeta* G_Local_Meta;
+    static const NetMeta* GetMeta(std::string module, int svrId = -1);
+    static void AddMeta(const NetMeta& meta);
+    static void DelMeta(std::string module, int svrId);
+
+    void DataToBuf(class NetPack& buf) const;
+    void BufToData(class NetPack& buf);
+};
+#pragma pack(pop)
+
 struct NetCfgServer
 {
-    const char* ip = "127.0.0.1";
-    uint16 wPort = 7030;
+    static NetCfgServer& Instance() { static NetCfgServer T; return T; }
+
+    const char* ip = NetMeta::G_Local_Meta->ip.c_str();
+    int    svrId = NetMeta::G_Local_Meta->svr_id;
+    uint16 wPort = NetMeta::G_Local_Meta->tcp_port;
     uint32 nRecvPacketCheckTime = 10;
     uint32 nRecvPacketLimit = 1200;
     uint32 dwAssistLoopMs = 10;
     uint32 nMaxPackage = 1024;
-    int    nDeadTime = 300;      //¶àÉÙÃëÃ»ÊÕµ½clientÏûÏ¢£¬¶Ï¿ª
-    uint32 nTimeLoop = 10;		//¶àÏß³ÌµÄÇé¿öÏÂ£¬¶àÉÙÊ±¼ä±éÀúËùÓĞµÄsocket,±ØĞë¸úSend_GroupÒ»ÆğÊ¹ÓÃ
+    int    nDeadTime = 300;      //å¤šå°‘ç§’æ²¡æ”¶åˆ°clientæ¶ˆæ¯ï¼Œæ–­å¼€
+    uint32 nTimeLoop = 10;		//å¤šçº¿ç¨‹çš„æƒ…å†µä¸‹ï¼Œå¤šå°‘æ—¶é—´éå†æ‰€æœ‰çš„socket,å¿…é¡»è·ŸSend_Groupä¸€èµ·ä½¿ç”¨
     uint32 nInBuffer = 2048;
     uint32 nPackSize = 512;
-    uint32 DecodeWaitTime = 1000;	//connectÍê³Éµ½decodeµÄ×î´óÊ±¼ä(³¬¹ıÕâ¸öÊ±¼ä»¹Ã»ÓĞdecode Ôò»áÌßµô)  ms¼¶
+    uint32 DecodeWaitTime = 1000;	//connectå®Œæˆåˆ°decodeçš„æœ€å¤§æ—¶é—´(è¶…è¿‡è¿™ä¸ªæ—¶é—´è¿˜æ²¡æœ‰decode åˆ™ä¼šè¸¢æ‰)  msçº§
     uint32 dwMaxLink = 100/*20000*/;
-    int   nPreLink = 1;			//Ô¤ÏÈ´´½¨µÄLink
-    int	  nPreAccept = 1;		//Ô¤ÏÈÍ¶µİµÄAcceptEx
+    int   nPreLink = 1;			//é¢„å…ˆåˆ›å»ºçš„Link
+    int	  nPreAccept = 1;		//é¢„å…ˆæŠ•é€’çš„AcceptEx
     const char* kPassword = "ChillyRoom";
 };
-
 struct NetCfgClient
 {
-    const char* svrIp = "127.0.0.1";
-    uint16 svrPort = 7003; //svr_cross
+    const char* svrIp;
+    uint16 svrPort;
     uint32 nMaxPackageSend = 1024 * 20;
     const char* kPassword = "ChillyRoom";
 };

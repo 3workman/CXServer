@@ -86,11 +86,11 @@ void SplitStr2(const std::string& str, IntPairVec& retVec) // "2|3,7|4,9|6"
 }
 
 static time_t g_time_now = 0;
-time_t TimeNow() { return g_time_now; }
-void RefreshTimeNow() { g_time_now = ::time(NULL); }
+time_t TimeSecond() { return g_time_now; }
+void RefreshTimeSecond() { g_time_now = ::time(NULL); }
 
-uint64 TimeMS() {
-#ifdef WIN32
+time_t TimeMS() {
+#ifdef _WIN32
     struct _timeb tp; ::_ftime(&tp);
 #else
     struct timeb tp; ftime(&tp);

@@ -55,7 +55,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_USE_UDP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\include;$(SolutionDir)ThirdParty\raknet\Source;$(ProjectDir);$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)proto_file\output_cpp;$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)src\NetLib;$(SolutionDir)ThirdParty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\include;$(SolutionDir)ThirdParty\raknet\Source;$(ProjectDir);$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)proto_file\output_cpp;$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)src\NetLib;$(SolutionDir)ThirdParty\zlib;$(SolutionDir)src\rpc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4819;4267;4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,25 +88,29 @@
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\rpc\RpcClient.cpp" />
     <ClCompile Include="Cross\CrossAgent.cpp" />
     <ClCompile Include="LuaBridge\LuaBuffer.cpp" />
     <ClCompile Include="LuaBridge\LuaPlayer.cpp" />
     <ClCompile Include="Player\Player.cpp" />
-    <ClCompile Include="Player\PlayerDataSend.cpp" />
     <ClCompile Include="Room\PlayerRoomData.cpp" />
     <ClCompile Include="Room\PlayerRoomRpc.cpp" />
     <ClCompile Include="Room\Room.cpp" />
     <ClCompile Include="svr_battle.cpp" />
+    <ClCompile Include="Zookeeper\Zookeeper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\rpc\RpcClient.h" />
     <ClInclude Include="..\rpc\RpcEnum.h" />
     <ClInclude Include="..\rpc\RpcQueue.h" />
+    <ClInclude Include="Config\ConstDef.h" />
+    <ClInclude Include="Config\LoadCsv.hpp" />
     <ClInclude Include="Cross\CrossAgent.h" />
     <ClInclude Include="LuaBridge\Test_Lua.h" />
     <ClInclude Include="Player\Player.h" />
-    <ClInclude Include="Player\PlayerDataSend.h" />
     <ClInclude Include="Room\PlayerRoomData.h" />
     <ClInclude Include="Room\Room.h" />
+    <ClInclude Include="Zookeeper\Zookeeper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,10 +1,10 @@
 /***********************************************************************
-* @ Í¨ÓÃÌõ¼şÅĞ¶ÏÄ£¿é
+* @ é€šç”¨æ¡ä»¶åˆ¤æ–­æ¨¡å—
 * @ brief
-    1¡¢°Ñ»î¶ª¸ø²ß»®
-    2¡¢Ò»Ğ©ÓëÍæ¼ÒÊı¾İÎŞ¹ØµÄÌõ¼ş£¬Ö¸Õë»áÖ÷¶¯´«NULL
+    1ã€æŠŠæ´»ä¸¢ç»™ç­–åˆ’
+    2ã€ä¸€äº›ä¸ç©å®¶æ•°æ®æ— å…³çš„æ¡ä»¶ï¼ŒæŒ‡é’ˆä¼šä¸»åŠ¨ä¼ NULL
 
-    3¡¢arrayÊ½×éÖ¯½á¹¹£¬¶Ô±ÈrewardµÄmapÊ½×éÖ¯½á¹¹
+    3ã€arrayå¼ç»„ç»‡ç»“æ„ï¼Œå¯¹æ¯”rewardçš„mapå¼ç»„ç»‡ç»“æ„
 * @ author zhoumf
 * @ date 2016-11-21
 ************************************************************************/
@@ -14,8 +14,8 @@
 #undef Trigger_Enum
 #define Declare(typ) typ,
 #define Trigger_Enum\
-    Declare(UpLevel)        /*µÈ¼¶³¬¹ı*/\
-    Declare(DuringTime)     /*ÔÚÁ½Ê±¼äµãÖ®¼ä*/\
+    Declare(UpLevel)        /*ç­‰çº§è¶…è¿‡*/\
+    Declare(DuringTime)     /*åœ¨ä¸¤æ—¶é—´ç‚¹ä¹‹é—´*/\
 
 
 class Player;
@@ -23,7 +23,7 @@ struct TriggerTable
 {
     uint16      id;
     uint16      type;
-    int32       val1; //1223145632£º12ÔÂ23ºÅ14:56:32
+    int32       val1; //1223145632ï¼š12æœˆ23å·14:56:32
     int32       val2;
 };
 class Trigger {
@@ -43,7 +43,7 @@ public:
     bool Check(Player* player, const int triggerId);
     bool Check(Player* player, const std::vector<int>& triggerIds);
 
-    //¸÷ÀàÅĞ¶Ïº¯Êı£¬ÕâÀï¾Í²»¼ì²é¿ÕÖ¸ÕëÁË£¬Âß¼­²ã¸ºÔğ
+    //å„ç±»åˆ¤æ–­å‡½æ•°ï¼Œè¿™é‡Œå°±ä¸æ£€æŸ¥ç©ºæŒ‡é’ˆäº†ï¼Œé€»è¾‘å±‚è´Ÿè´£
 public:
 #undef Declare
 #define Declare(typ) bool _Is_##typ(Player* player, int32 val1, int32 val2);

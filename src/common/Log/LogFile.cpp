@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include "LogFile.h"
-#include "../tool/mkdir.h"
+#include "tool/mkdir.h"
 #include "AsyncLog.h"
 
 LogFile* LogFile::g_log = NULL;
@@ -24,13 +24,13 @@ void LogFile::Log(const char* curFile, const int curLine, LogLv kLevel, const ch
 {
     if (kLevel < _level) return;
 
-    int idx = (int)sprintf(g_logBuff, "[%s]", ::LevelToString[kLevel]);
+    int idx = (int)sprintf(g_logBuff, "[%s] ", ::LevelToString[kLevel]);
     time_t t; time(&t);
-    idx += (int)strftime(g_logBuff+idx, 32, "[%Y-%m-%d %H:%M:%S]", localtime(&t));
-    idx += (int)sprintf(g_logBuff+idx, "[%s(%d)]\n", Dir::FindName(curFile), curLine);
-
-    //TODO:[pid=15529][thread=0x12345]  进程id、线程id
-
+    idx += (int)strftime(g_logBuff+idx, 32, "%Y/%m/%d %H:%M:%S ", localtime(&t));
+#ifdef _DEBUG
+    auto tid = std::hash<std::thread::id>()(std::this_thread::get_id());
+    idx += (int)sprintf(g_logBuff+idx, "%s:%d tid:%d\n", Dir::FindName(curFile), curLine, tid);
+#endif
     va_list ap;
     va_start(ap, fmt);
     int n = vsnprintf(g_logBuff+idx, MAX_MSFBUFF_SIZE-idx, fmt, ap);

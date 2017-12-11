@@ -57,7 +57,7 @@ void test_svr_battle(int playerCnt)
     char strbuff[1024] = { '\0' };
     while (true)
     {
-        sRpcClientPlayer.Update();
+        CPlayer::_rpc.Update();
 
         for (auto& it : vec)
         {

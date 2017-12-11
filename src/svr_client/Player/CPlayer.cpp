@@ -2,17 +2,17 @@
 #include "CPlayer.h"
 #include "raknet/client/UdpClient.h"
 
-CPlayer::_RpcFunc CPlayer::_rpc[RpcEnumCnt] = {0};
-NetCfgClient CPlayer::_netCfg;
+CPlayer::_RpcFunc  CPlayer::_rpcfunc[RpcEnumCnt] = {0};
+RpcQueue<CPlayer>& CPlayer::_rpc = RpcQueue<CPlayer>::Instance();
 
 void CPlayer::UpdateNet(){ _netLink->Update(); }
 
 CPlayer::CPlayer()
 {
-    //if (_rpc.empty())
+    //if (!_rpcfunc[])
     {
 #undef Rpc_Declare
-#define Rpc_Declare(typ) _rpc[typ] = &Player::HandleRpc_##typ;
+#define Rpc_Declare(typ) _rpcfunc[typ] = &Player::HandleRpc_##typ;
         Rpc_For_Client;
     }
 
@@ -38,18 +38,18 @@ void CPlayer::RunClientNet()
     });
     _netLink->Start([&](void* p, int size){
         NetPack msg(p, size);
-        sRpcClientPlayer._Handle(this, msg);
+        _rpc._Handle(this, msg);
     });
 }
 uint64 CPlayer::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun)
 {
-    return sRpcClientPlayer._CallRpc(rid, sendFun, std::bind(&CPlayer::SendMsg, this, std::placeholders::_1));
+    return _rpc._CallRpc(rid, sendFun, std::bind(&CPlayer::SendMsg, this, std::placeholders::_1));
 }
 void CPlayer::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {
     uint64 reqKey = CallRpc(rid, sendFun);
 
-    sRpcClientPlayer.RegistResponse(reqKey, recvFun);
+    _rpc.RegistResponse(reqKey, recvFun);
 }
 void CPlayer::SendMsg(const NetPack& pack)
 {
@@ -58,4 +58,5 @@ void CPlayer::SendMsg(const NetPack& pack)
 
 //////////////////////////////////////////////////////////////////////////
 // rpc
-
+#undef Rpc_Realize
+#define Rpc_Realize(typ) void CPlayer::HandleRpc_##typ(NetPack& req, NetPack& ack)

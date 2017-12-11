@@ -46,6 +46,7 @@
     <ClCompile Include="raknet\server\UdpServer.cpp">
       <Filter>raknet\server</Filter>
     </ClCompile>
+    <ClCompile Include="config_net.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config_net.h" />

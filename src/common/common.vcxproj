@@ -19,7 +19,6 @@
     <ClInclude Include="Buffer\DataSend.h" />
     <ClInclude Include="Buffer\NetPack.h" />
     <ClInclude Include="Csv\CSVparser.hpp" />
-    <ClInclude Include="def\ConstDef.h" />
     <ClInclude Include="Log\AsyncLog.h" />
     <ClInclude Include="Log\LogFile.h" />
     <ClInclude Include="Log\RuntimeCast.h" />
@@ -64,6 +63,9 @@
     <ClCompile Include="Rand\rand.cpp" />
     <ClCompile Include="Service\ServiceMgr.cpp" />
     <ClCompile Include="Timer\TimerWheel.cpp" />
+    <ClCompile Include="tool\compress.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="tool\DebugFile.cpp" />
     <ClCompile Include="tool\GameApi.cpp" />
     <ClCompile Include="tool\Input.cpp" />
@@ -115,7 +117,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)ThirdParty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)ThirdParty\zlib;$(SolutionDir)ThirdParty\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

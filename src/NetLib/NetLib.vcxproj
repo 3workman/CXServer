@@ -23,6 +23,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="config_net.cpp" />
     <ClCompile Include="iocp\client\ClientLink.cpp" />
     <ClCompile Include="iocp\server\ServLink.cpp" />
     <ClCompile Include="iocp\server\ServLinkMgr.cpp" />
@@ -109,7 +110,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\include;$(SolutionDir)\ThirdParty\raknet\Source;$(ProjectDir);$(SolutionDir)\ThirdParty\libevent\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\include;$(SolutionDir)\ThirdParty\raknet\Source;$(ProjectDir);$(SolutionDir)\ThirdParty\libevent\include;$(SolutionDir)ThirdParty\flatbuffers\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>

@@ -61,9 +61,10 @@ void UdpServer::RemoveClientAgent(const RakNet::RakNetGUID& guid, std::function<
         delete clientAgent;
     }
 }
-void UdpServer::CloseLink(const RakNet::SystemAddress& addr)
+void UdpServer::CloseLink(const RakNet::RakNetGUID& guid)
 {
-    m_rakPeer->CloseConnection(addr, true);
+    m_rakPeer->CloseConnection(guid, true);
+    OnLinkClosed(guid);
 }
 void UdpServer::OnLinkClosed(const RakNet::RakNetGUID& guid)
 {
