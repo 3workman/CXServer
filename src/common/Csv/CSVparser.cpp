@@ -226,14 +226,14 @@ namespace csv {
     return false;
   }
 
-  const std::string Row::operator[](unsigned int valuePosition) const
+  const std::string& Row::operator[](unsigned int valuePosition) const
   {
        if (valuePosition < _values.size())
            return _values[valuePosition];
        throw Error("can't return this value (doesn't exist)");
   }
 
-  const std::string Row::operator[](const std::string &key) const
+  const std::string& Row::operator[](const std::string &key) const
   {
       std::vector<std::string>::const_iterator it;
       int pos = 0;

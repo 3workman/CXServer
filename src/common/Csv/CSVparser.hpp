@@ -44,8 +44,8 @@ namespace csv {
         void push(const std::string &);
         bool set(const std::string &, const std::string &);
 
-        const std::string operator[](unsigned int) const;
-        const std::string operator[](const std::string &valueName) const;
+        const std::string& operator[](unsigned int) const;
+        const std::string& operator[](const std::string &valueName) const;
         friend std::ostream& operator<<(std::ostream& os, const Row &row);
         friend std::ofstream& operator<<(std::ofstream& os, const Row &row);
 
@@ -151,9 +151,10 @@ namespace csv {
         std::string csvname("../data/csv/");
         csvname.append(name);
         T data;
-        csv::Parser file = csv::Parser(csvname);
+        csv::Parser file(csvname);
         uint cnt = file.rowCount();
         for (uint i = 0; i < cnt; ++i) {
+            if (file[i][0].at(0) == '#') continue;
             file[i].Parse(&data);
             table.push_back(data);
         }
@@ -164,9 +165,10 @@ namespace csv {
         csvname.append(name);
         Val data;
         Key* pKey = (Key*)(char*)&data;
-        csv::Parser file = csv::Parser(csvname);
+        csv::Parser file(csvname);
         uint cnt = file.rowCount();
         for (uint i = 0; i < cnt; ++i) {
+            if (file[i][0].at(0) == '#') continue;
             file[i].Parse(&data);
             assert(table.find(*pKey) == table.end());
             table.insert(std::make_pair(*pKey, data));

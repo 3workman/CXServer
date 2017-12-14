@@ -72,10 +72,9 @@ public:
     static CTimerMgr& Instance(){ static CTimerMgr T; return T; }
     void Refresh(uint32 time_elasped, const time_t timenow);
 
-    TimerNode* AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec = 0, int totalSec = 0);
+    TimerNode* AddTimer(const std::function<void()>& f, float delaySec, float cdSec = 0, float totalSec = 0);
     void _AddTimerNode(uint32 milseconds, TimerNode* node);
-
-    void RemoveTimer(TimerNode* node);
+    void DelTimer(TimerNode* node);
 private:
     void Cascade(uint32 wheelIdx, const time_t timenow);
     void AddToReadyNode(TimerNode* node);

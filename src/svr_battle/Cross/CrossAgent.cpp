@@ -7,7 +7,7 @@
 
 CrossAgent::CrossAgent()
 {
-    if (!_rpcfunc[rpc_svr_accept])
+    if (!_rpcfunc[rpc_battle_handle_player_data])
     {
 #undef Rpc_Declare
 #define Rpc_Declare(typ) _rpcfunc[typ] = (RpcClient::_RpcFunc)&CrossAgent::HandleRpc_##typ;

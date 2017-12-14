@@ -4,7 +4,7 @@
 
 Zookeeper::Zookeeper()
 {
-    if (!_rpcfunc[rpc_svr_accept])
+    if (!_rpcfunc[rpc_svr_node_join])
     {
 #undef Rpc_Declare
 #define Rpc_Declare(typ) _rpcfunc[typ] = (RpcClient::_RpcFunc)&Zookeeper::HandleRpc_##typ;

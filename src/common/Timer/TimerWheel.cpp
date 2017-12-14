@@ -33,10 +33,13 @@ void TimerNode::_Callback(){
         delete this;
     }
 }
-TimerNode* CTimerMgr::AddTimer(const std::function<void()>& f, uint32 delaySec, uint32 cdSec /* = 0 */, int totalSec /* = 0 */) {
-    TimerNode* node = new TimerNode(f, cdSec * 1000, totalSec * 1000);
-    node->timeDead = GameApi::TimeMS() + delaySec * 1000;
-    _AddTimerNode(delaySec * 1000, node);
+TimerNode* CTimerMgr::AddTimer(const std::function<void()>& f, float delaySec, float cdSec /* = 0 */, float totalSec /* = 0 */) {
+    uint32 delay = uint32(delaySec * 1000);
+    uint32 cd = uint32(cdSec * 1000);
+    int total = int(totalSec * 1000);
+    TimerNode* node = new TimerNode(f, cd, total);
+    node->timeDead = GameApi::TimeMS() + delay;
+    _AddTimerNode(delay, node);
     return node;
 }
 void CTimerMgr::_AddTimerNode(uint32 milseconds, TimerNode* node) {
@@ -63,7 +66,7 @@ void CTimerMgr::_AddTimerNode(uint32 milseconds, TimerNode* node) {
     link->next = slot;
     slot->prev = link;
 }
-void CTimerMgr::RemoveTimer(TimerNode* node) {
+void CTimerMgr::DelTimer(TimerNode* node) {
     NodeLink* link = &(node->link);
     if (link->prev) {
         link->prev->next = link->next;
