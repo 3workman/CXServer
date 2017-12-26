@@ -31,7 +31,6 @@
 * @ date 2014-11-21
 ************************************************************************/
 #pragma once
-#include "SafeQueue.h"
 
 // 检查一段内存是否越界(头尾设标记)
 #define CHECKNU 6893    // 除0外任意值
@@ -44,10 +43,11 @@ if ((o)->__precheck##i != CHECKNU || (o)->__poscheck##i != CHECKNU){\
 	__FILE__, __LINE__, (o)->__precheck##i, (o)->__poscheck##i);}\
 }
 
-class CPoolPage{//线程安全的
+class CPoolPage {
 	const size_t	  m_pageSize;
 	const size_t	  m_pageCnt;
-    SafeQueue<void*>  m_queue;
+    //SafeQueue<void*>  m_queue;
+    std::queue<void*> m_queue;
 
     bool Double() // 可设置Double次数限制
     {
@@ -69,17 +69,27 @@ public:
             3、注意调用的成员函数也可能干坏事
             4、即便在构造函数的最后一行也不行
         */
+#ifdef _DEBUG
+        *const_cast<size_t*>(&m_pageSize) = m_pageSize + 1;
+#endif
 		Double();
 	}
 	void* Alloc(){
-        void* ret = NULL;
-        if (!m_queue.pop(ret))
-        {
-            if (Double()) m_queue.pop(ret);
-        }
+        if (m_queue.empty() && !Double()) return NULL;
+        void* ret = m_queue.front();
+        m_queue.pop();
+#ifdef _DEBUG
+        uint8* p = (uint8*)ret + m_pageSize - 1;
+        *p = 0xff;
+#endif
         return ret;
 	}
 	void Dealloc(void* p){
+#ifdef _DEBUG
+        uint8* p1 = (uint8*)p + m_pageSize - 1;
+        assert(*p1 == 0xff);
+        *p1 = 0;
+#endif
 		m_queue.push(p);
 	}
 };
@@ -100,7 +110,8 @@ class CPoolLevel {
 #define LevelCnt(lv)  (m_MaxLvCnt << (MaxLevel-(lv)))
 
     const int   	  m_MaxLvCnt;
-    SafeQueue<void*>  m_queue[MaxLevel+1];
+    //SafeQueue<void*>  m_queue[MaxLevel+1];
+    std::queue<void*> m_queue[MaxLevel + 1];
 
 public:
     CPoolLevel(int maxLvCnt) : m_MaxLvCnt(maxLvCnt)
@@ -109,19 +120,30 @@ public:
     }
     void* Alloc(int size)
     {
+#ifdef _DEBUG
+        ++size;
+#endif
         int lv = _GetLevel(size);
 
         if (lv == -1) return malloc(size);
 
-        void* ret = NULL;
-        if (!m_queue[lv].pop(ret))
-        {
-            if (_Append(lv)) m_queue[lv].pop(ret);
-        }
+        if (m_queue[lv].empty() && !_Append(lv)) return NULL;
+        void* ret = m_queue[lv].front();
+        m_queue[lv].pop();
+#ifdef _DEBUG
+        uint8* p = (uint8*)ret + size - 1;
+        *p = 0xff;
+#endif
         return ret;
     }
     void Dealloc(void* p, int size)
     {
+#ifdef _DEBUG
+        ++size;
+        uint8* p1 = (uint8*)p + size - 1;
+        assert(*p1 == 0xff);
+        *p1 = 0;
+#endif
         int lv = _GetLevel(size);
         if (lv == -1) {
             free(p);
@@ -164,7 +186,8 @@ private:
         size_t size = m_queue[lv].size()/2+1;
         void* tmp = NULL;
         do  {
-            m_queue[lv].pop(tmp);
+            tmp = m_queue[lv].front();
+            m_queue[lv].pop();
             m_queue[lv-1].push(tmp);
             m_queue[lv-1].push((char*)tmp + LevelSize(lv - 1));
         } while (--size);
@@ -230,6 +253,7 @@ public:
 		return m_arrPtr[id];
 	}
 	void Dealloc(T* p){
+        assert(p->m_index != VOID_POOL_ID);
 		m_queue.push(p->m_index);
 		p->m_index = VOID_POOL_ID; // 回收后置空内存id
 	}
@@ -282,21 +306,15 @@ public:
             return NULL; \
         }
 
-template <class T>
-class CPoolObj{
-	CPoolPage	m_pool;
-public:
-	CPoolObj(size_t num) : m_pool(sizeof(T), num){}
-	T* Alloc(){ return (T*)m_pool.Alloc(); }
-	void Dealloc(T* p){ m_pool.Dealloc(p); }
-};
-#define Pool_Obj_Define(T, size) \
-        static CPoolObj<T>& _Pool(){ static CPoolObj<T> pool(size); return pool; } \
+
+// 分页池包装为对象池
+#define Pool_Obj_Define(T, num) \
+        static CPoolPage& _Pool(){ static CPoolPage pool(sizeof(T), num); return pool; } \
         public: \
 		void* operator new(size_t /*size*/){ return _Pool().Alloc(); }\
 		void* operator new(size_t /*size*/, const char* file, int line){ return _Pool().Alloc(); }\
-		void operator delete(void* p, const char* file, int line){ return _Pool().Dealloc((T*)p); }\
-		void operator delete(void* p, size_t) { return _Pool().Dealloc((T*)p); }
+		void operator delete(void* p, const char* file, int line){ return _Pool().Dealloc(p); }\
+		void operator delete(void* p, size_t) { return _Pool().Dealloc(p); }
 
 
 /************************************************************************/

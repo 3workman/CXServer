@@ -3,10 +3,10 @@
 #include "tool/GameApi.h"
 #include "Log/LogFile.h"
 
-uint32 CTimerMgr::WHEEL_SIZE[] = {};
-uint32 CTimerMgr::WHEEL_CAP[] = {};
+uint32 TimerMgr::WHEEL_SIZE[] = {};
+uint32 TimerMgr::WHEEL_CAP[] = {};
 
-CTimerMgr::CTimerMgr() {
+TimerMgr::TimerMgr() {
     assert(SUM_ARR(WHEEL_BIT, WHEEL_NUM) < 32);
     for (int i = 0; i < WHEEL_NUM; ++i) {
         WHEEL_SIZE[i] = 1 << WHEEL_BIT[i];
@@ -15,7 +15,7 @@ CTimerMgr::CTimerMgr() {
         _wheels[i] = new stWheel(WHEEL_SIZE[i]);
     }
 }
-CTimerMgr::~CTimerMgr() {
+TimerMgr::~TimerMgr() {
     for (int i = 0; i < WHEEL_NUM; ++i) {
         if (_wheels[i]) delete _wheels[i];
     }
@@ -26,14 +26,15 @@ void TimerNode::_Callback(){
     if (loop > 0) {
         //timeDead = TimeNow() + interval;
         timeDead += interval; //Notice：周期执行的函数，服务器卡顿应该追帧，再取系统当前时间是错的
-        CTimerMgr::Instance()._AddTimerNode(interval, this);
+        TimerMgr::Instance()._AddTimerNode(interval, this);
         func(); //must at the last line; timer may be deleted in _func();
     } else {
-        func();
+        loop = -1;
+        func(); //Bug：里面调TimerMgr::DelTimer()，就多次delete了
         delete this;
     }
 }
-TimerNode* CTimerMgr::AddTimer(const std::function<void()>& f, float delaySec, float cdSec /* = 0 */, float totalSec /* = 0 */) {
+TimerNode* TimerMgr::AddTimer(const std::function<void()>& f, float delaySec, float cdSec /* = 0 */, float totalSec /* = 0 */) {
     uint32 delay = uint32(delaySec * 1000);
     uint32 cd = uint32(cdSec * 1000);
     int total = int(totalSec * 1000);
@@ -42,7 +43,7 @@ TimerNode* CTimerMgr::AddTimer(const std::function<void()>& f, float delaySec, f
     _AddTimerNode(delay, node);
     return node;
 }
-void CTimerMgr::_AddTimerNode(uint32 milseconds, TimerNode* node) {
+void TimerMgr::_AddTimerNode(uint32 milseconds, TimerNode* node) {
     NodeLink* slot = NULL;
     uint32 tickCnt = milseconds / TIME_TICK_LEN;
     if (tickCnt < WHEEL_CAP[0]) {
@@ -66,7 +67,10 @@ void CTimerMgr::_AddTimerNode(uint32 milseconds, TimerNode* node) {
     link->next = slot;
     slot->prev = link;
 }
-void CTimerMgr::DelTimer(TimerNode* node) {
+void TimerMgr::DelTimer(TimerNode* node) {
+    //Bug：避免与TimerNode::_Callback()中重复delete
+    if (node->loop < 0) return;
+
     NodeLink* link = &(node->link);
     if (link->prev) {
         link->prev->next = link->next;
@@ -78,7 +82,7 @@ void CTimerMgr::DelTimer(TimerNode* node) {
 
     delete node;
 }
-void CTimerMgr::Refresh(uint32 elapse, const time_t timenow) {
+void TimerMgr::Refresh(uint32 elapse, const time_t timenow) {
     _time_elapse += elapse;
     uint32 tickCnt = _time_elapse / TIME_TICK_LEN;
     _time_elapse %= TIME_TICK_LEN;
@@ -101,14 +105,14 @@ void CTimerMgr::Refresh(uint32 elapse, const time_t timenow) {
     }
     DoTimeOutCallBack();
 }
-void CTimerMgr::AddToReadyNode(TimerNode* node) {
+void TimerMgr::AddToReadyNode(TimerNode* node) {
     NodeLink* link = &(node->link);
     link->prev = _readyNode.prev;
     link->prev->next = link;
     link->next = &_readyNode;
     _readyNode.prev = link;
 }
-void CTimerMgr::DoTimeOutCallBack() {
+void TimerMgr::DoTimeOutCallBack() {
     NodeLink* link = _readyNode.next;
     while (link != &_readyNode) {
         TimerNode* node = (TimerNode*)link;
@@ -117,7 +121,7 @@ void CTimerMgr::DoTimeOutCallBack() {
     }
     _readyNode.next = _readyNode.prev = &_readyNode;
 }
-void CTimerMgr::Cascade(uint32 wheelIdx, const time_t timenow) {
+void TimerMgr::Cascade(uint32 wheelIdx, const time_t timenow) {
     if (wheelIdx < 1 || wheelIdx >= WHEEL_NUM) return;
 
     bool isCascade = false;
@@ -143,7 +147,7 @@ void CTimerMgr::Cascade(uint32 wheelIdx, const time_t timenow) {
     }
     if (isCascade) Cascade(++wheelIdx, timenow);
 }
-void CTimerMgr::Printf() {
+void TimerMgr::Printf() {
     LOG_TRACK("=======Printf=======");
     for (int i = 0; i < WHEEL_NUM; ++i) {
         stWheel* wheel = _wheels[i];

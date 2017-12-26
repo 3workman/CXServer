@@ -58,7 +58,7 @@ struct stWheel {
     }
     NodeLink* GetCurSlot() { return slots + slotIdx; }
 };
-class CTimerMgr {
+class TimerMgr {
     static uint32 WHEEL_SIZE[WHEEL_NUM];
     static uint32 WHEEL_CAP[WHEEL_NUM];
 
@@ -66,10 +66,10 @@ class CTimerMgr {
     NodeLink _readyNode;
     uint32   _time_elapse = 0;
 
-    CTimerMgr();
-    ~CTimerMgr();
+    TimerMgr();
+    ~TimerMgr();
 public:
-    static CTimerMgr& Instance(){ static CTimerMgr T; return T; }
+    static TimerMgr& Instance(){ static TimerMgr T; return T; }
     void Refresh(uint32 time_elasped, const time_t timenow);
 
     TimerNode* AddTimer(const std::function<void()>& f, float delaySec, float cdSec = 0, float totalSec = 0);
@@ -81,4 +81,4 @@ private:
     void DoTimeOutCallBack();
     void Printf();
 };
-#define sTimerMgr CTimerMgr::Instance()
+#define sTimerMgr TimerMgr::Instance()
