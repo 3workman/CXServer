@@ -43,7 +43,7 @@ void CPlayer::RunClientNet()
 }
 uint64 CPlayer::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun)
 {
-    return _rpc._CallRpc(rid, sendFun, std::bind(&CPlayer::SendMsg, this, std::placeholders::_1));
+    return _rpc._CallRpc(this, rid, sendFun);
 }
 void CPlayer::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {

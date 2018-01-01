@@ -3,6 +3,7 @@
 * @ brief
 	1、预先申请一大块内存，按固定大小分页，页头地址给外界使用
 	2、多涉及operator new、operator delete
+    3、给消息类型加池子，须保障线程安全。IO线程new，逻辑线程delete
 
 * @ Notice
     1、cPool_Index 内存池里的对象，有m_index数据，实为内存索引
@@ -31,6 +32,7 @@
 * @ date 2014-11-21
 ************************************************************************/
 #pragma once
+#include "SafeQueue.h"
 
 // 检查一段内存是否越界(头尾设标记)
 #define CHECKNU 6893    // 除0外任意值
@@ -46,8 +48,7 @@ if ((o)->__precheck##i != CHECKNU || (o)->__poscheck##i != CHECKNU){\
 class CPoolPage {
 	const size_t	  m_pageSize;
 	const size_t	  m_pageCnt;
-    //SafeQueue<void*>  m_queue;
-    std::queue<void*> m_queue;
+    SafeQueue<void*>  m_queue; //Notice：可能IO线程new，逻辑线程delete
 
     bool Double() // 可设置Double次数限制
     {
@@ -75,9 +76,10 @@ public:
 		Double();
 	}
 	void* Alloc(){
-        if (m_queue.empty() && !Double()) return NULL;
-        void* ret = m_queue.front();
-        m_queue.pop();
+        void* ret = NULL;
+        if (!m_queue.pop(ret)) {
+            if (Double()) m_queue.pop(ret);
+        }
 #ifdef _DEBUG
         uint8* p = (uint8*)ret + m_pageSize - 1;
         *p = 0xff;
@@ -110,8 +112,7 @@ class CPoolLevel {
 #define LevelCnt(lv)  (m_MaxLvCnt << (MaxLevel-(lv)))
 
     const int   	  m_MaxLvCnt;
-    //SafeQueue<void*>  m_queue[MaxLevel+1];
-    std::queue<void*> m_queue[MaxLevel + 1];
+    SafeQueue<void*>  m_queue[MaxLevel+1];
 
 public:
     CPoolLevel(int maxLvCnt) : m_MaxLvCnt(maxLvCnt)
@@ -127,9 +128,10 @@ public:
 
         if (lv == -1) return malloc(size);
 
-        if (m_queue[lv].empty() && !_Append(lv)) return NULL;
-        void* ret = m_queue[lv].front();
-        m_queue[lv].pop();
+        void* ret = NULL;
+        if (!m_queue[lv].pop(ret)) {
+            if (_Append(lv)) m_queue[lv].pop(ret);
+        }
 #ifdef _DEBUG
         uint8* p = (uint8*)ret + size - 1;
         *p = 0xff;
@@ -186,8 +188,7 @@ private:
         size_t size = m_queue[lv].size()/2+1;
         void* tmp = NULL;
         do  {
-            tmp = m_queue[lv].front();
-            m_queue[lv].pop();
+            m_queue[lv].pop(tmp);
             m_queue[lv-1].push(tmp);
             m_queue[lv-1].push((char*)tmp + LevelSize(lv - 1));
         } while (--size);

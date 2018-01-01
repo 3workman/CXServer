@@ -22,6 +22,7 @@ void RpcClient::_OnConnect() //Notice：IO线程调用的，不是主逻辑线�
 {
     //这里不能用CallRpc，它不是线程安全的
     _netLink->SendMsg(&_connId, sizeof(_connId)); //第一条消息：上报connId
+
     NetPack regMsg(16);
     regMsg.OpCode(rpc_regist);
     NetMeta::G_Local_Meta->DataToBuf(regMsg);
@@ -42,7 +43,7 @@ RpcClient::~RpcClient()
 }
 uint64 RpcClient::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun)
 {
-    return _rpc._CallRpc(rid, sendFun, std::bind(&RpcClient::SendMsg, this, std::placeholders::_1));
+    return _rpc._CallRpc(this, rid, sendFun);
 }
 void RpcClient::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {

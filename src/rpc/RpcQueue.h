@@ -21,7 +21,6 @@
 #include "generate_rpc_enum.h"
 
 typedef std::function<void(NetPack&)> ParseRpcParam;
-typedef std::function<void(const NetPack&)> SendMsgFunc;
 
 template <typename Typ> // 类型Typ须含有：_rpcfunc列表，SendMsg()
 class RpcQueue {
@@ -56,9 +55,6 @@ public:
             m_BackBuffer.ResetHead(buf);
             (pObj->*func)(buf, m_BackBuffer);
             if(m_BackBuffer.OpCode()) SendBackBuffer(pObj);
-#ifdef _DEBUG
-            //std::cout << "Recv Msg: " << RpcIdToName(opCode) << " ID:" << opCode << std::endl;
-#endif
         } else {
             auto it = m_response.find(buf.GetReqKey());
             assert(it != m_response.end());
@@ -80,7 +76,7 @@ public:
         m_response[reqKey] = func; //后来的应该覆盖之前的
         //m_response.insert(make_pair(reqKey, func));
     }
-    uint64 _CallRpc(RpcEnum rid, const ParseRpcParam& func, const SendMsgFunc& doSend)
+    uint64 _CallRpc(Typ* pObj, RpcEnum rid, const ParseRpcParam& func)
     {
         // make sure body is cleared, to avoid nested buffer writes
         assert(m_SendBuffer.OpCode() == 0 && "opcode overwriten, probably nested rpc buffer write");
@@ -95,7 +91,7 @@ public:
 
         func(m_SendBuffer);
         m_SendBuffer.MoveToBuf(SendBuilder);
-        doSend(m_SendBuffer);
+        pObj->SendMsg(m_SendBuffer);
         m_SendBuffer.Clear();
         return ret;
     }

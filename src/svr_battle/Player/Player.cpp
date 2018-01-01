@@ -95,7 +95,7 @@ void Player::SendMsg(const NetPack& pack)
 
 uint64 Player::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun)
 {
-    return _rpc._CallRpc(rid, sendFun, std::bind(&Player::SendMsg, this, std::placeholders::_1));
+    return _rpc._CallRpc(this, rid, sendFun);
 }
 void Player::CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun)
 {
