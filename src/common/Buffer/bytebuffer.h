@@ -94,6 +94,7 @@ public:
     // appending to the end of buffer
     void append(const std::string& str) {//tolua_export
         uint16 len = (uint16)str.size();
+        assert(str.size() < std::pow(2, sizeof(len) * 8));
         append(len);
         append(str.c_str(), len);
     }//tolua_export
@@ -102,11 +103,13 @@ public:
     // NOTICE：若无const char* 重载，会匹配进template函数
     void append(const char* str) {
         uint16 len = (uint16)strlen(str);
+        assert(strlen(str) < std::pow(2, sizeof(len) * 8));
         append(len);
         append(str, len);
     }
     void append(char* str) {
         uint16 len = (uint16)strlen(str);
+        assert(strlen(str) < std::pow(2, sizeof(len) * 8));
         append(len);
         append(str, len);
     }

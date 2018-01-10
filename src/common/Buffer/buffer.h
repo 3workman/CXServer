@@ -114,8 +114,7 @@ namespace net
 		}
         void ensureWritableBytes(size_t len) //确保剩余空间足够，一定能写入
         {
-            if (writableBytes() < len) makeSpace(len);
-
+            makeSpace(len);
             assert(writableBytes() >= len);
         }
 
@@ -137,14 +136,12 @@ namespace net
 	private:
 		char* begin(){ return &*_buffer.begin(); }
 
-		void makeSpace(size_t len)
-		{
-			if (writableBytes() + prependBytes() < len + kCheapPrepend)
-			{
+        void makeSpace(size_t len)
+        {
+            if (writableBytes() >= len) {
+            } else if (writableBytes() + prependBytes() < len + kCheapPrepend) {
 				_buffer.resize(_wpos + len);
-			}
-			else
-			{
+			} else {
 				// move readable data to the front, make space inside buffer
 				size_t oldReadable = readableBytes();
 				std::copy(beginRead(), beginWrite(), begin() + kCheapPrepend);
