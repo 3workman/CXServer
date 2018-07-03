@@ -3,27 +3,28 @@
 #include "UdpServer.h"
 #include "RakPeerInterface.h"
 
-UdpClientAgent::UdpClientAgent(UdpServer* p)
-    : m_pMgr(p)
-    , m_rakPeer(p->m_rakPeer)
+UdpClientAgent::UdpClientAgent(UdpServer& svr)
+    : m_pMgr(svr)
+    , m_rakPeer(svr.m_rakPeer)
 {
 
 }
 void UdpClientAgent::CloseLink()
 {
-    printf("Udp CloseLink(%d)... \n", m_guid.ToUint32(m_guid));
-    m_pMgr->CloseLink(m_guid);
+    printf("Udp CloseLink(%xd)... \n", m_guid.ToUint32(m_guid));
+    m_pMgr.CloseLink(m_guid);
+    m_player = NULL;
 }
 void UdpClientAgent::RecvMsg(const void* pMsg, int size)
 {
     if (m_player == NULL)
     {
-        if (!m_pMgr->_BindLinkAndPlayer(m_player, this, pMsg, size))
+        if (!m_pMgr._BindLinkAndPlayer(m_player, this, pMsg, size))
         {
             CloseLink();
         }
     }
-    m_pMgr->_HandleClientMsg(m_player, pMsg, size);
+    m_pMgr._HandleClientMsg(m_player, pMsg, size);
 }
 void UdpClientAgent::SendMsg(const void* pMsg, int size)
 {

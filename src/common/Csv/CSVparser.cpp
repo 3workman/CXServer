@@ -18,7 +18,7 @@ namespace csv {
         {
             while (ifile.good())
             {
-                getline(ifile, line);
+                std::getline(ifile, line);
                 if (line != "")
                     _originalFile.push_back(line);
             }

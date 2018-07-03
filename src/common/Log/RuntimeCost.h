@@ -9,20 +9,15 @@
 * @ date 2017-8-7
 ************************************************************************/
 #pragma once
+#include <chrono>
 
-class RuntimeCast
-{
+class RuntimeCost {
 public:
-    RuntimeCast(const char* funName, uint cast = 15);
-    ~RuntimeCast();
-
-    static bool     IsLog;
+    RuntimeCost(const char* funName, uint costMsec = 15);
+    ~RuntimeCost();
 private:
-#ifdef _WIN32
-    LARGE_INTEGER   m_begin;
-#else
-    uint64          m_begin;
-#endif
-    uint            m_cast;
+    const uint      m_costMsec;
     const char*		m_funName;
+
+    std::chrono::steady_clock::time_point m_begin;
 };

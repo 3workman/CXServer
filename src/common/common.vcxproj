@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
@@ -21,9 +29,20 @@
     <ClInclude Include="Csv\CSVparser.hpp" />
     <ClInclude Include="Log\AsyncLog.h" />
     <ClInclude Include="Log\LogFile.h" />
-    <ClInclude Include="Log\RuntimeCast.h" />
+    <ClInclude Include="Log\RuntimeCost.h" />
     <ClInclude Include="Lua\LuaCall.h" />
     <ClInclude Include="Lua\tolua.h" />
+    <ClInclude Include="math\config-osx.h" />
+    <ClInclude Include="math\config-vc.h" />
+    <ClInclude Include="math\gfx.h" />
+    <ClInclude Include="math\intvec.h" />
+    <ClInclude Include="math\mat2.h" />
+    <ClInclude Include="math\mat3.h" />
+    <ClInclude Include="math\mat4.h" />
+    <ClInclude Include="math\quat.h" />
+    <ClInclude Include="math\vec2.h" />
+    <ClInclude Include="math\vec3.h" />
+    <ClInclude Include="math\vec4.h" />
     <ClInclude Include="Rand\rand.h" />
     <ClInclude Include="Rand\RandWeight.h" />
     <ClInclude Include="Rank\rank.h" />
@@ -33,16 +52,17 @@
     <ClInclude Include="tool\cLock.h" />
     <ClInclude Include="tool\compress.h" />
     <ClInclude Include="tool\DebugFile.h" />
-    <ClInclude Include="tool\delegate.h" />
     <ClInclude Include="tool\Floyd.h" />
     <ClInclude Include="tool\GameApi.h" />
-    <ClInclude Include="tool\global.h" />
+    <ClInclude Include="tool\Grid2D.h" />
     <ClInclude Include="tool\Input.h" />
+    <ClInclude Include="tool\lodepng.h" />
     <ClInclude Include="tool\Mempool.h" />
     <ClInclude Include="tool\mkdir.h" />
     <ClInclude Include="tool\noncopyable.h" />
     <ClInclude Include="tool\SafeQueue.h" />
     <ClInclude Include="tool\ScopeGuard.h" />
+    <ClInclude Include="tool\StringHash.h" />
     <ClInclude Include="tool\thread.h" />
     <ClInclude Include="tool\UnionID.h" />
     <ClInclude Include="tool\UnitTest.h" />
@@ -50,25 +70,47 @@
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Buffer\DataDiff.cpp" />
     <ClCompile Include="Buffer\DataSend.cpp" />
     <ClCompile Include="Csv\CSVparser.cpp" />
     <ClCompile Include="Log\AsyncLog.cpp" />
     <ClCompile Include="Log\LogFile.cpp" />
-    <ClCompile Include="Log\RuntimeCast.cpp" />
-    <ClCompile Include="Lua\LuaCall.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+    <ClCompile Include="Log\RuntimeCost.cpp" />
+    <ClCompile Include="Lua\LuaCall.cpp" />
+    <ClCompile Include="math\mat2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="math\mat3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="math\mat4.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="math\quat.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Rand\rand.cpp" />
     <ClCompile Include="Service\ServiceMgr.cpp" />
     <ClCompile Include="Timer\TimerWheel.cpp" />
     <ClCompile Include="tool\compress.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="tool\DebugFile.cpp" />
     <ClCompile Include="tool\GameApi.cpp" />
     <ClCompile Include="tool\Input.cpp" />
+    <ClCompile Include="tool\lodepng.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="tool\StringHash.cpp" />
     <ClCompile Include="tool\UnitTest.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -84,7 +126,20 @@
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
@@ -97,17 +152,33 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
-    <OutDir>$(SolutionDir)build\</OutDir>
-    <IntDir>$(SolutionDir)build\temp\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)build\Debug\</OutDir>
+    <IntDir>$(SolutionDir)build\temp_debug\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)build\Release\</OutDir>
+    <IntDir>$(SolutionDir)build\temp_release\$(ProjectName)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -117,7 +188,28 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)ThirdParty\zlib;$(SolutionDir)ThirdParty\googletest\include;$(SolutionDir)src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\include;$(ProjectDir);$(SolutionDir)ThirdParty\googletest\include;$(SolutionDir)ThirdParty\zlib;$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)ThirdParty\flatbuffers\include</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4819</DisableSpecificWarnings>
+      <AdditionalOptions>/std:c++17 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <OutputFile>$(SolutionDir)build\Debug\$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)\ThirdParty;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlibstat.lib;lua.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\include;$(ProjectDir);$(SolutionDir)ThirdParty\googletest\include;$(SolutionDir)ThirdParty\zlib;$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)ThirdParty\flatbuffers\include;$(SolutionDir)src\svr_battle</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -126,11 +218,36 @@
     </Link>
     <Lib>
       <OutputFile>$(SolutionDir)build\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>lua.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\ThirdParty;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlibstat.lib;lua.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\include;$(ProjectDir);$(SolutionDir)ThirdParty\googletest\include;$(SolutionDir)ThirdParty\zlib;$(SolutionDir)ThirdParty\lua-5.3.4\src;$(SolutionDir)ThirdParty\LuaBridge\Source;$(SolutionDir)ThirdParty\flatbuffers\include</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4819</DisableSpecificWarnings>
+      <AdditionalOptions>/std:c++17 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <OutputFile>$(SolutionDir)build\Release\$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>zlibstat.lib;lua.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\ThirdParty;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>

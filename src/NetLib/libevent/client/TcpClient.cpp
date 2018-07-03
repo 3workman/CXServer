@@ -6,6 +6,7 @@
 # ifdef _XOPEN_SOURCE_EXTENDED
 #  include <arpa/inet.h>
 # endif
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #endif
 #include <event2/bufferevent.h>
@@ -17,6 +18,7 @@
 TcpClient::TcpClient(const NetCfgClient& info)
     : _config(info)
     , _recvBuf(4096)
+    , _sendBuf(4096)
 {
 
 }
@@ -32,8 +34,10 @@ TcpClient::~TcpClient() {
 }
 void TcpClient::SendMsg(const void* pMsg, uint16 size)
 {
-    bufferevent_write(_bev, &size, sizeof(size));
-    bufferevent_write(_bev, pMsg, size);
+    _sendBuf.append(size);
+    _sendBuf.append(pMsg, size);
+    bufferevent_write(_bev, _sendBuf.beginRead(), _sendBuf.readableBytes());
+    _sendBuf.clear();
 }
 
 void cb_conn_read(struct bufferevent* bev, void* arg);
@@ -76,6 +80,7 @@ void cb_conn_read(struct bufferevent* bev, void* arg)
     auto client = (TcpClient*)arg;
     auto& buf = client->_recvBuf;
 
+    buf.ensureWritableBytes(1);
     size_t n = bufferevent_read(bev, buf.beginWrite(), buf.writableBytes());
     buf.writerMove(n);
     const int c_off = sizeof(uint16);

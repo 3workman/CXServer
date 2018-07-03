@@ -38,6 +38,7 @@ public:
 
     void Insert(Typ* pObj, const void* pData, uint size)
     {
+        assert(NetPack::GetOpCode(pData));
         m_queue.push(std::make_pair(pObj, new NetPack(pData, size)));
     }
     void Update() //主循环，每帧调一次
@@ -67,7 +68,7 @@ public:
     void SendBackBuffer(Typ* pObj)
     {
         assert(m_BackBuffer.OpCode() > 0 && "send rpc relay repeatedly");
-        m_BackBuffer.MoveToBuf(BackBuilder);
+        m_BackBuffer.Absorb(BackBuilder);
         if (m_BackBuffer.BodySize()) pObj->SendMsg(m_BackBuffer);
         m_BackBuffer.Clear();
     }
@@ -90,7 +91,7 @@ public:
         auto ret = m_SendBuffer.GetReqKey();
 
         func(m_SendBuffer);
-        m_SendBuffer.MoveToBuf(SendBuilder);
+        m_SendBuffer.Absorb(SendBuilder);
         pObj->SendMsg(m_SendBuffer);
         m_SendBuffer.Clear();
         return ret;

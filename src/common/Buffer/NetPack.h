@@ -9,6 +9,7 @@
 #pragma once
 #include "bytebuffer.h"
 #include "tool/Mempool.h"
+#include "tool/UnionID.h"
 #include "flatbuffers/flatbuffers.h"
 
 template<typename T> using FlatVector = std::vector<flatbuffers::Offset<T>>;
@@ -43,6 +44,7 @@ public:
         rpos(HEADER_SIZE);
     }
 public: // header
+    static  uint16 GetOpCode(const void* pMsg) { return *(uint16*)((char*)pMsg + OPCODE_INDEX); }
     void    OpCode(uint16 opCode) { put(OPCODE_INDEX, opCode); }
     uint16  OpCode() const { return show<uint16>(OPCODE_INDEX); }
     void    Type(uint8 packType) { put(TYPE_INDEX, packType); }
@@ -70,6 +72,9 @@ public:
     void    WriteString(const std::string& val) { append(val); }
     void    WriteString(const char* val) { append(val); }
     void    WriteBuf(const void* buf, size_t len) { append(buf, len); }
+    void    WriteUuid(const UID<3>& uid) { append(uid.data, uid.kSize); }
+
+    void    WriteStringZipped(const std::string& str);
 
     bool    ReadBool() { return read<bool>(); }
     int8    ReadInt8() { return read<int8>(); }
@@ -87,7 +92,14 @@ public:
         //return std::move(str);
         //return str; // c++11 右值引用，移动构造
     }
-    void MoveToBuf(flatbuffers::FlatBufferBuilder& builder) {
+
+    UID<3>  ReadUuid() {
+        UID<3> ret;
+        read(ret.data, ret.kSize);
+        return ret;
+    }
+
+    void Absorb(flatbuffers::FlatBufferBuilder& builder) {
         if (builder.GetSize()) {
             WriteBuf(builder.GetBufferPointer(), builder.GetSize());
             builder.Clear();

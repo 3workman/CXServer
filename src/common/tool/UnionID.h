@@ -71,3 +71,21 @@ private:
         uint16 _type;
     };
 };
+
+template <int N> struct UID
+{
+    static const int kSize = N;
+    uint8 data[kSize];
+
+    static const uint32& _GenUid() {
+        static uint32 UIDGen = 0;
+        static_assert(sizeof(UIDGen) >= kSize);
+        if (++UIDGen >= (1 << kSize*8)) UIDGen = 0;
+        return UIDGen;
+    }
+
+    UID() { memcpy(data, &_GenUid(), kSize); }
+    void Reset(uint32 v) { memcpy(data, &v, kSize); }
+    bool operator< (UID const& rhs) { return memcmp(data, rhs.data, kSize) < 0; }
+    bool operator== (UID const& rhs) { return memcmp(data, rhs.data, kSize) == 0; }
+};

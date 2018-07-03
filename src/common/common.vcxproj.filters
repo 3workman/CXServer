@@ -26,10 +26,13 @@
       <UniqueIdentifier>{8c68f065-a506-4b7d-b000-a37422bddc25}</UniqueIdentifier>
     </Filter>
     <Filter Include="Csv">
-      <UniqueIdentifier>{44527399-bd59-4789-9878-c159169aa80f}</UniqueIdentifier>
+      <UniqueIdentifier>{2f70b3b1-683e-4368-a065-c4899244749a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{f965a940-8e80-4eea-919e-0a2f35ec7979}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lua">
-      <UniqueIdentifier>{3fc82617-f9db-4627-93c2-d5c3d38845ec}</UniqueIdentifier>
+      <UniqueIdentifier>{09bacbc1-2847-4fca-8ec1-5dc81d3226a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,16 +57,10 @@
     <ClInclude Include="tool\DebugFile.h">
       <Filter>tool</Filter>
     </ClInclude>
-    <ClInclude Include="tool\delegate.h">
-      <Filter>tool</Filter>
-    </ClInclude>
     <ClInclude Include="tool\Floyd.h">
       <Filter>tool</Filter>
     </ClInclude>
     <ClInclude Include="tool\GameApi.h">
-      <Filter>tool</Filter>
-    </ClInclude>
-    <ClInclude Include="tool\global.h">
       <Filter>tool</Filter>
     </ClInclude>
     <ClInclude Include="tool\mkdir.h">
@@ -120,6 +117,42 @@
     <ClInclude Include="Csv\CSVparser.hpp">
       <Filter>Csv</Filter>
     </ClInclude>
+    <ClInclude Include="math\config-osx.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\config-vc.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\gfx.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\intvec.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\mat2.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\mat3.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\mat4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\quat.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\vec2.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\vec3.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\vec4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\compress.h">
+      <Filter>tool</Filter>
+    </ClInclude>
     <ClInclude Include="Lua\LuaCall.h">
       <Filter>Lua</Filter>
     </ClInclude>
@@ -132,11 +165,17 @@
     <ClInclude Include="Buffer\DataDiff.h">
       <Filter>Buffer</Filter>
     </ClInclude>
-    <ClInclude Include="Log\RuntimeCast.h">
-      <Filter>Log</Filter>
-    </ClInclude>
-    <ClInclude Include="tool\compress.h">
+    <ClInclude Include="tool\StringHash.h">
       <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\lodepng.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="tool\Grid2D.h">
+      <Filter>tool</Filter>
+    </ClInclude>
+    <ClInclude Include="Log\RuntimeCost.h">
+      <Filter>Log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -182,11 +221,29 @@
     <ClCompile Include="Buffer\DataDiff.cpp">
       <Filter>Buffer</Filter>
     </ClCompile>
-    <ClCompile Include="Log\RuntimeCast.cpp">
-      <Filter>Log</Filter>
+    <ClCompile Include="math\mat2.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\mat3.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\mat4.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\quat.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\StringHash.cpp">
+      <Filter>tool</Filter>
     </ClCompile>
     <ClCompile Include="tool\compress.cpp">
       <Filter>tool</Filter>
+    </ClCompile>
+    <ClCompile Include="tool\lodepng.cpp">
+      <Filter>tool</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\RuntimeCost.cpp">
+      <Filter>Log</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

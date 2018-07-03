@@ -1,10 +1,12 @@
 #pragma once
 #include "tool/Mempool.h"
+#include "IRole.h"
 #include "RpcEnum.h"
 #include "RpcQueue.h"
 #include "Config/ConstDef.h"
 //logic module
 #include "Room/PlayerRoomData.h"
+#include "Player/DBData.h"
 
 #define _USE_RAKNET 1
 #ifdef _USE_RAKNET
@@ -24,21 +26,25 @@ class TcpClientAgent;   typedef TcpClientAgent*     NetLinkPtr;
 class NetPack;
 class GameObject;
 class FlatBufferBuilder;
-class Player {
+class Player : public IRole {
     Pool_Index_Define(Player, MAX_PLAYER_COUNT);
 private:
     static std::map<uint32, Player*> G_PlayerList;
     NetLinkPtr      _netLink = NULL;
 public:
     uint32          m_pid = 0;
-    std::string     m_name;
+    int             m_svrId = 0; //所在游戏服id
     bool            m_isLogin = false;
+    bool            m_canJoinRoom = false;
+
+    DBData          m_dbData;
 public:
     Player(uint32 pid);
     ~Player();
-    void    SetNetLink(NetLinkPtr p);
-    void    SendMsg(const NetPack& pack);
+    void    CloseNetLink();
+    void    ResetNetLink(NetLinkPtr p);
 
+    void    SendMsg(const NetPack& pack);
     uint64  CallRpc(RpcEnum rid, const ParseRpcParam& sendFun);
     void    CallRpc(RpcEnum rid, const ParseRpcParam& sendFun, const ParseRpcParam& recvFun);
     void    SendRpcReplyImmediately();

@@ -3,12 +3,13 @@
 // Don't edit !
 #define Rpc_Enum\
 	_Declare(rpc_regist, 1)\
-	_Declare(rpc_svr_accept, 2)\
-	_Declare(rpc_center_reg_account, 3)\
-	_Declare(rpc_center_check_account, 4)\
-	_Declare(rpc_center_change_password, 5)\
-	_Declare(rpc_center_account_login, 6)\
-	_Declare(rpc_center_bind_info_login, 7)\
+	_Declare(rpc_unregist, 2)\
+	_Declare(rpc_svr_accept, 3)\
+	_Declare(rpc_net_error, 4)\
+	_Declare(rpc_svr_node_join, 5)\
+	_Declare(rpc_http_node_quit, 6)\
+	_Declare(rpc_recv_player_msg, 7)\
+	_Declare(rpc_zoo_register, 100)\
 	_Declare(rpc_center_bind_info, 8)\
 	_Declare(rpc_center_get_account_by_bind_info, 9)\
 	_Declare(rpc_cross_relay_battle_data, 10)\
@@ -55,6 +56,7 @@
 	_Declare(rpc_battle_logout, 51)\
 	_Declare(rpc_battle_reconnect, 52)\
 	_Declare(rpc_battle_exit_room, 53)\
+	_Declare(rpc_battle_join_room, 137)\
 	_Declare(rpc_battle_direct_join_room, 54)\
 	_Declare(rpc_battle_handle_move_input, 55)\
 	_Declare(rpc_battle_handle_fire_input, 56)\
@@ -84,8 +86,6 @@
 	_Declare(rpc_client_lua_test, 80)\
 	_Declare(rpc_client_sync_buff_add, 81)\
 	_Declare(rpc_client_sync_buff_del, 82)\
-	_Declare(rpc_svr_node_join, 83)\
-	_Declare(rpc_zoo_register, 84)\
 	_Declare(rpc_login_get_accountid, 85)\
 	_Declare(RpcEnumCnt, 86)\
 	

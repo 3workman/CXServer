@@ -32,8 +32,6 @@ void UdpServer::Start(BindLinkFunc bindPlayer, HandleMsgFunc handleClientMsg, Re
     bool bOk = m_rakPeer->Startup(_config.dwMaxLink, &socketDescriptors, 1) == RakNet::RAKNET_STARTED;
     if (!bOk) {
         printf("Server failed to start.  Terminating.\n");
-    } else {
-        printf("Udp server success.\n");
     }
 }
 UdpServer::~UdpServer() {
@@ -49,7 +47,7 @@ UdpClientAgent* UdpServer::FindClientAgent(const RakNet::RakNetGUID& guid) {
     return nullptr;
 }
 UdpClientAgent* UdpServer::AddClientAgent(const RakNet::RakNetGUID& guid) {
-    UdpClientAgent* clientAgent = new UdpClientAgent(this);
+    UdpClientAgent* clientAgent = new UdpClientAgent(*this);
     m_clientList[guid] = clientAgent;
     return clientAgent;
 }

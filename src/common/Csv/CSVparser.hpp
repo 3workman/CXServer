@@ -152,7 +152,7 @@ namespace csv {
         csvname.append(name);
         T data;
         csv::Parser file(csvname);
-        uint cnt = file.rowCount();
+        uint cnt = (uint)file.rowCount();
         for (uint i = 0; i < cnt; ++i) {
             if (file[i][0].at(0) == '#') continue;
             file[i].Parse(&data);
@@ -166,7 +166,7 @@ namespace csv {
         Val data;
         Key* pKey = (Key*)(char*)&data;
         csv::Parser file(csvname);
-        uint cnt = file.rowCount();
+        uint cnt = (uint)file.rowCount();
         for (uint i = 0; i < cnt; ++i) {
             if (file[i][0].at(0) == '#') continue;
             file[i].Parse(&data);

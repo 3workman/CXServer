@@ -14,6 +14,7 @@
 #include "Buffer/NetPack.h"
 //#include "Lua/LuaCall.h"
 #include "tool/compress.h"
+#include "Room/Room.h"
 
 static Byte g_compress_buf[1024] = { 0 };
 static const uint G_Compress_Limit_Size = 128;
@@ -26,6 +27,7 @@ std::map<uint32, Player*> Player::G_PlayerList;
 Player::Player(uint32 pid)
     : m_pid(pid)
     , m_room(*this)
+    , m_dbData(*this)
 {
     if (!_rpcfunc[rpc_battle_login])
     {
@@ -38,7 +40,10 @@ Player::Player(uint32 pid)
 
 Player::~Player()
 {
-    SetNetLink(NULL);
+    if (CRoom* p = CRoom::FindByUniqueId(m_roomId))
+    {
+        p->ExitRoom(*this);
+    }
 
     G_PlayerList.erase(m_pid); m_pid = 0;
 }
@@ -50,10 +55,14 @@ Player* Player::FindByPid(uint32 pid)
     return it->second;
 }
 
-void Player::SetNetLink(NetLinkPtr p)
+void Player::CloseNetLink()
 {
-    if (_netLink)
-    {
+    if (_netLink) _netLink->CloseLink();
+}
+void Player::ResetNetLink(NetLinkPtr p)
+{
+    if (_netLink) {
+        _netLink->m_player = NULL;
         _netLink->CloseLink();
     }
     _netLink = p;
@@ -61,6 +70,8 @@ void Player::SetNetLink(NetLinkPtr p)
 
 void Player::SendMsg(const NetPack& pack)
 {
+    if (!_netLink) return;
+
     const uint8 type = pack.Type();
     const void* buf = NULL;
     size_t bufLen = 0;
@@ -78,8 +89,8 @@ void Player::SendMsg(const NetPack& pack)
         buf = g_compress_buf;
         bufLen = size + 5;
     }
-
     assert(buf && bufLen && bufLen < sizeof(g_compress_buf));
+
     switch (type) {
     case NetPack::TYPE_UDP:
         //_netLink->SendUdpMsg(buf, bufLen);

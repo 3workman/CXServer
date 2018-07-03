@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "Cross/CrossAgent.h"
 #include "Zookeeper.h"
+#include "Room/Utility/Random.hpp"
 
 Zookeeper::Zookeeper()
 {
-    if (!_rpcfunc[rpc_svr_node_join])
     {
 #undef Rpc_Declare
 #define Rpc_Declare(typ) _rpcfunc[typ] = (RpcClient::_RpcFunc)&Zookeeper::HandleRpc_##typ;
@@ -33,12 +33,25 @@ void Zookeeper::_OnConnect()
             NetMeta::AddMeta(meta);
 
             if (meta.module == "cross") {
-                auto ptr = std::make_shared<CrossAgent>();
-                m_nodes.push_back(ptr);
+                auto ptr = make_shared<CrossAgent>();
+                m_cross[meta.svr_id] = ptr;
                 ptr->RunClient();
             }
         }
     });
+}
+
+RpcClient* Zookeeper::GetCross() const
+{
+    if (m_cross.empty()) return nullptr;
+
+    int i = 0;
+    int idx = Random::Range(0, m_cross.size() - 1);
+    for (auto it = m_cross.begin(); ; ++it, ++i)
+    {
+        if (i == idx) return it->second.get();
+    }
+    return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,8 +66,8 @@ Rpc_Realize(rpc_svr_node_join)//有服务器节点加入，连接之
     NetMeta::AddMeta(meta);
 
     if (meta.module == "cross") {
-        auto ptr = std::make_shared<CrossAgent>();
-        m_nodes.push_back(ptr);
+        auto ptr = make_shared<CrossAgent>();
+        m_cross[meta.svr_id] = ptr;
         ptr->RunClient();
     }
 }

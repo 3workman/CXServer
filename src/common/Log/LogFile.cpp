@@ -12,11 +12,11 @@ LogFile* LogFile::g_log = NULL;
 static const int MAX_MSFBUFF_SIZE = 1024;
 static char g_logBuff[MAX_MSFBUFF_SIZE] = { '\0' };
 static const char* LevelToString[] = {
-    "TRACK",
-    "DEBUG",
-    "INFO",
-    "WARN",
-    "ERROR",
+    "T",
+    "D",
+    "I",
+    "W",
+    "E",
 };
 STATIC_ASSERT_ARRAY_LENGTH(LevelToString, LogFile::ERR + 1);
 
@@ -24,13 +24,15 @@ void LogFile::Log(const char* curFile, const int curLine, LogLv kLevel, const ch
 {
     if (kLevel < _level) return;
 
-    int idx = (int)sprintf(g_logBuff, "[%s] ", ::LevelToString[kLevel]);
+    int idx = 0;
     time_t t; time(&t);
     idx += (int)strftime(g_logBuff+idx, 32, "%Y/%m/%d %H:%M:%S ", localtime(&t));
 #ifdef _DEBUG
     auto tid = std::hash<std::thread::id>()(std::this_thread::get_id());
     idx += (int)sprintf(g_logBuff+idx, "%s:%d tid:%d\n", Dir::FindName(curFile), curLine, tid);
 #endif
+    idx += (int)sprintf(g_logBuff+idx, "[%s] ", ::LevelToString[kLevel]);
+
     va_list ap;
     va_start(ap, fmt);
     int n = vsnprintf(g_logBuff+idx, MAX_MSFBUFF_SIZE-idx, fmt, ap);
@@ -54,7 +56,7 @@ LogFile::LogFile(std::string fileName, LogLv lv)
 {
     char sTime[32];
     time_t t; time(&t);
-    strftime(sTime, 32, "%Y%m%d%H%M%S.log", localtime(&t));
+    strftime(sTime, ARRAY_SIZE(sTime), "%Y%m%d_%H%M%S.log", localtime(&t));
     fileName.append(sTime);
     const char* pStr = fileName.c_str();
 

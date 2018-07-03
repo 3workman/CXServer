@@ -19,6 +19,7 @@
 #include <event2/util.h>
 #include <event2/event.h>
 #include <event2/bufferevent_struct.h>
+#include <event2/thread.h>
 
 TcpServer::TcpServer(const NetCfgServer& info)
     : _config(info)
@@ -46,8 +47,14 @@ void TcpServer::_loop()
 #ifdef _WIN32
     WSADATA wsa_data;
     WSAStartup(0x0201, &wsa_data);
+    evthread_use_windows_threads(); //使libevent线程安全
+#else
+    //使libevent线程安全
+    if(evthread_use_pthreads() == -1) {
+        fprintf(stderr, "Libevent initialization error. Cannot use pthreads!\n");
+        return;
+    }
 #endif
-    evthread_use_pthreads(); //使libevent线程安全
 
     event_base* base = event_base_new();
     if (!base) {
@@ -139,7 +146,7 @@ static void cb_conn_read(struct bufferevent *bev, void *user_data)
         agent->RecvMsg(pMsg, kMsgSize);
 
         // 4、消息处理完毕，接收字节/包指针更新(处理下一个包)
-        buf.readerMove(n);
+        buf.readerMove(kPackSize);
         pPack += kPackSize;
     }
 }

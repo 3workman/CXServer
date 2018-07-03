@@ -6,12 +6,6 @@
     <ClCompile Include="Cross\CrossAgent.cpp">
       <Filter>Cross</Filter>
     </ClCompile>
-    <ClCompile Include="Room\PlayerRoomData.cpp">
-      <Filter>Room</Filter>
-    </ClCompile>
-    <ClCompile Include="Room\PlayerRoomRpc.cpp">
-      <Filter>Room</Filter>
-    </ClCompile>
     <ClCompile Include="Room\Room.cpp">
       <Filter>Room</Filter>
     </ClCompile>
@@ -29,6 +23,15 @@
     </ClCompile>
     <ClCompile Include="Zookeeper\Zookeeper.cpp">
       <Filter>Zookeeper</Filter>
+    </ClCompile>
+    <ClCompile Include="Player\DBData.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\PlayerRoomRpc.cpp">
+      <Filter>Room</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\PlayerRoomData.cpp">
+      <Filter>Room</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,9 +67,6 @@
     <ClInclude Include="Cross\CrossAgent.h">
       <Filter>Cross</Filter>
     </ClInclude>
-    <ClInclude Include="Room\PlayerRoomData.h">
-      <Filter>Room</Filter>
-    </ClInclude>
     <ClInclude Include="Room\Room.h">
       <Filter>Room</Filter>
     </ClInclude>
@@ -87,6 +87,15 @@
     </ClInclude>
     <ClInclude Include="Config\LoadCsv.hpp">
       <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\DBData.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Room\PlayerRoomData.h">
+      <Filter>Room</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\IRole.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

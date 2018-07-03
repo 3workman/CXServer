@@ -425,12 +425,11 @@ bool ServLink::PostRecv()
 	{
 		//memset((char *)&_ovRecv, 0, sizeof(OVERLAPPED)); //清空ov头貌似没必要
 
-        _recvBuf.ensureWritableBytes(IN_BUFFER_SIZE);
-
 		//Notice：len是固定的，如果buf指向的内存块实际没这么大，有内存越界风险（所以_recvBuf开了两倍大小）
 		//Notice：长度太短的性能损失
 		WSABUF wbuf;
 		//wbuf.len = IN_BUFFER_SIZE;   //dont read so much...
+        _recvBuf.ensureWritableBytes(IN_BUFFER_SIZE);
         wbuf.len = _recvBuf.writableBytes();
         wbuf.buf = _recvBuf.beginWrite();
         DWORD dwBytes(0), dwFlags(0);

@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "GameApi.h"
-#include <sys/timeb.h>
-#include <time.h>
 
 namespace GameApi {
 
@@ -85,57 +83,22 @@ void SplitStr2(const std::string& str, IntPairVec& retVec) // "2|3,7|4,9|6"
     }
 }
 
+using namespace std::chrono;
+
 static time_t g_time_now = 0;
+void RefreshTimeSecond() { g_time_now = system_clock::to_time_t(system_clock::now()); }
 time_t TimeSecond() { return g_time_now; }
-void RefreshTimeSecond() { g_time_now = ::time(NULL); }
+time_t TimeMS() { return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count(); }
 
-time_t TimeMS() {
-#ifdef _WIN32
-    struct _timeb tp; ::_ftime(&tp);
-#else
-    struct timeb tp; ftime(&tp);
-#endif
-    return tp.time * 1000 + tp.millitm;
+std::chrono::milliseconds TimeNow()
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 }
+    
+struct tm* TimeDate() { return localtime(&g_time_now); }
 
-int TimeHour() {
-    time_t timep;
-    struct tm *p;
-    time(&timep);
-    p = localtime(&timep);
-    return p->tm_hour;
-}
-int TimeMonth() {
-    time_t timep;
-    struct tm *p;
-    time(&timep);
-    p = localtime(&timep);
-    return p->tm_mon;
-}
-int TimeYear() {
-    time_t timep;
-    struct tm *p;
-    time(&timep);
-    p = localtime(&timep);
-    return p->tm_year;
-}
-int TimeDayOfWeek() {
-    time_t timep;
-    struct tm *p;
-    time(&timep);
-    p = localtime(&timep);
-    return p->tm_wday;
-}
-int TimeYearOfWeek() {
-    time_t timep;
-    struct tm *p;
-    time(&timep);
-    p = localtime(&timep);
-    return p->tm_yday;
-}
-
-static time_t _GetCurDay(time_t sec){
-    tm* t = ::localtime(&sec);
+static time_t _GetDayMask(time_t sec) {
+    struct tm* t = ::localtime(&sec);
     time_t ret = t->tm_year;
     ret = ret << 8;
     ret += t->tm_mon;
@@ -143,14 +106,9 @@ static time_t _GetCurDay(time_t sec){
     ret += t->tm_mday;
     return ret;
 }
-bool IsToday(time_t sec)
-{
-    return _GetCurDay(sec) == _GetCurDay(g_time_now);
-}
-bool IsSameDay(time_t sec1, time_t sec2)
-{
-    return _GetCurDay(sec1) == _GetCurDay(sec2);
-}
+bool IsToday(time_t sec)                { return _GetDayMask(sec) == _GetDayMask(g_time_now); }
+bool IsSameDay(time_t sec1, time_t sec2){ return _GetDayMask(sec1) == _GetDayMask(sec2); }
+
 time_t ParseTime(time_t num) //20160223145632：2016年2月23号14:56:32
 {
 #define _Parse_(n) num%(n); num /= (n)

@@ -2,6 +2,7 @@
 
 ulimit -c unlimited # 设置core大小为无限
 
+# root=~/soulnet
 root=/mnt/d/soulnet
 passwd="890104"
 
@@ -10,8 +11,8 @@ Init() {
     ln -s $root/svr ~/bin/svr
     mkdir -p $root/GoServer/bin/db
     ln -s $root/CXServer/data/csv $root/GoServer/bin/csv
-    ln -s $root/CXServer/data/csv $root/GameClient/csv
-    ln -s $root/CXServer/proto_file/output_cs $root/GameClient/Assets/flat
+    # ln -s $root/CXServer/data/csv $root/GameClient/csv
+    # ln -s $root/CXServer/proto_file/output_cs $root/GameClient/Assets/flat
     ln -s $root/CXServer/ThirdParty/googletest/libgtest.a $root/CXServer/ThirdParty/libgtest.a
     ln -s $root/CXServer/ThirdParty/handy/libhandy.a $root/CXServer/ThirdParty/libhandy.a
     ln -s $root/CXServer/ThirdParty/libevent/libevent.a $root/CXServer/ThirdParty/libevent.a
@@ -22,19 +23,30 @@ Init() {
 InitDB() {
 MongoDB='mongo'
 $MongoDB <<EOF
+
 use admin;
 db.createUser({user:"root",pwd:"zhoumf233*",roles:["root"]});
 db.auth("root","zhoumf233*");
+
 use account;
 db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
 db.Account.ensureIndex({"name":1},{"unique":true})
 db.Account.ensureIndex({"bindinfo.phone":1})
 db.Account.ensureIndex({"bindinfo.email":1})
+
 use sdk;
 db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
+
+use save;
+db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
+
 use soulnet;
 db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
 db.Player.ensureIndex({"accountid":1},{"unique":true})
+
+use friend;
+db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
+
 exit;
 EOF
 }
@@ -64,9 +76,21 @@ Game() {
     cd $root/GoServer/bin
     RunSvr game $1
 }
+Gateway() {
+    cd $root/GoServer/bin
+    RunSvr gateway $1
+}
+Friend() {
+    cd $root/GoServer/bin
+    RunSvr friend $1
+}
 Sdk() {
     cd $root/GoServer/bin
     RunSvr sdk $1
+}
+Save() {
+    cd $root/GoServer/bin
+    RunSvr save $1
 }
 Login() {
     cd $root/GoServer/bin
@@ -87,7 +111,7 @@ Zookeeper() {
     fi
 }
 DB() {
-    nohup echo $passwd | sudo -S mongod --auth --dbpath $root/GoServer/bin/db > $root/db.out 2>&1 &
+    nohup echo $passwd | sudo -S mongod --auth --dbpath $root/GoServer/bin/db >/dev/null 2>$root/db.out &
 }
 # --------------------------------------------------------------------------
 KillAll() {
@@ -95,7 +119,10 @@ KillAll() {
     killall -9 svr_center
     killall -9 svr_cross
     killall -9 svr_game
+    killall -9 svr_gateway
+    killall -9 svr_friend
     killall -9 svr_sdk
+    killall -9 svr_save
     killall -9 svr_login
     killall -9 svr_file
     killall -9 zookeeper
@@ -106,14 +133,17 @@ RunOne() {
     else
         case $1 in
             0|"db")         DB $2;;
-            1|"center")     Center $2;;     #
-            2|"cross")      Cross $2;;      #
-            3|"sdk")        Sdk $2;;        #
+            1|"zoo")        Zookeeper $2;;
+            2|"center")     Center $2;;     #
+            3|"cross")      Cross $2;;      #
             4|"login")      Login $2;;      #
             5|"game")       Game $2;;       # link: cross center sdk
             6|"battle")     Battle $2;;     # link: cross
-            7|"file")       File $2;;       #
-            8|"zoo")        Zookeeper $2;;  #
+            7|"gateway")    Gateway $2;;    #
+            8|"friend")     Friend $2;;     #
+            "sdk")          Sdk $2;;        #
+            "save")         Save $2;;       #
+            "file")         File $2;;       #
             "kill")         KillAll;;
             "init")         Init;;
             "initdb")       InitDB;;

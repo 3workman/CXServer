@@ -25,6 +25,21 @@
     <Filter Include="libevent">
       <UniqueIdentifier>{30cc53c3-7333-48bc-ae66-d8f05bd48c12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libevent\client">
+      <UniqueIdentifier>{6f496d54-5ff1-4e27-8bfb-51fdcd870112}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libevent\server">
+      <UniqueIdentifier>{e82d9983-87b8-4866-bc72-c14704329555}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{e142a67c-dace-4179-b6df-34e2e0f66fbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\client">
+      <UniqueIdentifier>{acc7b1cc-d6b4-43ef-b1f6-f2c7a04251a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\server">
+      <UniqueIdentifier>{caaac128-ae22-4e66-b3b9-0f2fb8f71fee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\stdafx.cpp" />
@@ -47,6 +62,15 @@
       <Filter>raknet\server</Filter>
     </ClCompile>
     <ClCompile Include="config_net.cpp" />
+    <ClCompile Include="libevent\client\TcpClient.cpp">
+      <Filter>libevent\client</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\server\TcpClientAgent.cpp">
+      <Filter>libuv\server</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\server\TcpServer.cpp">
+      <Filter>libuv\server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config_net.h" />
@@ -67,6 +91,15 @@
     </ClInclude>
     <ClInclude Include="raknet\server\UdpServer.h">
       <Filter>raknet\server</Filter>
+    </ClInclude>
+    <ClInclude Include="libevent\client\TcpClient.h">
+      <Filter>libevent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="libuv\server\TcpServer.h">
+      <Filter>libuv\server</Filter>
+    </ClInclude>
+    <ClInclude Include="libuv\server\TcpClientAgent.h">
+      <Filter>libuv\server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

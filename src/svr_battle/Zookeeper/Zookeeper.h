@@ -7,10 +7,13 @@ public:
 public:
     static Zookeeper& Instance() { static Zookeeper T; return T; }
     Zookeeper();
+
+    RpcClient* GetCross() const;
+
 protected:
     void _OnConnect() override;
 
 private:
-    std::vector<shared<RpcClient>> m_nodes;
+    std::map<int, shared<RpcClient>> m_cross;
 };
 #define sZookeeper Zookeeper::Instance()

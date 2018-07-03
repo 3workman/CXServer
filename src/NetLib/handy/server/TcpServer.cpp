@@ -35,6 +35,7 @@ void TcpServer::_loop()
                 break;
             case handy::TcpConn::Closed:
                 _ReportErrorMsg(conn->context<void*>(), 0, 0);
+                conn->context<void*>() = NULL;
                 break;
             default:
                 break;

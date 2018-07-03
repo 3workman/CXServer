@@ -238,6 +238,7 @@ bool ClientLink::PostRecv()
 
 	//Notice：buf长度太短的性能损失（_recvBuf开的足够大8k）
 	WSABUF buf;
+    _recvBuf.ensureWritableBytes(1);
     buf.buf = _recvBuf.beginWrite();
     buf.len = _recvBuf.writableBytes();
 	DWORD dwBytes(0), dwFlags(0);

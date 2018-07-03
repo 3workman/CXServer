@@ -27,9 +27,12 @@ CrossAgent::CrossAgent()
 Rpc_Realize(rpc_battle_handle_player_data)//回复<pid>列表
 {
     uint8 cnt = req.ReadUInt8();
-    ack << Player::GetPlayerCnt() + cnt;
-    ack << cnt;
-    std::vector<Player*> lst; lst.reserve(cnt);
+    std::vector<Player*> vec; vec.reserve(cnt);
+
+    ack.WriteUInt32((uint32)(Player::GetPlayerCnt() + cnt));
+    ack.WriteString(NetCfgServer::Instance().ip);
+    ack.WriteUInt16(NetCfgServer::Instance().wPort);
+
     for (uint i = 0; i < cnt; ++i) {
         uint32 pid = req.ReadUInt32();
         Player* player = Player::FindByPid(pid);
@@ -37,6 +40,8 @@ Rpc_Realize(rpc_battle_handle_player_data)//回复<pid>列表
 
         //svr_game --- Rpc_Battle_Begin，更新玩家战斗数据
         player->m_name = req.ReadString();
+        player->m_svrId = req.ReadInt32();
+        player->m_dbData.BufToData(req);
 
         ack << pid;
 
@@ -47,22 +52,24 @@ Rpc_Realize(rpc_battle_handle_player_data)//回复<pid>列表
 
         //一段时间client没连上来，防止等待加入中途出错(强杀进程)，内存泄露
         //【Bug】可能在定时器期间，玩家登录又离线，所以还需判断player是否已被delete
-        sTimerMgr.AddTimer([=]{
-            if (!player->m_isLogin && player->m_pid) delete player;
-        }, 10);
+        sTimerMgr.AddTimer([=] {if (!player->m_isLogin && player->m_pid) delete player; }, 30);
 
-        lst.push_back(player);
+        vec.push_back(player);
     }
+
+    ack.WriteUInt8(vec.size());
+    for (auto& it : vec) ack.WriteUInt32(it->m_pid);
+
     bool isJoin = false;
     for (auto& it : CRoom::RoomList) {
-        if (it.second->TryToJoinWaitLst(lst)) {
+        if (it.second->TryToJoinWaitLst(vec)) {
             isJoin = true;
             break;
         }
     }
     if (!isJoin) {
         CRoom* pRoom = new CRoom;
-        isJoin = pRoom->TryToJoinWaitLst(lst);
+        isJoin = pRoom->TryToJoinWaitLst(vec);
         assert(isJoin);
     }
 }

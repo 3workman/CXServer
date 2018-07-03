@@ -14,6 +14,7 @@ public:
     HandleMsgFunc       _HandleServerMsg;
     OnConnectFunc       _OnConnect;
     net::Buffer         _recvBuf;
+    net::Buffer         _sendBuf;
 
 public:
     TcpClient(const NetCfgClient& info);
