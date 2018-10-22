@@ -23,7 +23,7 @@ void RpcClient::_OnConnect() //Notice：IO线程调用的，不是主逻辑线�
     //这里不能用CallRpc，它不是线程安全的
     _netLink->SendMsg(&_connId, sizeof(_connId)); //第一条消息：上报connId
 
-    NetPack regMsg(16); regMsg.OpCode(rpc_regist);
+    NetPack regMsg(16); regMsg.OpCode(Rpc_regist);
     NetMeta::G_Local_Meta->DataToBuf(regMsg);
     SendMsg(regMsg);
 }
@@ -34,7 +34,7 @@ RpcClient::RpcClient()
 
 #undef Rpc_Declare
 #define Rpc_Declare(typ) _rpcfunc[typ] = &RpcClient::HandleRpc_##typ;
-    Rpc_Declare(rpc_svr_accept)
+    Rpc_Declare(Rpc_svr_accept)
 }
 RpcClient::~RpcClient()
 {
@@ -60,7 +60,7 @@ void RpcClient::SendMsg(const NetPack& pack)
 #undef Rpc_Realize
 #define Rpc_Realize(typ) void RpcClient::HandleRpc_##typ(NetPack& req, NetPack& ack)
 
-Rpc_Realize(rpc_svr_accept)
+Rpc_Realize(Rpc_svr_accept)
 {
     _connId = req.ReadUInt32();
 }

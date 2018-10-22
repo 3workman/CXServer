@@ -43,6 +43,11 @@ public:
         append(other.contents(), HEADER_SIZE);
         rpos(HEADER_SIZE);
     }
+    void Reset(const void* pData, int size) {
+        clear();
+        append(pData, size);
+        rpos(HEADER_SIZE);
+    }
 public: // header
     static  uint16 GetOpCode(const void* pMsg) { return *(uint16*)((char*)pMsg + OPCODE_INDEX); }
     void    OpCode(uint16 opCode) { put(OPCODE_INDEX, opCode); }

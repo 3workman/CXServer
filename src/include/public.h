@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <assert.h>
 #include <set>
@@ -46,39 +47,44 @@ typedef uint8_t		uint8;
 typedef unsigned 	uint;
 typedef std::vector< std::pair<int, int> > IntPairVec;
 
+#define USE_FAST_SMART_PTR 1
+
+// define smart pointer types for easier typing
+#if USE_FAST_SMART_PTR
+#include "shared_ptr.h"
+template<typename T> using unique = std::unique_ptr<T>;
+template<typename T> using shared = cr::shared_ptr<T>;
+template<typename T> using weak   = cr::weak_ptr<T>;
+
+//using cr::make_shared;
+using cr::enable_shared_from_this;
+using cr::dynamic_pointer_cast;
+using cr::static_pointer_cast;
+using cr::const_pointer_cast;
+
+template<typename T, typename ...Args>
+inline shared<T> make_shared(Args&& ... args)
+{
+    return shared<T>(new T(std::forward<Args>(args)...));
+}
+
+using cr::owner_less;
+
+template<typename T>
+using weak_set = std::set<weak<T>, owner_less<>>;
+
+#else
 template<typename T> using shared = std::shared_ptr<T>;
 template<typename T> using unique = std::unique_ptr<T>;
 template<typename T> using weak   = std::weak_ptr<T>;
-//---------------------------------------------------------
-// std::weak_ptr does not support equality comparison for
-// good reasons. In order to compare weak_ptrs, we have to
-// lock them first, which incurs lock overhead. This could
-// be very bad for container usages. fast weak_ptr does not
-// suffer this problem as lock is very cheap. Thus the
-// overloaded equality is really just for fast weak_ptrs.
-//---------------------------------------------------------
-template<typename T, typename U>
-inline bool operator == (const weak<T>& lhs, const weak<U>& rhs) noexcept { return lhs.lock() == rhs.lock(); }
-template<typename T, typename U>
-inline bool operator == (const shared<T>& lhs, const weak<U>& rhs) noexcept { return lhs == rhs.lock(); }
-template<typename T, typename U>
-inline bool operator == (const weak<T>& lhs, const shared<U>& rhs) noexcept { return lhs.lock() == rhs; }
 
-template<typename T, typename U>
-inline bool operator != (const weak<T>& lhs, const weak<U>& rhs) noexcept { return lhs.lock() != rhs.lock(); }
-template<typename T, typename U>
-inline bool operator != (const shared<T>& lhs, const weak<U>& rhs) noexcept { return lhs != rhs.lock(); }
-template<typename T, typename U>
-inline bool operator != (const weak<T>& lhs, const shared<U>& rhs) noexcept { return lhs.lock() != rhs; }
+using std::make_shared;
+using std::enable_shared_from_this;
+using std::dynamic_pointer_cast;
+using std::static_pointer_cast;
 
-template<typename T>
-inline bool operator == (const weak<T>& lhs, nullptr_t) noexcept { return lhs.lock() == nullptr; }
-template<typename T>
-inline bool operator == (nullptr_t, const weak<T>& rhs) noexcept { return rhs.lock() == nullptr; }
-
-template<typename T>
-weak<T> weak_null() { return weak<T>(); }
-
+using std::owner_less;
+#endif
 
 
 #ifdef _WIN32
@@ -90,6 +96,7 @@ weak<T> weak_null() { return weak<T>(); }
 #undef min
 #undef max
 #undef CreateWindow
+#undef Yield
 
 inline int random() { return Rand::rand(); }
 

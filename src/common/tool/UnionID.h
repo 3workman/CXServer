@@ -72,19 +72,22 @@ private:
     };
 };
 
-template <int N> struct UID
+template <int N>
+struct UID
 {
     static const int kSize = N;
-    uint8 data[kSize];
+    
+    uint8 data[kSize] = { 0 };
 
-    static const uint32& _GenUid() {
-        static uint32 UIDGen = 0;
-        static_assert(sizeof(UIDGen) >= kSize);
-        if (++UIDGen >= (1 << kSize*8)) UIDGen = 0;
-        return UIDGen;
-    }
+//    static const uint32& _GenUid()
+//    {
+//        static uint32 UIDGen = 0;
+//        static_assert(sizeof(UIDGen) >= kSize, "Error: UIDGen size greater than kSize");
+//        if (++UIDGen >= (1 << kSize*8)) UIDGen = 1; // 0 is default initialization value, considered invalid
+//        return UIDGen;
+//    }
 
-    UID() { memcpy(data, &_GenUid(), kSize); }
+//    UID() { memcpy(data, &_GenUid(), kSize); } // do not do static id
     void Reset(uint32 v) { memcpy(data, &v, kSize); }
     bool operator< (UID const& rhs) { return memcmp(data, rhs.data, kSize) < 0; }
     bool operator== (UID const& rhs) { return memcmp(data, rhs.data, kSize) == 0; }

@@ -17,6 +17,7 @@
 * @ date 2017-7-24
 ************************************************************************/
 #pragma once
+#include "../../svr_battle/Room/Utility/AnyTable.hpp"
 
 class Player;
 class NetPack;
@@ -43,7 +44,7 @@ private:
     lua_State*	m_pL;
     int			m_FuncIdx[eMax];
     int			m_TableIdx[eTMax];
-    const char* m_szFile;
+    const char* m_mainFile;
 
 public:
     ~LuaCall();
@@ -55,6 +56,8 @@ public:
     bool		DoFile(const char* szFile); //各模块初始化时载入一次脚本即可
     void        ReloadFile(const char* szFile = NULL);
     void		PrintStack();
+    AnyTable    ReadLuaTable(const char* path);
+    AnyTable    ReadLuaTable(int tablePlusIdx);
 
 // for lua logic
     int		    RegLuaCall();
@@ -72,6 +75,9 @@ public:
     bool		CallPathUpdate();
     bool		CallRecv(NetPack* buf);
     bool		CallSend();
+
+private:
+    int         PushLuaVal(const char* path); //压值入栈顶
 };
 /*
     Notice：有需要的话，可分为几大业务单元，每单元一个lua_State

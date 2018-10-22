@@ -23,10 +23,17 @@
 #include <list>
 #include <vector>
 
-//template <typename T> inline bool operator == (const weak<T>& lhs, const weak<T>& rhs) {
-//    if (lhs.expired() && rhs.expired()) return true;
-//    return !lhs.expired() && !rhs.expired() && lhs.lock() == rhs.lock();
-//}
+template <typename T>
+inline bool service_obj_equal (const T& lhs, const T& rhs)
+{
+    return lhs == rhs;
+}
+
+inline bool service_obj_equal(const weak<GameObject>& lhs, const weak<GameObject>& rhs)
+{
+    return lhs.get() == rhs.get();
+}
+
 
 template <typename T>
 class iService {
@@ -121,13 +128,13 @@ public:
 		return true;
 	}
 	void UnRegister(T pObj){
-        if (m_runIt != m_list.end() && m_runIt->second == pObj) {
+        if (m_runIt != m_list.end() && service_obj_equal(m_runIt->second, pObj)) {
             m_runIt = m_list.erase(m_runIt);//删自己，迭代器到下一个
         } else {
                                             //删别人，直接erase，循环中++m_runIt安全【vector需考虑在m_runIt前还是后，删前面要挪动...vectro用索引替换it吧】
             for (auto it = m_list.begin(); it != m_list.end(); ++it)
             {
-                if (it->second == pObj) { m_list.erase(it); break; }
+                if (service_obj_equal(it->second, pObj)) { m_list.erase(it); break; }
             }
         }
     }

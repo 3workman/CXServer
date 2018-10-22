@@ -22,11 +22,6 @@ namespace GameApi {
     */
     std::chrono::milliseconds TimeNow();
 
-    int TimeHour();
-    int TimeMonth();
-    int TimeYear();
-    int TimeDayOfWeek();
-    int TimeYearOfWeek();
     struct tm* TimeDate();
 
     bool IsToday(time_t sec);

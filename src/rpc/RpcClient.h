@@ -18,7 +18,7 @@ public:
     typedef void(RpcClient::*_RpcFunc)(NetPack&, NetPack&);
     static  _RpcFunc         _rpcfunc[RpcEnumCnt]; //自己实现的rpc
     static  RpcQueue<RpcClient>& _rpc;
-    Rpc_Declare(rpc_svr_accept)
+    Rpc_Declare(Rpc_svr_accept)
 public:
     void    SendMsg(const NetPack& pack);
     uint64  CallRpc(RpcEnum rid, const ParseRpcParam& sendFun);

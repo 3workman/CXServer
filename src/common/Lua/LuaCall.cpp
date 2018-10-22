@@ -1,15 +1,16 @@
 #include "stdafx.h"
 #include "LuaCall.h"
 #include "tolua.h"
+#include "tool/GameApi.h"
 
 using namespace std;
 
 #define LUA_PATH  "../lua/"
 #define LUA_PATH2 "package.path = '../lua/?.lua;'..package.path"
 
-LuaCall* G_Lua = new LuaCall("init.lua");
+LuaCall* G_Lua = nullptr; //进入main函数后立即赋值
 
-LuaCall::LuaCall(const char* szFile) : m_szFile(szFile)
+LuaCall::LuaCall(const char* szFile) : m_mainFile(szFile)
 {
     ZeroMemoryArray(m_FuncIdx);
     ZeroMemoryArray(m_TableIdx);
@@ -24,12 +25,16 @@ LuaCall::LuaCall(const char* szFile) : m_szFile(szFile)
 
     tolua::InitLuaReg(m_pL); //载入c++接口
 
-    if (m_szFile) DoFile(m_szFile); //载入入口脚本，此脚本内可加载其它所需脚本
+#ifdef WIN32
+    lua_pushboolean(m_pL, true);
+    lua_setglobal(m_pL, "_WIN");
+#endif
+    DoFile(m_mainFile); //载入入口脚本，此脚本内可加载其它所需脚本
+    RegLuaCall();
 }
 LuaCall::~LuaCall()
 {
-    if (m_pL)
-    {
+    if (m_pL) {
         lua_close(m_pL);
         m_pL = NULL;
     }
@@ -43,7 +48,8 @@ void LuaCall::PrintStack()
 	if (lua_pcall(m_pL, 0, 1, 0) == 0)
 		LOG_DEBUG(lua_tostring(m_pL, -1));
 	else
-		LOG_ERROR("PrintTraceStack call lua debug.traceback error.");
+		LOG_ERROR("PrintTraceStack call lua debug.traceback error: %s", lua_tostring(m_pL, -1));
+    lua_pop(m_pL, 1);
 }
 
 bool LuaCall::Call(const char* szFunc, const char *sig, ...)
@@ -57,13 +63,12 @@ bool LuaCall::Call(const char* szFunc, const char *sig, ...)
 bool LuaCall::_Call(const char* szFunc, const char *sig, va_list vl)
 {
 	int	nTop = lua_gettop(m_pL);
-	int	narg = 0;
-	int	nres = 0;
 
-	lua_getglobal(m_pL, szFunc);
+    PushLuaVal(szFunc);
 
 	bool bError = false;
-
+    int	 narg = 0;
+    int	 nres = 0;
 	try
 	{
 		while (*sig)
@@ -181,7 +186,80 @@ endwhile:
 	}
 
 	lua_settop(m_pL, nTop);
-	return bError == false;
+	return !bError;
+}
+
+AnyTable LuaCall::ReadLuaTable(const char* path)
+{
+    int n = PushLuaVal(path); //变量值入栈，位于栈顶-1
+    auto& ret = ReadLuaTable(n);
+    lua_pop(m_pL, 1);
+    return ret;
+}
+AnyTable LuaCall::ReadLuaTable(int tablePlusIdx)
+{
+    AnyTable ret;
+    std::string key, value;
+
+    lua_pushnil(m_pL); //现在的栈：-1 => nil; index => table
+    /*
+        1、先从栈顶弹出一个 key
+        2、从栈指定位置的 table 里取下一对 key-value（相对1中弹出的key而言），先将 key 入栈再将 value 入栈
+        3、table 里第一对 key-value 的前面没有数据，所以先用 lua_pushnil() 压入一个 nil 充当初始 key
+        4、如果第2步成功则返回非 0 值，否则返回 0，并且不向栈中压入任何值
+        *、遍历表时除非明确知道key是string：lua_tostring会改变对应索引位置的key的值，使下一次lua_next无效
+    */
+    while (lua_next(m_pL, tablePlusIdx))
+    {
+        //现在的栈：-1 => value; -2 => key; index => table
+        switch (lua_type(m_pL, -2)) {
+        case LUA_TNUMBER:
+            char buf[8]; sprintf(buf, "%d", (int)lua_tonumber(m_pL, -2));
+            key = buf;
+            break;
+        case LUA_TSTRING:
+            key = lua_tostring(m_pL, -2);
+            break;
+        default:
+            break;
+        }
+        switch (lua_type(m_pL, -1)) {
+        case LUA_TNUMBER:
+            ret[key] = (float)lua_tonumber(m_pL, -1);
+            break;
+        case LUA_TSTRING:
+            value = lua_tostring(m_pL, -1);
+            ret[key] = value;
+            break;
+        case LUA_TTABLE:
+            ret[key] = ReadLuaTable(lua_gettop(m_pL));
+            break;
+        default:
+            break;
+        }
+        //弹出 value，留下原始的 key 作为下一次 lua_next 的参数
+        lua_pop(m_pL, 1); //现在的栈：-1 => key; index => table
+    }
+    //现在的栈：index => table （最后 lua_next 返回 0 的时候它已经把上一次留下的 key 给弹出了）
+    //所以栈已经恢复到进入这个函数时的状态
+    return ret;
+}
+
+int LuaCall::PushLuaVal(const char* path)
+{
+    int	nTop = lua_gettop(m_pL);
+    std::vector<std::string> keys; GameApi::SplitStr(path, keys, '.');
+    for (size_t i = 0; i < keys.size(); ++i) {
+        if (i == 0) {
+            lua_getglobal(m_pL, keys[i].c_str());
+        } else {
+            lua_getfield(m_pL, -1, keys[i].c_str());
+        }
+    }
+    nTop += 1; //比之调用前，增加一个值入栈
+    lua_insert(m_pL, nTop);
+    lua_settop(m_pL, nTop);
+    return nTop;
 }
 
 bool LuaCall::DoFile(const char* szFile)
@@ -192,15 +270,13 @@ bool LuaCall::DoFile(const char* szFile)
     {
         LOG_ERROR("do lua file error. `%s': %s", szFile, lua_tostring(m_pL, -1));
         lua_pop(m_pL, 1);
-        lua_settop(m_pL, 0);
         return false;
     }
-	return true;	
+	return true;
 }
-
 void LuaCall::ReloadFile(const char* szFile /* = NULL */)
 {
-    if (szFile == NULL) szFile = m_szFile;
+    if (szFile == NULL) szFile = m_mainFile;
 
     CallReload(1);      //ReloadBegin，清旧脚本数据等
     UnRegLuaCall();
@@ -221,12 +297,12 @@ bool LuaCall::RegLuaTable(int& ref, const char* szName)
 {
     lua_getglobal(m_pL, szName);
 
-    if (lua_istable(m_pL, -1) == 0) return false;
-
-    ref = luaL_ref(m_pL, LUA_REGISTRYINDEX);
-
+    if (!lua_istable(m_pL, -1)) {
+        lua_pop(m_pL, -1);
+        return false;
+    }
+    ref = luaL_ref(m_pL, LUA_REGISTRYINDEX); //将栈顶元素放到t对应的table中
     lua_pop(m_pL, -1);
-    lua_settop(m_pL, 0);
     return true;
 }
 void LuaCall::UnRegLuaTable()
@@ -264,12 +340,12 @@ bool LuaCall::RegLuaCall(int& ref, const char* szName)
 {
     lua_getglobal(m_pL, szName);
 
-    if (lua_isfunction(m_pL, -1) == 0) return false;
-
+    if (!lua_isfunction(m_pL, -1)) {
+        lua_pop(m_pL, -1);
+        return false;
+    }
     ref = luaL_ref(m_pL, LUA_REGISTRYINDEX);
-
     lua_pop(m_pL, -1);
-    lua_settop(m_pL, 0);
     return true;
 }
 void LuaCall::UnRegLuaCall()
@@ -294,7 +370,6 @@ bool LuaCall::CallMain()
 		LOG_ERROR("Server error running function `%s': %s", "CallMain", lua_tostring(m_pL, -1));
 		//PrintStack();
 		lua_pop(m_pL, 1);
-		lua_settop(m_pL, 0);
 		return false;
 	}
 	return true;
@@ -310,7 +385,6 @@ bool LuaCall::CallExit(int nExitCode)
 	{
 		LOG_ERROR("Server error running function `%s': %s","CallExit", lua_tostring(m_pL, -1));
 		lua_pop(m_pL, 1);
-		lua_settop(m_pL, 0);
 		return false;
 	}
 	return true;
@@ -325,7 +399,6 @@ bool LuaCall::CallDestroy()
 	{
 		LOG_ERROR("Server error running function `%s': %s","CallDestroy", lua_tostring(m_pL, -1));
 		lua_pop(m_pL, 1);
-		lua_settop(m_pL, 0);
 		return false;
 	}
 	return true;
@@ -341,7 +414,6 @@ bool LuaCall::CallReload(int nStep)
 	{
 		LOG_ERROR("Server error running function `%s': %s","CallReload", lua_tostring(m_pL, -1));
 		lua_pop(m_pL, 1);
-		lua_settop(m_pL, 0);
 		return false;
 	}
 	return true;
@@ -356,7 +428,6 @@ bool LuaCall::CallPathUpdate()
 	{
 		LOG_ERROR("Server error running function `%s': %s","CallPathUpdate", lua_tostring(m_pL, -1));
 		lua_pop(m_pL, 1);
-		lua_settop(m_pL, 0);
 		return false;
 	}
 	return true;
@@ -372,7 +443,6 @@ bool LuaCall::CallRecv(NetPack* buf)
 	{
 		LOG_ERROR("Server error running function `%s': %s","CallRecv", lua_tostring(m_pL, -1));
 		lua_pop(m_pL, 1);
-		lua_settop(m_pL, 0);
 		return false;
 	}
 	return true;
@@ -387,7 +457,6 @@ bool LuaCall::CallSend()
     {
         LOG_ERROR("Server error running function `%s': %s", "CallSend", lua_tostring(m_pL, -1));
         lua_pop(m_pL, 1);
-        lua_settop(m_pL, 0);
         return false;
     }
     return true;

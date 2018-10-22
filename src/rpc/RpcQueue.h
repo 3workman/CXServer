@@ -65,7 +65,7 @@ public:
             }
         }
     }
-    void SendBackBuffer(Typ* pObj)
+    void SendBackBuffer(Typ* pObj) //可在rpc流程中调用此接口，提前回复消息
     {
         assert(m_BackBuffer.OpCode() > 0 && "send rpc relay repeatedly");
         m_BackBuffer.Absorb(BackBuilder);
