@@ -56,10 +56,12 @@ public: // header
     uint8   Type() const { return show<uint8>(TYPE_INDEX); }
     void    ReqIdx(uint32 idx) { put(REQ_IDX_INDEX, idx); }
     uint32  ReqIdx() const { return show<uint32>(REQ_IDX_INDEX); }
+    uint64  GetReqKey() { return (uint64(OpCode()) << 32) | ReqIdx(); }
 public:
-    uint16 BodySize() const { return (uint16)(size() - HEADER_SIZE); }
+    uint16 BodySize() const { return (uint16)(wpos() - HEADER_SIZE); }
+    uint16 LeftSize() const { return (uint16)(wpos() - rpos()); }
     const uint8* Body() const { return contents() + HEADER_SIZE; }
-    uint64 GetReqKey() { return (uint64(OpCode()) << 32) | ReqIdx(); }
+    const uint8* LeftBuf() const { return contentsRpos(); }
 
 // for logic
 public:
