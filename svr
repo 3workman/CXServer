@@ -5,6 +5,8 @@ ulimit -c unlimited # 设置core大小为无限
 # root=~/soulnet
 root=/mnt/d/soulnet
 passwd="890104"
+slave_src=""        #从库的主DB地址
+daemon=0
 
 Init() {
     # 构建配置环境，连接csv、ThirdParty等
@@ -12,6 +14,7 @@ Init() {
     mkdir -p $root/GoServer/bin/db
     ln -s $root/CXServer/data/csv $root/GoServer/bin/csv
     # ln -s $root/CXServer/data/csv $root/GameClient/csv
+    # ln -s $root/CXServer/lua $root/GameClient/Assets/StreamingAssets/lua
     # ln -s $root/CXServer/proto_file/output_cs $root/GameClient/Assets/flat
     ln -s $root/CXServer/ThirdParty/googletest/libgtest.a $root/CXServer/ThirdParty/libgtest.a
     ln -s $root/CXServer/ThirdParty/handy/libhandy.a $root/CXServer/ThirdParty/libhandy.a
@@ -27,6 +30,7 @@ $MongoDB <<EOF
 use admin;
 db.createUser({user:"root",pwd:"zhoumf233*",roles:["root"]});
 db.auth("root","zhoumf233*");
+db.createUser({user:"repl",pwd:"db#233*",roles:[{role:"dbOwner", db:"local"}]})
 
 use account;
 db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
@@ -39,6 +43,7 @@ db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
 
 use save;
 db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
+db.Save.ensureIndex({"mac":1},{"unique":true})
 
 use soulnet;
 db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
@@ -47,72 +52,91 @@ db.Player.ensureIndex({"accountid":1},{"unique":true})
 use friend;
 db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
 
+use other;
+db.createUser({user:"chillyroom",pwd:"db#233*",roles:["readWrite"]});
+
 exit;
 EOF
 }
+
+# --------------------------------------------------------------------------
 RunSvr() {
     # rm -f core
     # rm -rf ./log
-    if [ $2 ] && [ $2 = "-d" ]; then
-        nohup ./svr_$1 > $root/$1.out 2>&1 &
+    if [ $daemon == 1 ]; then
+        nohup ./svr_$1 ${@:2} > $root/$1.out 2>&1 &
     else
-        ./svr_$1
+        ./svr_$1 ${@:2}
     fi
 }
-# --------------------------------------------------------------------------
 Battle() {
     cd $root/CXServer/build
-    RunSvr battle $1
+    RunSvr battle
 }
 Center() {
     cd $root/GoServer/bin
-    RunSvr center $1
+    RunSvr center
 }
 Cross() {
     cd $root/GoServer/bin
-    RunSvr cross $1
+    RunSvr cross
 }
 Game() {
     cd $root/GoServer/bin
-    RunSvr game $1
+    RunSvr game
 }
 Gateway() {
     cd $root/GoServer/bin
-    RunSvr gateway $1
+    RunSvr gateway
 }
 Friend() {
     cd $root/GoServer/bin
-    RunSvr friend $1
+    RunSvr friend
 }
 Sdk() {
     cd $root/GoServer/bin
-    RunSvr sdk $1
+    RunSvr sdk
 }
 Save() {
     cd $root/GoServer/bin
-    RunSvr save $1
+    RunSvr save
 }
 Login() {
     cd $root/GoServer/bin
-    RunSvr login $1
+    RunSvr login -id 1
 }
 File() {
     cd $root/GoServer/bin
-    RunSvr file $1
+    RunSvr file
 }
 Zookeeper() {
     cd $root/GoServer/bin
     # rm -f core
     # rm -rf ./log
-    if [ $1 ] && [ $1 = "-d" ]; then
+    if [ $daemon == 1 ]; then
         nohup ./zookeeper > $root/zookeeper.out 2>&1 &
     else
         ./zookeeper
     fi
 }
+
+# --------------------------------------------------------------------------
+AFK() {
+    cd $root/GoServer/bin
+    nohup ./AFK > $root/afk.out 2>&1 &
+}
+
+# --------------------------------------------------------------------------
 DB() {
     nohup echo $passwd | sudo -S mongod --auth --dbpath $root/GoServer/bin/db >/dev/null 2>$root/db.out &
 }
+DB_Master() {
+    nohup echo $passwd | sudo -S mongod --master --oplogSize 4096 --auth --dbpath $root/bin/db >/dev/null 2>$root/db.out &
+}
+DB_Slave() {
+    nohup echo $passwd | sudo -S mongod --slave --source $slave_src --auth --dbpath $root/bin/db >/dev/null 2>$root/db.out &
+}
+
 # --------------------------------------------------------------------------
 KillAll() {
     killall -9 svr_battle
@@ -128,38 +152,36 @@ KillAll() {
     killall -9 zookeeper
 }
 RunOne() {
-    if [ $2 ] && [ $2 != "-d" ]; then
-        echo "-d    run as a daemon"
-    else
-        case $1 in
-            0|"db")         DB $2;;
-            1|"zoo")        Zookeeper $2;;
-            2|"center")     Center $2;;     #
-            3|"cross")      Cross $2;;      #
-            4|"login")      Login $2;;      #
-            5|"game")       Game $2;;       # link: cross center sdk
-            6|"battle")     Battle $2;;     # link: cross
-            7|"gateway")    Gateway $2;;    #
-            8|"friend")     Friend $2;;     #
-            "sdk")          Sdk $2;;        #
-            "save")         Save $2;;       #
-            "file")         File $2;;       #
-            "kill")         KillAll;;
-            "init")         Init;;
-            "initdb")       InitDB;;
-            *) echo "Input a key, like:\n svr game [-d] \n svr 1 [-d]";;
-        esac
-    fi
+    case $1 in
+        "db")           DB;;
+        "dbMaster")     DB_Master;;
+        "dbSlave")      DB_Slave;;
+        1|"zoo")        Zookeeper $2;;
+        2|"center")     Center $2;;
+        3|"cross")      Cross $2;;
+        4|"login")      Login $2;;
+        5|"game")       Game $2;;
+        6|"battle")     Battle $2;;
+        7|"gateway")    Gateway $2;;
+        8|"friend")     Friend $2;;
+        "sdk")          Sdk $2;;
+        "save")         Save $2;;
+        "file")         File $2;;
+        "afk")          AFK $2;;
+        "kill")         KillAll;;
+        "init")         Init;;
+        "initdb")       InitDB;;
+        *) echo "Input a key, like:\n svr [-d] game \n svr [-d] 1";;
+    esac
 }
 # --------------------------------------------------------------------------
 for arg in $@; do
-    if [ $arg = "-d" ]; then
-        daemon="-d"
-        break
-    fi
+while getopts ":d" opt; do
+    case $opt in
+        d) shift 1; daemon=1;;
+        *) echo "Invalid option: -$OPTARG";;
+    esac
 done
 for arg in $@; do
-    if [ $arg != "-d" ]; then
-        RunOne $arg $daemon
-    fi
+    RunOne $arg
 done
