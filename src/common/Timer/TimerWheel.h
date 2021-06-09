@@ -23,20 +23,16 @@ struct NodeLink {
     NodeLink* next;
     NodeLink() { prev = next = this; } //circle
 };
-struct TimerNode {
-    Pool_Obj_Define(TimerNode, 32)
+struct TimeNode {
+    Pool_Obj_Define(TimeNode, 32)
     NodeLink link; //must in the head
-    time_t timeDead;
-    uint32 interval; //间隔多久
-    int loop;        //总共循环多久
-    std::function<void()> func;
+    time_t   when;
+	bool     _funcIng = false;
+    std::function<int()> func;
 
-    TimerNode(const std::function<void()>& f, uint32 cd = 0, int total = 0)
-        : timeDead(0)
-        , interval(cd)
-        , loop(total)
-        , func(f){};
+    TimeNode(const std::function<int()>& f) : when(0), func(f){};
     void _Callback();
+    inline void Stop();
 };
 struct stWheel {
     NodeLink* slots; //每个slot维护的node链表为一个环，如此可以简化插入删除的操作。slot->next为node链表中第一个节点，prev为node的最后一个节点
@@ -48,7 +44,7 @@ struct stWheel {
             for (uint32 j = 0; j < size; ++j) {
                 NodeLink* link = (slots + j)->next;
                 while (link != slots + j) {
-                    TimerNode* node = (TimerNode*)link;
+                    TimeNode* node = (TimeNode*)link;
                     link = node->link.next;
                     delete node;
                 }
@@ -58,27 +54,27 @@ struct stWheel {
     }
     NodeLink* GetCurSlot() { return slots + slotIdx; }
 };
-class TimerMgr {
-    static uint32 WHEEL_SIZE[WHEEL_NUM];
+class TimeWheel {
+    static uint32 WHEEL_MASK[WHEEL_NUM];
     static uint32 WHEEL_CAP[WHEEL_NUM];
 
     stWheel* _wheels[WHEEL_NUM];
     NodeLink _readyNode;
     uint32   _time_elapse = 0;
 
-    TimerMgr();
-    ~TimerMgr();
+    TimeWheel();
+    ~TimeWheel();
 public:
-    static TimerMgr& Instance(){ static TimerMgr T; return T; }
+    static TimeWheel& Instance(){ static TimeWheel T; return T; }
     void Refresh(uint32 time_elasped, const time_t timenow);
 
-    TimerNode* AddTimer(const std::function<void()>& f, float delaySec, float cdSec = 0, float totalSec = 0);
-    void _AddTimerNode(uint32 milseconds, TimerNode* node);
-    void DelTimer(TimerNode* node);
+    TimeNode* AddTimer(const std::function<int()>& f, float delaySec);
+    void _AddTimerNode(uint32 milseconds, TimeNode* node);
+    void DelTimer(TimeNode* node);
 private:
     void Cascade(uint32 wheelIdx, const time_t timenow);
-    void AddToReadyNode(TimerNode* node);
+    void AddToReadyNode(TimeNode* node);
     void DoTimeOutCallBack();
     void Printf();
 };
-#define sTimerMgr TimerMgr::Instance()
+#define sTimerMgr TimeWheel::Instance()

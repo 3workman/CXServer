@@ -122,8 +122,8 @@ public:
 	ServiceList(RefreshFun func, uint msec) : iService<T>(func), m_timeCD(msec){
         m_runIt = m_list.begin();
     }
-	bool Register(T pObj, time_t exeTime){
-		m_list.push_back(TimerPair(exeTime,pObj)); //list结构，放到最后面，在Run时调了Reg也没关系
+	bool Register(T pObj, time_t timenow){
+		m_list.push_back(TimerPair(timenow + m_timeCD, pObj)); //list结构，放到最后面，在Run时调了Reg也没关系
         if (m_runIt == m_list.end()) m_runIt = m_list.begin();
 		return true;
 	}
@@ -144,8 +144,8 @@ public:
             TimerPair& it = *m_runIt;//m_func后it可能失效
             if (it.first <= timenow) {
                 if (++m_runIt == m_list.end()) m_runIt = m_list.begin();
-                uint timeDiff = uint(timenow-it.first)+m_timeCD;
-                it.first = timenow + m_timeCD;
+                uint timeDiff = m_timeCD+uint(timenow-it.first);
+                it.first += m_timeCD;
                 this->m_func(it.second, timeDiff);//里头可能把自己删掉，m_runIt指向改变，it可能失效
             } else break;
         }
@@ -166,8 +166,8 @@ class ServiceVec : public iService<T> {
 public:
     ServiceVec(RefreshFun func, uint msec) : iService<T>(func), m_timeCD(msec) {}
 
-    bool Register(T pObj, time_t exeTime) {
-        m_vec.push_back(TimerPair(exeTime, pObj));
+    bool Register(T pObj, time_t timenow) {
+        m_vec.push_back(TimerPair(timenow + m_timeCD, pObj));
         return true;
     }
     void UnRegister(T pObj) {
@@ -186,8 +186,8 @@ public:
             TimerPair& it = m_vec[m_runPos];
             if (it.first <= timenow) {
                 if (++m_runPos >= (int)m_vec.size()) m_runPos = 0;
-                uint timeDiff = uint(timenow-it.first)+m_timeCD;
-                it.first = timenow + m_timeCD;
+                uint timeDiff = m_timeCD + uint(timenow-it.first);
+                it.first += m_timeCD;
                 this->m_func(it.second, timeDiff);//里头可能把自己删掉，m_runIt指向改变，it可能失效
             }
             else break;
@@ -212,8 +212,10 @@ class ServiceMap : public iService<T> {
 public:
     ServiceMap(RefreshFun func, uint msec) : iService<T>(func), m_timeCD(msec) {}
 
-	bool Register(T pObj, time_t exeTime) {
-        this->m_bRun ? m_mapAdd.insert(TimerPair(exeTime, pObj)) : m_map.insert(TimerPair(exeTime, pObj));
+	bool Register(T pObj, time_t timenow) {
+        this->m_bRun ? 
+			m_mapAdd.insert(TimerPair(timenow+m_timeCD, pObj)) : 
+			m_map.insert(TimerPair(timenow+m_timeCD, pObj));
         return true;
 	}
 	void UnRegister(T pObj) {
@@ -240,8 +242,8 @@ public:
                     it = m_map.erase(it);
                     continue;
                 }
-				this->m_func(it->second, uint(timenow-it->first)+m_timeCD);
-                m_mapAdd.insert(TimerPair(timenow+m_timeCD, it->second));
+				this->m_func(it->second, m_timeCD+uint(timenow-it->first));
+                m_mapAdd.insert(TimerPair(it->first+m_timeCD, it->second));
 				it = m_map.erase(it);
 			} else {
 				//++it; //map以时间作key，自动按从小到大排序，本次的it->first > timenow那后面的会全大于，不必继续循环了
